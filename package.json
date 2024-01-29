@@ -2,6 +2,9 @@
   "name": "preventai",
   "version": "1.0.0",
   "description": "PreventAI TFG",
+  "engines": {
+    "node": "20.9.0"
+  },
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -23,3 +26,5 @@
   },
   "type": "module"
 }
+
+  
