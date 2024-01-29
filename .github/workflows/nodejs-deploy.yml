@@ -1,0 +1,30 @@
+name: Node.js Deployment
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: '14' # Set the Node.js version
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build
+      run: npm run build # If your project needs a build step
+
+    - name: Deploy to Heroku
+      uses: akhileshns/heroku-deploy@v3.12.12 # This action simplifies Heroku deployment
+      with:
+        heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+        heroku_app_name: "your-app-name" # Replace with your Heroku app name
+        heroku_email: "your-email@example.com" # Replace with your Heroku account email
