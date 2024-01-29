@@ -1,21 +1,19 @@
 const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-
+// const mongoose = require('mongoose');
+// const cors = require('cors');
 const app = express();
-app.use(cors());
+// app.use(cors());
 app.use(express.json()); // for parsing application/json
 
-// MongoDB connection URL - replace with your own
 const dbUrl = 'mongodb://localhost:27017/preventai';
 
-mongoose.connect(dbUrl);
+// mongoose.connect(dbUrl);
 
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', () => {
-    console.log("Connected successfully to MongoDB");
-});
+// const db = mongoose.connection;
+// db.on('error', console.error.bind(console, 'connection error:'));
+// db.once('open', () => {
+//     console.log("Connected successfully to MongoDB");
+// });
 
 const port = process.env.PORT || 3001;
 
