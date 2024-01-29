@@ -18,7 +18,7 @@ jobs:
 
     - name: Install dependencies
       run: npm install
-      working-directory: ./backend
+      working-directory: backend/
 
     - name: Build
       run: npm run build # If your project needs a build step
