@@ -23,7 +23,7 @@ jobs:
       run: npm run build # If your project needs a build step
 
     - name: Deploy to Heroku
-      uses: khileshns/heroku-deploy@v3.13.15 # This action simplifies Heroku deployment
+      uses: akhileshns/heroku-deploy@v3.13.15 # This action simplifies Heroku deployment
       with:
         heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
         heroku_app_name: "PreventAI" # Replace with your Heroku app name
