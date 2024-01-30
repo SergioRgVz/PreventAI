@@ -1,7 +1,16 @@
+import { config } from 'dotenv';
 import express from 'express'
 import path from 'path'
 const app = express()
 const port = 3001
+import { executeUserCrudOperations } from './src/ClusterConnection.js';
+
+config();
+await executeUserCrudOperations();
+
+
+// config();
+// console.log(process.env.DB_URI);
 
 
 // Path: index.js
