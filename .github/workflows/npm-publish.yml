@@ -17,10 +17,11 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     
-    - name: Charge Environment Variables
+    - name: Create .env file MongoDB
       run: |
-        echo "DB_URI=${{ secrets.DB_URI }}" >> $GITHUB_ENV
-        echo "DB_CODE_URI=${{ secrets.DB_CODE_URI }}" >> $GITHUB_ENV
+        echo "DB_URI=${{ secrets.DB_URI }}" > .env
+        echo "DB_CODE_URI=${{ secrets.DB_CODE_URI }}" >> .env
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
@@ -28,4 +29,8 @@ jobs:
         cache: 'npm'
     - run: npm install
     # - run: npm test
+    - name: Transferir archivo .env al servidor
+      run: scp .env ubuntu@ip-172-31-21-21:/home/ubuntu/actions-runner/_work/PreventAI/PreventAI
+      
+    - name: Reiniciar servidor con PM2
     - run: pm2 restart backendserver
