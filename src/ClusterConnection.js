@@ -26,21 +26,24 @@ export async function connectToCluster(uri) {
        const db = mongoClient.db('user');
        const collection = db.collection('tecnhicians');
         console.log('Connected to user.tecnhicians collection');
-        const name = "joce antonio";
+    let name = "joce antonio";
     // CREATE AN USER
     //    console.log('CREATE Technician');
-    //    await createUserTechnician(collection);
+    //    await createUserTechnician(collection, 'John Smith');
+    //    await createUserTechnician(collection, 'Pepito Perez');
 
     //Find a user by name in the database
     console.log(await findTechnicianByName(collection, 'John Smith'));
+    name = await findTechnicianByName(collection, 'Pepito Perez');
 
-    console.log('UPDATE Student\'s Password');
-    await updateTecnhiciansByName(collection, 'John Smith', { password: '1234' });
-    console.log(await findTechnicianByName(collection, 'John Smith'));
+    // console.log('UPDATE Student\'s Password');
+    // await updateTecnhiciansByName(collection, 'John Smith', { password: '1234' });
+    // console.log(await findTechnicianByName(collection, 'John Smith'));
 
-    console.log('DELETE Student');
-    await deleteTecnhiciansByName(collection, 'John Smith');
-    console.log(await findTechnicianByName(collection, 'John Smith'));
+    // console.log('DELETE Student');
+    // await deleteTecnhiciansByName(collection, 'John Smith');
+    // await deleteTecnhiciansByName(collection, 'Pepito Perez');
+    // console.log(await findTechnicianByName(collection, 'John Smith'));
     
     return name;
 
@@ -50,9 +53,9 @@ export async function connectToCluster(uri) {
 }
 
 //Insert a single Technician into the collection
-export async function createUserTechnician(collection) {
+export async function createUserTechnician(collection, name) {
     const Tecnhician = {
-        name: 'John Smith',
+        name: name,
         id_user: 1,
         password: '123456789',
     };
