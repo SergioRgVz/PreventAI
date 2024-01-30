@@ -16,11 +16,17 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
     steps:
     - uses: actions/checkout@v3
+    
+    - name: Create .env file MongoDB
+      run: |
+        echo "DB_URI=${{ secrets.DB_URI }}" > .env
+        echo "DB_CODE_URI=${{ secrets.DB_CODE_URI }}" >> .env
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm ci
+    - run: npm install
     # - run: npm test
     - run: pm2 restart backendserver
