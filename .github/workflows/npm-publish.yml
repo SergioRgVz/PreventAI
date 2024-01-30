@@ -30,7 +30,7 @@ jobs:
     - run: npm install
     # - run: npm test
     - name: Transferir archivo .env al servidor
-      run: scp .env ubuntu@ip-172-31-21-21:/home/ubuntu/actions-runner/_work/PreventAI/PreventAI
+      run: cp .env /home/ubuntu/actions-runner/_work/PreventAI/PreventAI
       
     - name: Reiniciar servidor con PM2
       run: pm2 restart backendserver
