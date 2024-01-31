@@ -1,8 +1,13 @@
 # React + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- src/
+  - components/: Reusable UI components.
+  - containers/: Components connected to state management.
+  - pages/: Components representing pages.
+  - hooks/: Custom React hooks.
+  - utils/: Utility functions and constants.
+  - services/: API calls and other service-related functions.
+  - App.js: Main React application component.
+  - index.js: Entry point for React app.
+  - public/
+    - Static assets like images, favicon, etc.
+  - package.json: Frontend dependencies and scripts.
