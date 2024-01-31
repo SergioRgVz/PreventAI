@@ -7,7 +7,7 @@
   },
   "main": "index.js",
   "scripts": {
-    "start": "node ./src/index.js",
+    "start": "cd src && node index.js",
     "test": "jest",
     "postinstall": "cd client && npm install && npm run build",
     "devstart": "nodemon ./src/index.js",
