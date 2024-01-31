@@ -10,7 +10,8 @@
     "start": "node ./src/index.js",
     "test": "jest",
     "postinstall": "cd client && npm install && npm run build",
-    "devstart": "nodemon ./src/index.js"
+    "devstart": "nodemon ./src/index.js",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0"
   },
   "jest": {
     "transform": {
