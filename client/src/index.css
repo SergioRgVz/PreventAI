@@ -4,3 +4,15 @@ body {
   min-width: 320px;
   min-height: 100vh;
 }
+
+
+.login_background {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 64px);
+  background-image: url(/logo_bg.jpg);
+  background-size: cover;
+  background-position: center;
+  opacity: 0.6;
+}
