@@ -1,9 +1,23 @@
 import { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { LandingPage } from './pages/LandingPage';
+import { LandingPage } from './pages/Landing';
+import { LoginPage } from './pages/Login';
+
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+
 import axios from 'axios';
 import './App.css'
 
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#007FFF',
+      light: '#DAECFF',
+      //... otros tonos de azul si son necesarios
+    },
+    //... otros colores y configuraciones
+  },
+});
 // const apiCall = () => {
 //   axios.get('http://localhost:8080/test').then((data) => {
 //     console.log(data)
@@ -31,12 +45,15 @@ import './App.css'
 
 export function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="*" element={<p>404</p>} />
-      </Routes>
-    </Router>  
+    <ThemeProvider theme={theme}>
+      <Router>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="*" element={<p>404</p>} />
+        </Routes>
+      </Router>  
+    </ThemeProvider>
   )
 }
 export default App

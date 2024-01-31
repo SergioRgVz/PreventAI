@@ -10,7 +10,7 @@ export function LandingPage() {
   };
 
   return (
-    <Box sx={ {backgroundColor: 'rgb(231, 239, 246)' }}>
+    <Box sx={{ backgroundColor: 'rgb(231, 239, 246)'}}>
       <HeaderLandingPage />
       <Box>
         <Box sx={{ display: 'grid', gridTemplateColumns: '6fr 3fr', alignItems: 'center', gap: 4 }}>

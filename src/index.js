@@ -1,23 +1,26 @@
-import { config } from 'dotenv';
+import * as dotenv from 'dotenv'
 import express from 'express'
 import path, { normalize } from 'path'
 import cors from 'cors';
-const app = express()
-const port = process.env.PORT || '8080';
 import { executeUserCrudOperations } from './ClusterConnection.js';
 
+const app = express()
+
+dotenv.config()
 //sincronizar con el frontend
 app.use(cors({
   origin: 'http://localhost:${port}', 
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true, // permitir cookies de sesión
 }));
-config();
 
-const name = await executeUserCrudOperations();
 
 const __dirname = path.resolve();
 const buildPath = path.join(__dirname, 'client/dist')
+
+const port = process.env.PORT;
+
+const name = await executeUserCrudOperations();
 
 app.get('/api/get-name', (req, res) => {
   res.json({ name: name[0].name });
