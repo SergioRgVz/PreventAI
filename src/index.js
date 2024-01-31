@@ -16,7 +16,7 @@ app.use(cors({
 
 
 const __dirname = path.resolve();
-const buildPath = path.join(__dirname, 'client/dist')
+const buildPath = path.join(__dirname, '../client/dist')
 
 const port = process.env.PORT;
 
@@ -29,8 +29,7 @@ app.get('/api/get-name', (req, res) => {
 app.use(express.static(buildPath))
 
 app.get('/', (req, res) => {
-  res.send('Hello, World!' + name);
-  console.log(name);
+  res.sendFile(buildPath + '/index.html');
 });
 
 app.get('/test', (req, res) => {
