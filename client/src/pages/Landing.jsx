@@ -2,7 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Box, Typography } from '@mui/material';
 import { HeaderLandingPage } from '../components/HeaderLandingPage';
 
-export function LandingPage() {
+export function LandingPage(props) {
+  const { loggedIn, email, setLoggedIn } = props
   const navigate = useNavigate();
 
   const handleStart = () => {
@@ -11,7 +12,7 @@ export function LandingPage() {
 
   return (
     <Box sx={{ backgroundColor: 'rgb(231, 239, 246)', height: '100vh'}}>
-      <HeaderLandingPage />
+      <HeaderLandingPage email={email} loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
       <Box>
         <Box sx={{ display: 'grid', gridTemplateColumns: '6fr 3fr', alignItems: 'center', gap: 4 }}>
           <Box component="img" src="/empleados_landing.png" alt="Empleados" sx={{ width: '100%', height: 'auto' }} />

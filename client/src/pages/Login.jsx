@@ -1,27 +1,66 @@
-import { Box, Typography, FormControl, TextField, FormControlLabel, Checkbox, Link, Button } from '@mui/material'
-import { Logo } from '../components/Logo'
-import Paper from '@mui/material/Paper';
-import Image from '/logo_bg.jpg'
-// import { StyledInput } from '../components/StyledInput'
+import { Box, Typography, FormControl, TextField, FormControlLabel, Checkbox, Button } from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import Image from '/logo_bg.jpg';
+import { Logo } from '../components/Logo';
+import { loginUser as loginUserService } from '../services/authService';
 
+export function LoginPage({ setLoggedIn }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
 
-export function LoginPage() {
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!email) newErrors.email = "Introduce el correo electrónico, por favor";
+    else if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) newErrors.email = "Ingrese un correo electrónico válido";
+    if (!password) newErrors.password = "Introduce la contraseña, por favor";
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const onButtonClick = async (event) => {
+    event.preventDefault();
+
+    if (validateForm()) {
+      try {
+        const response = await loginUserService(email, password);
+        console.log('Login exitoso:', response);
+        setLoggedIn(true); 
+        navigate('/home'); 
+      } catch (error) {
+        if (error.response) {
+          switch (error.response.status) {
+            case 401:
+              setErrors({ ...errors, password: "Contraseña incorrecta" });
+              break;
+            case 404:
+              setErrors({ ...errors, email: "Usuario no encontrado" });
+              break;
+            default:
+              console.error('Error desconocido', error);
+              break;
+          }
+        } else {
+          console.error('Error en la petición', error);
+        }
+      }
+    }
+  };
 
   return (
-    <Box sx={{ 
-      backgroundImage: `url(${Image})`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat',
-      height: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center'
+      <Box sx={{ 
+      backgroundImage: `url(${Image})`, backgroundSize: 'cover', backgroundPosition: 'center',
+      height: '100vh', display: 'flex', flexDirection: 'column',
+      alignItems: 'center',  justifyContent: 'center'
     }}>
       <Box sx={{width:'100%', maxWidth: '700px', backgroundColor: 'rgba(255, 255, 255, 0.9)', 
       borderRadius: '15px', p: 2, boxShadow: 3, display: 'flex', flexDirection: 'column', 
-      alignItems:'center', justifyContent: 'center'}}>    
+      alignItems:'center', justifyContent: 'center'}}>      
         <Logo />
         <Typography variant="h3" component="h1" gutterBottom sx={{mt: 2}}>
           Iniciar sesión
@@ -30,59 +69,49 @@ export function LoginPage() {
           Bienvenido a la web de PreventAI
         </Typography>
         <FormControl defaultValue="" required>
-          <Typography 
-            variant="h6" 
-            component="h2"
-            sx={{mt:3}}
-          >
-              Correo electrónico
-          </Typography>
           <TextField 
+            error={Boolean(errors.email)}
+            helperText={errors.email}
             id="email"
+            label="Correo electrónico"
             variant="filled"
-            // onChange={e => setEmail(e.target.value)}
-            required
-            color="secondary"
-            type="email"
-            // value={email}
-            // error={emailError}
-            placeholder="email@example.com"
-            margin="dense"
-            sx={{mb:6, width:'500px'}}
+            onChange={e => setEmail(e.target.value)}
+            value={email}
+            sx={{width:'500px', mb: 2}}
           />
-          <Typography 
-            variant="h6" 
-            component="h2" 
-          >
-            Contraseña
-          </Typography>
           <TextField
-            // onChange={e => setPassword(e.target.value)}
-            required
+            error={Boolean(errors.password)}
+            helperText={errors.password}
+            id="password"
+            label="Contraseña"
             variant="filled"
-            color="secondary"
+            onChange={e => setPassword(e.target.value)}
+            value={password}
             type="password"
-            // value={password}
-            // error={passwordError}
-            placeholder="********"
-            margin="dense"
-            sx={{mb:2, width:'500px'}}
+            sx={{width:'500px', mb: 2}}
           />
           <FormControlLabel
             control={<Checkbox />}
             label="Recuérdame"
-            value="Recuérdame"
-            labelPlacement="end"
+            sx={{mb: 2}}
           />
+          <Button color='info' variant="contained" type="submit" value={"Log in"} onClick={onButtonClick} sx={{mb: 2, width:'fit-content', ml: 'auto'}}>
+            Iniciar sesión
+          </Button>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', my: 2 }}>
-            <Link component="button" variant="body2" to="/forgot-password">
-              ¿Has olvidado la contraseña?
+          <Typography variant="body2">
+            ¿No tienes cuenta aún?{' '}
+            <Link to="/register" style={{ textDecoration: 'none', color: 'info.main' }}>
+              Regístrate
             </Link>
-            <Button color='info' variant="contained" type="submit">
-              Login
-            </Button>
+          </Typography>
+          <Link to="/forgot-password" style={{ textDecoration: 'none', color: 'info.main', mt: 2 }}>
+            ¿Has olvidado la contraseña?
+          </Link>
           </Box>
         </FormControl>
+        
       </Box>
     </Box>
-  )}
+  );
+}

@@ -3,12 +3,13 @@ import { AppBar, Toolbar, Button, Box } from '@mui/material';
 import { Logo } from '../components/Logo';
 
 
-export function HeaderLandingPage() {
+export function HeaderLandingPage(props) {
     const navigate = useNavigate();
   
     const handleRegister = () => {
       navigate('/register');
     };
+    
   
     const handleLogin = () => {
       navigate('/login');
