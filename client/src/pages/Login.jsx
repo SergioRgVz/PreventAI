@@ -28,8 +28,8 @@ export function LoginPage({ setLoggedIn }) {
 
     if (validateForm()) {
       try {
-        const response = await loginUserService(email, password);
-        console.log('Login exitoso:', response);
+        await loginUserService(email, password);
+        console.log('Login exitoso:');
         setLoggedIn(true); 
         navigate('/home'); 
       } catch (error) {

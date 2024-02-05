@@ -24,6 +24,13 @@ const theme = createTheme({
   },
 });
 
+import { Navigate } from 'react-router-dom';
+
+const RequireAuth = ({ children }) => {
+    const authed = localStorage.getItem('token'); // La lógica de autenticación puede variar
+    return authed ? children : <Navigate to="/login" replace />;
+};
+
 export function App() {
   const [loggedIn, setLoggedIn] = useState(false)
   const [email, setEmail] = useState("")
@@ -34,8 +41,10 @@ export function App() {
           <Route path="/" element={<LandingPage email={email} loggedIn={loggedIn} setLoggedIn={setLoggedIn}/>} />
           <Route path="/login" element={<LoginPage setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
           <Route path="/register" element={<RegisterPage setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
-          <Route path="/home" element={<HomePage setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
-          <Route path="/management" element={<ManagementPage setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
+          <Route path="/home" element={<RequireAuth><HomePage setLoggedIn={setLoggedIn} setEmail={setEmail} /></RequireAuth>} />
+          {/* <Route path="/home" element={<HomePage setLoggedIn={setLoggedIn} setEmail={setEmail} />} /> */}
+          <Route path="/management" element={<RequireAuth><ManagementPage setLoggedIn={setLoggedIn} setEmail={setEmail} /></RequireAuth>} />
+          {/* <Route path="/management" element={<ManagementPage setLoggedIn={setLoggedIn} setEmail={setEmail} />} /> */}
           <Route path="*" element={<p>404</p>} />
         </Routes>
       </Router>  

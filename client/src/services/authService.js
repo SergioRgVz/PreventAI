@@ -2,9 +2,10 @@ import axios from 'axios';
 
 export const loginUser = async (email, password) => {
     try {
-        const response = await axios.post('/auth/login', { email, password });
-        console.log('Login exitoso:', response.data);
-        return response.data;
+        const { data } = await axios.post('/auth/login', { email, password });
+        // console.log('Login exitoso:', response.data);
+        console.log('Login exitoso:');
+        localStorage.setItem('token', data.token);
     } catch (error) {
         if (error.response) {
             throw {
