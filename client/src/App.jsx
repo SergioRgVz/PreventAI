@@ -7,6 +7,7 @@ import { RegisterPage } from './pages/Register';
 import { HomePage } from './pages/Home';
 import { ManagementPage } from './pages/Management';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { verifyToken } from './services/authService';
 import './App.css'
 
 const theme = createTheme({
@@ -27,7 +28,8 @@ const theme = createTheme({
 import { Navigate } from 'react-router-dom';
 
 const RequireAuth = ({ children }) => {
-    const authed = localStorage.getItem('token'); // La lógica de autenticación puede variar
+    const token = localStorage.getItem('token');
+    const authed = verifyToken(token);
     return authed ? children : <Navigate to="/login" replace />;
 };
 

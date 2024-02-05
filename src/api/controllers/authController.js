@@ -23,11 +23,13 @@ export const login = async (req, res) => {
 
 export const verifyToken = (req, res, next) => {
     const token = req.headers['authorization'];
+
     if (!token) return res.status(403).send('Se requiere un token para autenticación');
 
     jwt.verify(token, process.env.SECRET_KEY_JWT, (err, decoded) => {
         if (err) return res.status(401).send('Token inválido');
         req.userId = decoded.userId;
+        res.status(200).send('Token válido');
         next();
     });
 };

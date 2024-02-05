@@ -50,3 +50,30 @@ export const registerUser = async (email, password, name, surname, telephone) =>
         }
     }
 };
+
+// Función para verificar el token
+export const verifyToken = async () => {
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            console.log('No hay token disponible');
+            return false;
+        }
+
+        // Realiza la petición al endpoint de verificación
+        const response = await axios.post('/auth/verifyToken', {
+            headers: {
+                'Authorization': token
+            }
+        });
+
+        // Manejo de la respuesta
+        console.log('Token verificado con éxito', response.data);
+        return true;
+    } catch (error) {
+        // Manejo del error
+        console.error('Error al verificar el token', error.response ? error.response.data : error.message);
+        return false;
+    }
+};
+
