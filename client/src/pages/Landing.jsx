@@ -10,6 +10,10 @@ export function LandingPage(props) {
     navigate('/start'); 
   };
 
+  if (loggedIn) {
+    navigate('/home');
+  }
+
   return (
     <Box sx={{ backgroundColor: 'rgb(231, 239, 246)', height: '100vh'}}>
       <HeaderLandingPage email={email} loggedIn={loggedIn} setLoggedIn={setLoggedIn} />

@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export const loginUser = async (email, password) => {
     try {
-        const response = await axios.post('http://localhost:8080/auth/login', { email, password });
+        const response = await axios.post('/auth/login', { email, password });
         console.log('Login exitoso:', response.data);
         return response.data;
     } catch (error) {
@@ -27,7 +27,7 @@ export const loginUser = async (email, password) => {
 
 export const registerUser = async (email, password, name, surname, telephone) => {
     try {
-        const response = await axios.post('http://localhost:8080/auth/register', { email, password, name, surname, telephone });
+        const response = await axios.post('/auth/register', { email, password, name, surname, telephone });
         console.log('Registro exitoso:', response.data);
         return response.data;
     } catch (error) {

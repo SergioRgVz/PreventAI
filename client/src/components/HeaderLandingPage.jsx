@@ -20,10 +20,10 @@ export function HeaderLandingPage(props) {
         <Toolbar sx={{ justifyContent: 'space-between'}} >
           <Logo />
           <Box sx={{ display: 'flex', gap: 2 }}>
-            <Button variant='outlined' onClick={handleLogin}>
+            <Button variant='outlined' color='info' onClick={handleLogin}>
               Iniciar Sesión
             </Button>
-            <Button variant='outlined' onClick={handleRegister}>
+            <Button variant='outlined' color='info' onClick={handleRegister}>
               Registrarse
             </Button>
           </Box>
