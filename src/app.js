@@ -3,8 +3,9 @@ import * as dotenv from 'dotenv'
 import path from 'path';
 import cors from 'cors';
 import authRoutes from './api/routes/authRoutes.js';
+import companyRoutes from './api/routes/companyRoutes.js';
+import employeeRoutes from './api/routes/employeeRoutes.js';
 import {connectDB} from '../config/db.js';
-import userService  from './api/services/userService.js';
 // import apiRouter from './api/routes/apiRoutes';
 
 dotenv.config({path:'../.env'})
@@ -29,9 +30,9 @@ app.use(cors({
 app.use(express.json()) //Para que el servidor entienda json
 
 // Rutas API
-// app.use('/api', apiRouter);
-
 app.use('/auth', authRoutes);
+app.use('/company', companyRoutes);
+app.use('/employee', employeeRoutes);
 
 // Ruta raíz
 app.get('/', (req, res) => {
