@@ -8,7 +8,7 @@
  */
 
 import express from 'express';
-import { getCompanyById, getAllEmployeesByCompany, createCompany, deleteCompanyByCif, deleteCompanyById, getCompanies } from '../controllers/companyController.js';
+import { getCompanyById, getAllEmployeesByCompany, createCompany, updateCompanyByCif, deleteCompanyByCif, deleteCompanyById, getCompanies } from '../controllers/companyController.js';
 
 const router = express.Router();
 
@@ -44,6 +44,8 @@ router.get('/getEmployees/:CIF', getAllEmployeesByCompany);
  * @memberof module:routes/companyRoutes
  */
 router.post('/create', createCompany);
+
+router.put('/update/:CIF', updateCompanyByCif);
 /**
  * Ruta para eliminar una empresa por su CIF.
  * Maneja solicitudes POST para eliminar una empresa específica usando su CIF único.

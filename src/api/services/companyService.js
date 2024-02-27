@@ -6,6 +6,7 @@
 
 import Company from '../models/companyModel.js';
 import Employee from '../models/employeeModel.js';
+import { getComunidadAutonomaByCode, getProvinciaByCode, getPoblacionByCode } from './locationService.js';
 
 const companyService = {
     /**
@@ -41,7 +42,16 @@ const companyService = {
     findAllCompanies: async () => {
         try {
             const companies = await Company.find().exec();
-            return companies;
+
+        // Transforma cada compañía para incluir las localizaciones por nombre
+        const companiesWithLocations = companies.map(company => ({
+            ...company._doc, // Asume que `company` es un documento de Mongoose
+            ccaa: getComunidadAutonomaByCode(company.ccaa),
+            provincia: getProvinciaByCode(company.provincia),
+            municipio: getPoblacionByCode(company.municipio)
+        }));
+
+        return companiesWithLocations;
         } catch (error) {
             return null;
         }

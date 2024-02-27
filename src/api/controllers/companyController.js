@@ -61,11 +61,30 @@ export const createCompany = async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: 'Usuario no encontrado' });
         }
-        const company = await companyService.createCompany(CIF, name, technician, ccaa, provincia, municipio);
+        const company = await companyService.createCompany(CIF, name, user, ccaa, provincia, municipio);
         if (!company) {
             return res.status(409).json({ message: 'La empresa ya existe' });
         }
         return res.status(201).json({ message: 'Empresa creada', company });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error interno del servidor' });
+    }
+}
+
+export const updateCompanyByCif = async (req, res) => {
+    try {
+        const { CIF } = req.params;
+        const { name, technician, ccaa, provincia, municipio } = req.body;
+        const user = await userService.findUser(technician);
+        if (!user) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+        const company = await companyService.updateCompany(CIF, name, user, ccaa, provincia, municipio);
+        if (!company) {
+            return res.status(404).json({ message: 'Empresa no encontrada' });
+        }
+        return res.status(200).json({ message: 'Empresa actualizada', company });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Error interno del servidor' });

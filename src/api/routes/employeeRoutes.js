@@ -7,7 +7,7 @@
  */
 
 import express from 'express';
-import { getEmployeeById, createEmployee, deleteEmployeeById, getEmployees, updateEmployeeById } from '../controllers/employeeController.js';
+import { getEmployeeByDNI, createEmployee, deleteEmployeeByDNI, getEmployees, updateEmployeeByDNI } from '../controllers/employeeController.js';
 
 const router = express.Router();
 
@@ -27,7 +27,7 @@ router.get('/', getEmployees);
  * @memberof module:routes/employeeRoutes
  * @inner
  */
-router.get('/:id', getEmployeeById);
+router.get('/:DNI', getEmployeeByDNI);
 
 /**
  * Ruta para crear un nuevo empleado.
@@ -46,7 +46,7 @@ router.post('/create', createEmployee);
  * @memberof module:routes/employeeRoutes
  * @inner
  */
-router.put('/update', updateEmployeeById);
+router.put('/update/:DNI', updateEmployeeByDNI);
 
 /**
  * Ruta para eliminar un empleado por su ID.
@@ -55,6 +55,6 @@ router.put('/update', updateEmployeeById);
  * @memberof module:routes/employeeRoutes
  * @inner
  */
-router.delete('/:id', deleteEmployeeById);
+router.delete('/:DNI', deleteEmployeeByDNI);
 
 export default router;

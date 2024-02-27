@@ -27,10 +27,10 @@ export const getEmployees = async (req, res) => {
  * @param {Object} req - Objeto de solicitud Express, contiene el ID del empleado en `req.params`.
  * @param {Object} res - Objeto de respuesta Express.
  */
-export const getEmployeeById = async (req, res) => {
+export const getEmployeeByDNI = async (req, res) => {
     try {
-        const { id } = req.params;
-        const employee = await employeeService.findEmployeeById(id);
+        const { DNI } = req.params;
+        const employee = await employeeService.findEmployeeById(DNI);
         if (!employee) {
             return res.status(404).json({ message: 'Empleado no encontrado' });
         }
@@ -70,15 +70,15 @@ export const createEmployee = async (req, res) => {
  * @param {Object} req - Objeto de solicitud Express, contiene el ID del empleado y los datos a actualizar en `req.params` y `req.body`.
  * @param {Object} res - Objeto de respuesta Express.
  */
-export const updateEmployeeById = async (req, res) => {
+export const updateEmployeeByDNI = async (req, res) => {
     try {
-        const { id } = req.params;
-        const { DNI, name, surname, telephone, age, company, birth_date } = req.body;
+        const { DNI } = req.params;
+        const { name, surname, telephone, age, company, birth_date } = req.body;
         const companyExists = await companyService.findCompany(company);
         if (!companyExists) {
             return res.status(404).json({ message: 'Empresa no encontrada' });
         }
-        const employee = await employeeService.updateEmployee(id, DNI, name, surname, telephone, age, company, birth_date);
+        const employee = await employeeService.updateEmployee( DNI, name, surname, telephone, age, company, birth_date);
         if (!employee) {
             return res.status(404).json({ message: 'Empleado no encontrado' });
         }
@@ -94,7 +94,7 @@ export const updateEmployeeById = async (req, res) => {
  * @param {Object} req - Objeto de solicitud Express, contiene el DNI del empleado en `req.body`.
  * @param {Object} res - Objeto de respuesta Express.
  */
-export const deleteEmployeeByDni = async (req, res) => {
+export const deleteEmployeeByDNI = async (req, res) => {
     try {
         const { DNI } = req.body;
         const employee = await employeeService.deleteEmployee(DNI);
