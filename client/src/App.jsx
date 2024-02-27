@@ -6,6 +6,7 @@ import { LoginPage } from './pages/Login';
 import { RegisterPage } from './pages/Register';
 import { HomePage } from './pages/Home';
 import { ManagementPage } from './pages/Management';
+import { CompaniesPage } from './pages/CompaniesView';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { verifyToken } from './services/authService';
 import './App.css'
@@ -44,7 +45,7 @@ export function App() {
           <Route path="/login" element={<LoginPage setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
           <Route path="/register" element={<RegisterPage setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
           <Route path="/home" element={<RequireAuth><HomePage setLoggedIn={setLoggedIn} setEmail={setEmail} /></RequireAuth>} />
-          {/* <Route path="/home" element={<HomePage setLoggedIn={setLoggedIn} setEmail={setEmail} />} /> */}
+          <Route path="/management/view-companies" element={<CompaniesPage setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
           <Route path="/management" element={<RequireAuth><ManagementPage setLoggedIn={setLoggedIn} setEmail={setEmail} /></RequireAuth>} />
           {/* <Route path="/management" element={<ManagementPage setLoggedIn={setLoggedIn} setEmail={setEmail} />} /> */}
           <Route path="*" element={<p>404</p>} />

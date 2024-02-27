@@ -6,7 +6,6 @@ import authRoutes from './api/routes/authRoutes.js';
 import companyRoutes from './api/routes/companyRoutes.js';
 import employeeRoutes from './api/routes/employeeRoutes.js';
 import {connectDB} from '../config/db.js';
-// import apiRouter from './api/routes/apiRoutes';
 
 dotenv.config({path:'../.env'})
 
@@ -22,7 +21,8 @@ app.use(express.static(buildPath));
 
 //sincronizar con el frontend
 app.use(cors({
-    origin: 'http://localhost:${port}', 
+    // origin: 'http://localhost:${port}', 
+    origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true, 
   }));
@@ -39,16 +39,34 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(buildPath, 'index.html'));
 });
 
-// Ruta de prueba
-app.get('/test', (req, res) => {
-  res.send('Hello, World! test');
-});
-
-// const User = await userService.createUser('sergiorgvz@gmail.com', '1234');
-
 // Capturar todas las demás rutas no definidas y posiblemente servir index.html para SPA
 app.get('*', (req, res) => {
   res.sendFile(path.join(buildPath, 'index.html'));
 });
+
+function listEndpoints(app) {
+  const routes = [];
+
+  app._router.stack.forEach(middleware => {
+    if (middleware.route) {
+      const { path, methods } = middleware.route;
+      const methodNames = Object.keys(methods).filter(method => methods[method]).join(', ').toUpperCase();
+      routes.push(`${methodNames} ${path}`);
+    } else if (middleware.name === 'router') { // para rutas cargadas mediante express.Router
+      middleware.handle.stack.forEach(handler => {
+        const { route } = handler;
+        if (route) {
+          const methodNames = Object.keys(route.methods).filter(method => route.methods[method]).join(', ').toUpperCase();
+          routes.push(`${methodNames} ${route.path}`);
+        }
+      });
+    }
+  });
+
+  return routes;
+}
+
+console.log(listEndpoints(app));
+
 
 export default app;
