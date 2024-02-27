@@ -1,8 +1,8 @@
 import { Box, Typography, FormControl, TextField, FormControlLabel, Checkbox, Button } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import Image from '/logo_bg.jpg';
 import { Logo } from '../components/Logo';
+import { TranslucentBox } from '../components/TranslucentBox';
 import { loginUser as loginUserService } from '../services/authService';
 
 export function LoginPage({ setLoggedIn }) {
@@ -53,14 +53,7 @@ export function LoginPage({ setLoggedIn }) {
   };
 
   return (
-      <Box sx={{ 
-      backgroundImage: `url(${Image})`, backgroundSize: 'cover', backgroundPosition: 'center',
-      height: '100vh', display: 'flex', flexDirection: 'column',
-      alignItems: 'center',  justifyContent: 'center'
-    }}>
-      <Box sx={{width:'100%', maxWidth: '700px', backgroundColor: 'rgba(255, 255, 255, 0.9)', 
-      borderRadius: '15px', p: 2, boxShadow: 3, display: 'flex', flexDirection: 'column', 
-      alignItems:'center', justifyContent: 'center'}}>      
+      <TranslucentBox maxWidth={'700px'}>    
         <Logo />
         <Typography variant="h3" component="h1" gutterBottom sx={{mt: 2}}>
           Iniciar sesión
@@ -111,7 +104,6 @@ export function LoginPage({ setLoggedIn }) {
           </Box>
         </FormControl>
         
-      </Box>
-    </Box>
+    </TranslucentBox>
   );
 }

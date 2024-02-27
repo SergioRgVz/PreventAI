@@ -2,7 +2,8 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Button } from '@mui/material';
 import AppBarHome from '../components/AppBarHome';
-import {Logo} from '../components/Logo';
+import { ButtonForm } from '../components/ButtonForm';
+import { TranslucentBox } from '../components/TranslucentBox';
 import Image from '/logo_bg2.jpg'
 
 
@@ -21,29 +22,13 @@ export function HomePage(props) {
 		navigate(url);
 	}
   return (
-		<>
+    <>
 			<AppBarHome pageToRouteMapping={pageToRouteMapping} settings={settings} logged />
-			<Box sx={{ backgroundImage: `url(${Image})`, backgroundSize: 'cover',
-								backgroundPosition: 'center', height: '100vh',
-								display: 'flex', flexDirection: 'column',
-								alignItems: 'center', justifyContent: 'center'}}>
-				<Box sx={{width:'100%', maxWidth: '400px', 
-									backgroundColor: 'rgba(255, 255, 255, 0.9)', 
-									borderRadius: '15px', p: 2, 
-									boxShadow: 3, display: 'flex', 
-									flexDirection: 'column', alignItems:'center',
-									justifyContent: 'center'}}>
-						<Button variant='contained' color='secondary' onClick={() => handleClick('/new-report')} sx={{mt:2}}>
-              Nueva evaluación
-            </Button>
-						<Button variant='contained' color='secondary' onClick={() => handleClick('/new-report')} sx={{mt:4}}>
-              Abrir evaluación
-            </Button>
-						<Button variant='contained' color='secondary' onClick={() => handleClick('/management')} sx={{mt:4, mb: 2}}>
-              Empresas
-            </Button>
-				</Box>
-			</Box>
+      <TranslucentBox maxWidth={'300px'}>
+          <ButtonForm url='/new-report'>Nueva evaluación</ButtonForm>
+          <ButtonForm url='/open-report'>Abrir evaluación</ButtonForm>
+          <ButtonForm url='/management'>Empresas</ButtonForm>
+			</TranslucentBox>
 		</>
   );
 }

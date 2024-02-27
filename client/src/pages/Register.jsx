@@ -2,7 +2,7 @@ import { Box, Typography, FormControl, TextField, Button } from '@mui/material'
 import { useState,  } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import { Logo } from '../components/Logo'
-import Image from '/logo_bg.jpg'
+import { TranslucentBox } from '../components/TranslucentBox';
 import { registerUser as registerUserService } from '../services/authService';
 
 
@@ -56,16 +56,7 @@ export function RegisterPage({ setLoggedIn }) {
 }
 
   return (
-    <Box sx={{ backgroundImage: `url(${Image})`, backgroundSize: 'cover',
-              backgroundPosition: 'center', height: '100vh',
-              display: 'flex', flexDirection: 'column',
-              alignItems: 'center', justifyContent: 'center'}}>
-      <Box sx={{width:'100%', maxWidth: '700px', 
-                backgroundColor: 'rgba(255, 255, 255, 0.9)', 
-                borderRadius: '15px', p: 2, 
-                boxShadow: 3, display: 'flex', 
-                flexDirection: 'column', alignItems:'center',
-                justifyContent: 'center'}}>    
+    <TranslucentBox maxWidth={'700px'}> 
         <Logo />
         <Typography variant="h3" component="h1" gutterBottom sx={{mt: 2}}>
           Registro
@@ -146,7 +137,6 @@ export function RegisterPage({ setLoggedIn }) {
           </Typography>
           </Box>
         </FormControl>
-      </Box>
-    </Box>
+    </TranslucentBox>
   );
 }
