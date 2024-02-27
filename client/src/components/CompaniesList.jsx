@@ -47,7 +47,7 @@ export const CompaniesList = () => {
 
   useEffect(() => {
     const fetchCompanies = async () => {
-      const response = await axios.get('http://localhost:8080/company/'); // Asume que esta función devuelve las compañías con localizaciones
+      const response = await axios.get('/company/'); // Asume que esta función devuelve las compañías con localizaciones
       setCompanies(response.data.companies);
     };
 
