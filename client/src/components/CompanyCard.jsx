@@ -1,14 +1,12 @@
-import { Card, CardContent, CardActions, Typography, IconButton, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@mui/material';
+import { Card, CardContent, CardActions, Typography, IconButton } from '@mui/material';
 import React, { useState } from 'react';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import AlertDialog from './AlertDialog'; // Asegúrate de que la ruta sea correcta
+import  axios from 'axios';
+import AlertDialog from './AlertDialog';
 
-
-export const CompanyCard = ({ company }) => {
+export const CompanyCard = ({ company, onRemoveCompany }) => {
     const [openDialog, setOpenDialog] = useState(false);
-  // Añade aquí los manejadores de eventos para los botones
     const handleView = () => {
         setOpenDialog(true);
     };
@@ -17,8 +15,18 @@ export const CompanyCard = ({ company }) => {
         setOpenDialog(true);
     };
 
-    const handleDelete = () => {
-        console.log('Compañía eliminada');
+    const handleDelete = async (CIF) => {
+        try{
+            console.log("CIF: ", CIF);
+            const response = await axios.delete(`/company/delete/${CIF}`);
+            console.log('Respuesta del servidor: ', response.data);
+            onRemoveCompany(CIF);
+            setOpenDialog(false);
+        } catch (error) {
+            console.error('Error al eliminar la compañía: ', error);
+        }
+        console.log('Compañía eliminada: ', CIF);
+
 
         setOpenDialog(true);
     };
@@ -51,8 +59,7 @@ export const CompanyCard = ({ company }) => {
             <IconButton onClick={handleEdit} color="primary" aria-label="editar compañía">
             <EditIcon />
             </IconButton>
-
-            <AlertDialog handleDelete={handleDelete} color="error" aria_label="eliminar compañía"/>
+            <AlertDialog handleDelete={() => handleDelete(company.CIF)} color="error" aria_label="eliminar compañía"/>
         </CardActions>
         </Card>
     );

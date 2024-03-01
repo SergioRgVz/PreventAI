@@ -136,8 +136,8 @@ export const getAllEmployeesByCompany = async (req, res) => {
  */
 export const deleteCompanyByCif = async (req, res) => {
     try {
-        const { CIF } = req.body;
-        const company = await companyService.deleteCompany(CIF);
+        const { cif } = req.params;
+        const company = await companyService.deleteCompany(cif);
         if (!company) {
             return res.status(404).json({ message: 'Empresa no encontrada' });
         }

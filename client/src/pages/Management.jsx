@@ -32,7 +32,7 @@ export function ManagementPage(props) {
               {value === 0 && (
                 <Box sx={{ mt: 2 }}>
                   <ButtonForm url='/management/view-companies'>Ver Empresas</ButtonForm>
-                  <ButtonForm url='/create-company'>Crear Empresa</ButtonForm>
+                  <ButtonForm url='/management/create-company'>Crear Empresa</ButtonForm>
                   <ButtonForm url='/edit-company'>Modificar Empresa</ButtonForm>
                   <ButtonForm url='/delete-company'>Eliminar Empresa</ButtonForm>
                 </Box>

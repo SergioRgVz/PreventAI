@@ -116,17 +116,16 @@ const companyService = {
 
     /**
      * Elimina una empresa por su CIF.
-     * @param {string} CIF - CIF de la empresa a eliminar.
-     * @returns {Promise<Company|null>} La empresa eliminada o null si no existe.
+cif     * @returns {Promise<Company|null>} La empresa eliminada o null si no existe.
      */
-    deleteCompany: async (CIF) => {
+    deleteCompany: async (cif) => {
         try {
-            const company = await companyService.findCompany(CIF);
+            const company = await companyService.findCompany(cif);
             if (!company) {
                 console.log('Company does not exist:', company);
                 return null;
             }
-            await Company.deleteOne({ CIF: CIF }).exec();
+            await Company.deleteOne({ CIF: cif }).exec();
             console.log('Company deleted:', company);
             return company;
         } catch (error) {

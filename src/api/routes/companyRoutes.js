@@ -54,7 +54,7 @@ router.put('/update/:CIF', updateCompanyByCif);
  * @function
  * @memberof module:routes/companyRoutes
  */
-router.post('/deletebycif', deleteCompanyByCif);
+// router.post('/deletebycif', deleteCompanyByCif);
 /**
  * Ruta para eliminar una empresa por su ID.
  * Maneja solicitudes DELETE para eliminar una empresa específica basada en su ID único.
@@ -64,5 +64,5 @@ router.post('/deletebycif', deleteCompanyByCif);
  */
 router.delete('/:id', deleteCompanyById);
 
-
+router.delete('/delete/:cif', deleteCompanyByCif);
 export default router;
