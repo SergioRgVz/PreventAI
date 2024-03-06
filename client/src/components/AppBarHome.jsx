@@ -15,27 +15,25 @@ import { useNavigate } from 'react-router-dom';
 import Userlogo from '/user.svg';
 
 
-function Logo()
-{
-    const navigate = useNavigate();
+function Logo() {
+  const navigate = useNavigate();
 
-    const handleNavigateHome = () => {
-        navigate('/home'); // Navigate to the home page
-    }
-    return (
-        <IconButton edge={ 'start' } size={ 'small'} color={'inherit'} onClick={ handleNavigateHome } >
-            <img src="\LOGOTFG.png" alt="PreventAI" style={{height:'60px'}}/>
-        </IconButton>
-    );
+  const handleNavigateHome = () => {
+    navigate('/home'); // Navigate to the home page
+  }
+  return (
+    <IconButton edge={'start'} size={'small'} color={'inherit'} onClick={handleNavigateHome} >
+      <img src="\LOGOTFG.png" alt="PreventAI" style={{ height: '60px' }} />
+    </IconButton>
+  );
 }
 
 export function AppBarHome(props) {
   const navigate = useNavigate();
-  const {pageToRouteMapping, settings} = props;
+  const { pageToRouteMapping, settings } = props;
   const pages = Object.keys(pageToRouteMapping);
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
-  const [route, setRoute] = React.useState(null);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -53,10 +51,10 @@ export function AppBarHome(props) {
   };
 
   return (
-    <AppBar position="static" color='primary'>
+    <AppBar color='primary' sx={{ position: 'sticky', top: 0 }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <Logo/>
+          <Logo />
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
@@ -90,7 +88,7 @@ export function AppBarHome(props) {
               {pages.map((page) => (
                 <MenuItem key={page} onClick={() => {
                   const route = pageToRouteMapping[page];
-                  if(route)
+                  if (route)
                     navigate(route);
                 }}>
                   <Typography textAlign="center">{page}</Typography>
@@ -104,7 +102,7 @@ export function AppBarHome(props) {
                 key={page}
                 onClick={() => {
                   const route = pageToRouteMapping[page];
-                  if(route)
+                  if (route)
                     navigate(route);
                 }}
                 sx={{ my: 2, color: 'inherit', display: 'block' }}

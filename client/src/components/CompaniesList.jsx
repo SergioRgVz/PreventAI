@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CompanyCard } from './CompanyCard';
 import axios from 'axios';
 import Stack from '@mui/material/Stack';

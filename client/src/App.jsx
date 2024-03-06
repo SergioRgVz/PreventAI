@@ -8,8 +8,11 @@ import { HomePage } from './pages/Home';
 import { ManagementPage } from './pages/Management';
 import { CompaniesPage } from './pages/CompaniesView';
 import { CreateCompany } from './pages/CreateCompany';  
+import { ModifyCompany } from './pages/ModifyCompany';
+import { DeleteCompany } from './pages/DeleteCompany';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { verifyToken } from './services/authService';
+import { Navigate } from 'react-router-dom';
 import './App.css'
 
 const theme = createTheme({
@@ -27,7 +30,6 @@ const theme = createTheme({
   },
 });
 
-import { Navigate } from 'react-router-dom';
 
 const RequireAuth = ({ children }) => {
     const token = localStorage.getItem('token');
@@ -49,11 +51,13 @@ export function App() {
           <Route path="/management" element={<RequireAuth><ManagementPage setLoggedIn={setLoggedIn} setEmail={setEmail} /></RequireAuth>} />
           <Route path="/management/view-companies" element={<CompaniesPage setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
           <Route path="/management/create-company" element={<CreateCompany setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
-          {/* <Route path="/management" element={<ManagementPage setLoggedIn={setLoggedIn} setEmail={setEmail} />} /> */}
+          <Route path="/management/modify-company" element={<ModifyCompany setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
+          <Route path="/management/delete-company" element={<DeleteCompany  setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
           <Route path="*" element={<p>404</p>} />
         </Routes>
       </Router>  
     </ThemeProvider>
+
   )
 }
 export default App

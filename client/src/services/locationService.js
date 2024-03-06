@@ -20,6 +20,21 @@ export function getPoblacionByCode(code) {
     return poblacion ? poblacion.label : 'Población no encontrada';
 }
 
+export function getComunidadAutonomaByLabel(label) {
+    const comunidad = ccaa.find(ccaa => ccaa.label === label);
+    return comunidad ? comunidad.code : 'Comunidad no encontrada';
+}
+
+export function getProvinciaByLabel(label) {
+    const provincia = provincias.find(provincia => provincia.label === label);
+    return provincia ? provincia.code : 'Provincia no encontrada';
+}
+
+export function getPoblacionByLabel(label) {
+    const poblacion = poblaciones.find(poblacion => poblacion.label === label);
+    return poblacion ? poblacion.code : 'Población no encontrada';
+}
+
 export const getAllCCAAs = async () => {
     // Simulate fetching data
     return Promise.resolve(ccaa.map(({ code, label }) => ({ code, label })));

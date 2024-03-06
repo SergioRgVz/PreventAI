@@ -15,6 +15,7 @@ import userService from '../services/userService.js';
 export const getCompanies = async (req, res) => {
     try {
         const companies = await companyService.findAllCompanies();
+        console.log(companies);
         return res.status(200).json({ companies });
     } catch (error) {
         console.error(error);
@@ -38,6 +39,20 @@ export const getCompanyById = async (req, res) => {
     try {
         const { id } = req.params;
         const company = await companyService.findCompanyById(id);
+        if (!company) {
+            return res.status(404).json({ message: 'Empresa no encontrada' });
+        }
+        return res.status(200).json({ company });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error interno del servidor' });
+    }
+}
+
+export const getCompanyByCIF = async (req, res) => {
+    try {
+        const { CIF } = req.params;
+        const company = await companyService.findCompanyByCIF(CIF);
         if (!company) {
             return res.status(404).json({ message: 'Empresa no encontrada' });
         }

@@ -6,6 +6,7 @@
 
 import Company from '../models/companyModel.js';
 import Employee from '../models/employeeModel.js';
+import userService from './userService.js';
 import { getComunidadAutonomaByCode, getProvinciaByCode, getPoblacionByCode } from './locationService.js';
 
 const companyService = {
@@ -35,6 +36,14 @@ const companyService = {
             return null;
         }
     },
+    findCompanyByCIF: async (CIF) => {
+        try {
+            const company = await Company.findOne({ CIF }).exec();
+            return company;
+        } catch (error) {
+            return null;
+        }
+    },
     /**
      * Encuentra todas las empresas.
      * @returns {Promise<Array>} Lista de todas las empresas.
@@ -42,20 +51,23 @@ const companyService = {
     findAllCompanies: async () => {
         try {
             const companies = await Company.find().exec();
-
-        // Transforma cada compañía para incluir las localizaciones por nombre
-        const companiesWithLocations = companies.map(company => ({
-            ...company._doc, // Asume que `company` es un documento de Mongoose
-            ccaa: getComunidadAutonomaByCode(company.ccaa),
-            provincia: getProvinciaByCode(company.provincia),
-            municipio: getPoblacionByCode(company.municipio)
-        }));
-
-        return companiesWithLocations;
+    
+            // Transforma cada compañía para incluir las localizaciones por nombre
+            const companiesWithLocations = await Promise.all(companies.map(async (company) => ({
+                ...company._doc,
+                User: await userService.getUserById(company.User),
+                ccaa: await getComunidadAutonomaByCode(company.ccaa),
+                provincia: await getProvinciaByCode(company.provincia),
+                municipio: await getPoblacionByCode(company.municipio)
+            })));
+    
+            return companiesWithLocations;
         } catch (error) {
+            console.error(error); // Es importante manejar y/o loguear el error
             return null;
         }
     },
+    
     /**
      * Crea una nueva empresa.
      * @param {string} CIF - CIF de la nueva empresa.

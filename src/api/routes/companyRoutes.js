@@ -8,7 +8,7 @@
  */
 
 import express from 'express';
-import { getCompanyById, getAllEmployeesByCompany, createCompany, updateCompanyByCif, deleteCompanyByCif, deleteCompanyById, getCompanies } from '../controllers/companyController.js';
+import { getCompanyById, getCompanyByCIF, getAllEmployeesByCompany, createCompany, updateCompanyByCif, deleteCompanyByCif, deleteCompanyById, getCompanies } from '../controllers/companyController.js';
 
 const router = express.Router();
 
@@ -36,6 +36,8 @@ router.get('/:id', getCompanyById);
  * @memberof module:routes/companyRoutes
  */
 router.get('/getEmployees/:CIF', getAllEmployeesByCompany);
+
+router.get('/getCompany/:CIF', getCompanyByCIF);
 /**
  * Ruta para crear una nueva empresa.
  * Maneja solicitudes POST, recibiendo datos de una empresa en el cuerpo de la solicitud para crearla en la base de datos.

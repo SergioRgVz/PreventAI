@@ -23,6 +23,14 @@ const userService = {
         return null;
     }
   },
+  getUserById: async (id) => {
+    try {
+        const user = await User.findById(id).exec();
+        return user.email;
+    } catch (error) {
+        return null;
+    }
+  },
   
   /**
    *  Obtiene un usuario por su email.
