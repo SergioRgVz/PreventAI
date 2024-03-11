@@ -14,8 +14,6 @@ import { CreateEmployee } from './pages/CreateEmployee';
 import { ModifyEmployee } from './pages/ModifyEmployee';
 import { DeleteEmployee } from './pages/DeleteEmployee';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-// import { verifyToken } from './services/authService';
-import { Navigate } from 'react-router-dom';
 import './App.css'
 
 const theme = createTheme({
@@ -34,18 +32,12 @@ const theme = createTheme({
 });
 
 
-const RequireAuth = ({ children }) => {
-  const token = localStorage.getItem('token');
-  return true;
-  // const authed = verifyToken(token);
-  // return authed ? children : <Navigate to="/login" replace />;
-};
-
 export function App() {
   const [loggedIn, setLoggedIn] = useState(false)
   const [email, setEmail] = useState("")
   return (
     <ThemeProvider theme={theme}>
+      <script src="http://localhost:8097"></script>
       <Router>
         <Routes>
           <Route path="/" element={<LandingPage email={email} loggedIn={loggedIn} setLoggedIn={setLoggedIn} />} />

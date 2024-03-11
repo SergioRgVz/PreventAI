@@ -30,6 +30,7 @@ const employeeService = {
      */
     findEmployeesByUserId: async (userId) => {
         try {
+            console.log("User ID: ", userId);
             const companies = await Company.find({ User: userId }); // Buscar empresas del usuario
             const companyIds = companies.map(company => company._id); // Obtener IDs de empresas
             console.log("Company IDs: ", companyIds);

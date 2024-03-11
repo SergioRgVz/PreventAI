@@ -1,7 +1,7 @@
 import AppBarHome from '../components/AppBarHome';
 import Typography from '@mui/material/Typography';
 import { TranslucentBox } from '../components/TranslucentBox';
-import { CompaniesList } from '../components/CompaniesList';
+import { EmployeesList } from '../components/EmployeesList';
 import Divider from '@mui/material/Divider';
 import { GoBackButton } from '../components/GoBackButton';
 
@@ -26,9 +26,9 @@ export function EmployeesPage() {
       <TranslucentBox maxWidth={'600px'}>
         <Divider />
         <Typography variant="h4" component="h4" gutterBottom sx={{ mt: 2, zIndex: 'tooltip' }}>
-          Empresas
+          Empleados
         </Typography>
-        <CompaniesList />
+        <EmployeesList />
         <GoBackButton />
       </TranslucentBox>
     </>

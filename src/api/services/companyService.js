@@ -51,7 +51,6 @@ const companyService = {
     findAllCompanies: async (userId) => {
         try {
             const companies = await Company.find({ User: userId }).exec();
-            console.log("Companies found:", companies);
             // Transforma cada compañía para incluir las localizaciones por nombre
             const companiesWithLocations = await Promise.all(companies.map(async (company) => ({
                 ...company._doc,
@@ -63,7 +62,7 @@ const companyService = {
     
             return companiesWithLocations;
         } catch (error) {
-            console.error(error); // Es importante manejar y/o loguear el error
+            console.error(error); 
             return null;
         }
     },
