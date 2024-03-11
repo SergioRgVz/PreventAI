@@ -14,6 +14,6 @@ export const GoBackButton = () => {
   return (
     <IconButton color="info" onClick={goBack}>
       <ArrowBackIcon />
-  </IconButton>
+    </IconButton>
   );
 };

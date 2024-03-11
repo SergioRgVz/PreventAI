@@ -12,7 +12,7 @@ export const LocationSelector = ({ id, name, label, value, onChange, options, er
         value={value}
         label={label}
         onChange={onChange}
-        
+
         error={!!error}
       >
         {options.map((option) => (

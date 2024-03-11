@@ -48,10 +48,10 @@ const companyService = {
      * Encuentra todas las empresas.
      * @returns {Promise<Array>} Lista de todas las empresas.
      */
-    findAllCompanies: async () => {
+    findAllCompanies: async (userId) => {
         try {
-            const companies = await Company.find().exec();
-    
+            const companies = await Company.find({ User: userId }).exec();
+            console.log("Companies found:", companies);
             // Transforma cada compañía para incluir las localizaciones por nombre
             const companiesWithLocations = await Promise.all(companies.map(async (company) => ({
                 ...company._doc,

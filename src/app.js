@@ -5,6 +5,7 @@ import cors from 'cors';
 import authRoutes from './api/routes/authRoutes.js';
 import companyRoutes from './api/routes/companyRoutes.js';
 import employeeRoutes from './api/routes/employeeRoutes.js';
+import { verifyToken } from './api/controllers/authController.js';
 import {connectDB} from '../config/db.js';
 
 dotenv.config({path:'../.env'})
@@ -25,12 +26,14 @@ app.use(cors({
     origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true, 
+      exposedHeaders: 'Authorization',
   }));
   
 app.use(express.json()) //Para que el servidor entienda json
 
 // Rutas API
 app.use('/auth', authRoutes);
+app.use(verifyToken);
 app.use('/company', companyRoutes);
 app.use('/employee', employeeRoutes);
 

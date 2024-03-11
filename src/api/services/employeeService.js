@@ -5,6 +5,8 @@
  */
 
 import Employee from "../models/employeeModel.js";
+import Company from "../models/companyModel.js";
+import mongoose from "mongoose";
 
 const employeeService = {
     /**
@@ -17,6 +19,28 @@ const employeeService = {
             const employee = await Employee.findOne({ DNI }).exec();
             return employee;
         } catch (error) {
+            return null;
+        }
+    },
+
+    /**
+     * Busca todos los empleados asociados a empresas relacionadas con un usuario.
+     * @param {string} userId - El ID del usuario cuyas empresas se deben buscar.
+     * @returns {Promise<Array<Employee>|null>} Una lista de empleados o null si hay un error.
+     */
+    findEmployeesByUserId: async (userId) => {
+        try {
+            const companies = await Company.find({ User: userId }); // Buscar empresas del usuario
+            const companyIds = companies.map(company => company._id); // Obtener IDs de empresas
+            console.log("Company IDs: ", companyIds);
+
+            const employees = await Employee.find({ company: { $in: companyIds } }) // Buscar empleados de las empresas encontradas
+                .populate('company') // Poblar datos de la empresa
+                .select('-_id DNI name surname telephone age company birth_date'); // Seleccionar campos a devolver
+
+            return employees;
+        } catch (error) {
+            console.error('Error al buscar empleados por ID de usuario:', error);
             return null;
         }
     },

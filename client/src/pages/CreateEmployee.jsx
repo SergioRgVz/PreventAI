@@ -11,7 +11,7 @@ const pageToRouteMapping = {
 };
 const settings = ['Perfil', 'Cerrar sesión'];
 
-export function CreateCompany() {
+export function CreateEmployee() {
 
   return (
     <>

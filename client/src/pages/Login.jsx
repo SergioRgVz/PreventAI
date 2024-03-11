@@ -29,9 +29,8 @@ export function LoginPage({ setLoggedIn }) {
     if (validateForm()) {
       try {
         await loginUserService(email, password);
-        console.log('Login exitoso:');
-        setLoggedIn(true); 
-        navigate('/home'); 
+        setLoggedIn(true);
+        navigate('/home');
       } catch (error) {
         if (error.response) {
           switch (error.response.status) {
@@ -53,45 +52,45 @@ export function LoginPage({ setLoggedIn }) {
   };
 
   return (
-      <TranslucentBox maxWidth={'700px'}>    
-        <Logo />
-        <Typography variant="h3" component="h1" gutterBottom sx={{mt: 2}}>
+    <TranslucentBox maxWidth={'700px'}>
+      <Logo />
+      <Typography variant="h3" component="h1" gutterBottom sx={{ mt: 2 }}>
+        Iniciar sesión
+      </Typography>
+      <Typography variant="h5" component="h2" gutterBottom>
+        Bienvenido a la web de PreventAI
+      </Typography>
+      <FormControl defaultValue="" required>
+        <TextField
+          error={Boolean(errors.email)}
+          helperText={errors.email}
+          id="email"
+          label="Correo electrónico"
+          variant="filled"
+          onChange={e => setEmail(e.target.value)}
+          value={email}
+          sx={{ width: '500px', mb: 2 }}
+        />
+        <TextField
+          error={Boolean(errors.password)}
+          helperText={errors.password}
+          id="password"
+          label="Contraseña"
+          variant="filled"
+          onChange={e => setPassword(e.target.value)}
+          value={password}
+          type="password"
+          sx={{ width: '500px', mb: 2 }}
+        />
+        <FormControlLabel
+          control={<Checkbox />}
+          label="Recuérdame"
+          sx={{ mb: 2 }}
+        />
+        <Button color='info' variant="contained" type="submit" value={"Log in"} onClick={onButtonClick} sx={{ mb: 2, width: 'fit-content', ml: 'auto' }}>
           Iniciar sesión
-        </Typography>
-        <Typography variant="h5" component="h2" gutterBottom>
-          Bienvenido a la web de PreventAI
-        </Typography>
-        <FormControl defaultValue="" required>
-          <TextField 
-            error={Boolean(errors.email)}
-            helperText={errors.email}
-            id="email"
-            label="Correo electrónico"
-            variant="filled"
-            onChange={e => setEmail(e.target.value)}
-            value={email}
-            sx={{width:'500px', mb: 2}}
-          />
-          <TextField
-            error={Boolean(errors.password)}
-            helperText={errors.password}
-            id="password"
-            label="Contraseña"
-            variant="filled"
-            onChange={e => setPassword(e.target.value)}
-            value={password}
-            type="password"
-            sx={{width:'500px', mb: 2}}
-          />
-          <FormControlLabel
-            control={<Checkbox />}
-            label="Recuérdame"
-            sx={{mb: 2}}
-          />
-          <Button color='info' variant="contained" type="submit" value={"Log in"} onClick={onButtonClick} sx={{mb: 2, width:'fit-content', ml: 'auto'}}>
-            Iniciar sesión
-          </Button>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', my: 2 }}>
+        </Button>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', my: 2 }}>
           <Typography variant="body2">
             ¿No tienes cuenta aún?{' '}
             <Link to="/register" style={{ textDecoration: 'none', color: 'info.main' }}>
@@ -101,9 +100,9 @@ export function LoginPage({ setLoggedIn }) {
           <Link to="/forgot-password" style={{ textDecoration: 'none', color: 'info.main', mt: 2 }}>
             ¿Has olvidado la contraseña?
           </Link>
-          </Box>
-        </FormControl>
-        
+        </Box>
+      </FormControl>
+
     </TranslucentBox>
   );
 }

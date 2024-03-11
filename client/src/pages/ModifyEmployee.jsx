@@ -15,7 +15,7 @@ const pageToRouteMapping = {
 };
 const settings = ['Perfil', 'Cerrar sesión'];
 
-export function ModifyCompany() {
+export function ModifyEmployee() {
   const [selectedCompany, setSelectedCompany] = useState(null);
 
   const handleCompanySelect = (company) => {

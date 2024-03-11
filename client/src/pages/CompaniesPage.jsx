@@ -1,7 +1,9 @@
 import AppBarHome from '../components/AppBarHome';
+import Typography from '@mui/material/Typography';
 import { TranslucentBox } from '../components/TranslucentBox';
+import { CompaniesList } from '../components/CompaniesList';
+import Divider from '@mui/material/Divider';
 import { GoBackButton } from '../components/GoBackButton';
-import { AddCompany } from '../components/AddCompany';
 
 const pageToRouteMapping = {
   'Inicio': '/home',
@@ -11,13 +13,22 @@ const pageToRouteMapping = {
 };
 const settings = ['Perfil', 'Cerrar sesión'];
 
-export function CreateCompany() {
+export function CompaniesPage() {
+  // const [value, setValue] = React.useState(0);
+
+  // const handleChange = ( _, newValue) => {
+  // setValue(newValue);
+  // };
 
   return (
     <>
       <AppBarHome pageToRouteMapping={pageToRouteMapping} settings={settings} logged />
       <TranslucentBox maxWidth={'600px'}>
-        <AddCompany />
+        <Divider />
+        <Typography variant="h4" component="h4" gutterBottom sx={{ mt: 2, zIndex: 'tooltip' }}>
+          Empresas
+        </Typography>
+        <CompaniesList />
         <GoBackButton />
       </TranslucentBox>
     </>

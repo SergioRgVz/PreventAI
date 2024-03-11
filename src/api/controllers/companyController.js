@@ -14,8 +14,9 @@ import userService from '../services/userService.js';
  */
 export const getCompanies = async (req, res) => {
     try {
-        const companies = await companyService.findAllCompanies();
-        console.log(companies);
+        const userId = req.user.userId;
+        const companies = await companyService.findAllCompanies(userId);
+        console.log("companies", companies);
         return res.status(200).json({ companies });
     } catch (error) {
         console.error(error);

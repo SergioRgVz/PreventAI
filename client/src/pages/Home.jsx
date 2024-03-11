@@ -17,18 +17,18 @@ const pageToRouteMapping = {
 const settings = ['Perfil', 'Cerrar sesión'];
 
 export function HomePage(props) {
-	const navigate = useNavigate();
-	const handleClick = (url) => {
-		navigate(url);
-	}
+  const navigate = useNavigate();
+  const handleClick = (url) => {
+    navigate(url);
+  }
   return (
     <>
-			<AppBarHome pageToRouteMapping={pageToRouteMapping} settings={settings} logged />
+      <AppBarHome pageToRouteMapping={pageToRouteMapping} settings={settings} logged />
       <TranslucentBox maxWidth={'300px'}>
-          <ButtonForm url='/new-report'>Nueva evaluación</ButtonForm>
-          <ButtonForm url='/open-report'>Abrir evaluación</ButtonForm>
-          <ButtonForm url='/management'>Empresas</ButtonForm>
-			</TranslucentBox>
-		</>
+        <ButtonForm url='/new-report'>Nueva evaluación</ButtonForm>
+        <ButtonForm url='/open-report'>Abrir evaluación</ButtonForm>
+        <ButtonForm url='/management'>Empresas/Empleados</ButtonForm>
+      </TranslucentBox>
+    </>
   );
 }

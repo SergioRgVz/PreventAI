@@ -1,17 +1,20 @@
 import { useState } from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import React from 'react';
 import { LandingPage } from './pages/Landing';
 import { LoginPage } from './pages/Login';
 import { RegisterPage } from './pages/Register';
 import { HomePage } from './pages/Home';
 import { ManagementPage } from './pages/Management';
-import { CompaniesPage } from './pages/CompaniesView';
-import { CreateCompany } from './pages/CreateCompany';  
+import { CompaniesPage } from './pages/CompaniesPage';
+import { CreateCompany } from './pages/CreateCompany';
 import { ModifyCompany } from './pages/ModifyCompany';
 import { DeleteCompany } from './pages/DeleteCompany';
+import { EmployeesPage } from './pages/EmployeesPage';
+import { CreateEmployee } from './pages/CreateEmployee';
+import { ModifyEmployee } from './pages/ModifyEmployee';
+import { DeleteEmployee } from './pages/DeleteEmployee';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { verifyToken } from './services/authService';
+// import { verifyToken } from './services/authService';
 import { Navigate } from 'react-router-dom';
 import './App.css'
 
@@ -32,9 +35,10 @@ const theme = createTheme({
 
 
 const RequireAuth = ({ children }) => {
-    const token = localStorage.getItem('token');
-    const authed = verifyToken(token);
-    return authed ? children : <Navigate to="/login" replace />;
+  const token = localStorage.getItem('token');
+  return true;
+  // const authed = verifyToken(token);
+  // return authed ? children : <Navigate to="/login" replace />;
 };
 
 export function App() {
@@ -44,18 +48,22 @@ export function App() {
     <ThemeProvider theme={theme}>
       <Router>
         <Routes>
-          <Route path="/" element={<LandingPage email={email} loggedIn={loggedIn} setLoggedIn={setLoggedIn}/>} />
+          <Route path="/" element={<LandingPage email={email} loggedIn={loggedIn} setLoggedIn={setLoggedIn} />} />
           <Route path="/login" element={<LoginPage setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
           <Route path="/register" element={<RegisterPage setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
-          <Route path="/home" element={<RequireAuth><HomePage setLoggedIn={setLoggedIn} setEmail={setEmail} /></RequireAuth>} />
-          <Route path="/management" element={<RequireAuth><ManagementPage setLoggedIn={setLoggedIn} setEmail={setEmail} /></RequireAuth>} />
+          <Route path="/home" element={<HomePage setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
+          <Route path="/management" element={<ManagementPage setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
           <Route path="/management/view-companies" element={<CompaniesPage setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
           <Route path="/management/create-company" element={<CreateCompany setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
           <Route path="/management/modify-company" element={<ModifyCompany setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
-          <Route path="/management/delete-company" element={<DeleteCompany  setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
+          <Route path="/management/delete-company" element={<DeleteCompany setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
+          <Route path="/management/view-employees" element={<EmployeesPage setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
+          <Route path="/management/create-employee" element={<CreateEmployee setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
+          <Route path="/management/modify-employee" element={<ModifyEmployee setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
+          <Route path="/management/delete-employee" element={<DeleteEmployee setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
           <Route path="*" element={<p>404</p>} />
         </Routes>
-      </Router>  
+      </Router>
     </ThemeProvider>
 
   )

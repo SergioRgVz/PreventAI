@@ -3,8 +3,8 @@ import { TranslucentBox } from '../components/TranslucentBox';
 import { useState, useEffect } from 'react';
 import { GoBackButton } from '../components/GoBackButton';
 import Stack from '@mui/material/Stack';
-import { companyService } from '../hooks/useCompanies';
 import { CompanyCardDelete } from '../components/CompanyCardDelete';
+import axios from 'axios';
 
 const pageToRouteMapping = {
   'Inicio': '/home',
@@ -14,22 +14,13 @@ const pageToRouteMapping = {
 };
 const settings = ['Perfil', 'Cerrar sesión'];
 
-export function DeleteCompany() {
+export function DeleteEmployee() {
   const [companies, setCompanies] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchCompanies = async () => {
-      setLoading(true);
-      try {
-        const data = await companyService.getCompanies();
-        setCompanies(data);
-      } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
+      const response = await axios.get('/company/'); // Este endpoint no sirve para empleados #TODO
+      setCompanies(response.data.companies);
     };
 
     fetchCompanies();

@@ -12,6 +12,7 @@ import { getCompanyById, getCompanyByCIF, getAllEmployeesByCompany, createCompan
 
 const router = express.Router();
 
+
 /**
  * Ruta para obtener todas las empresas.
  * Maneja solicitudes GET para listar todas las empresas registradas.

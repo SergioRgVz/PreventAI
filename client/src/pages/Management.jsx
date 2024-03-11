@@ -17,36 +17,36 @@ const settings = ['Perfil', 'Cerrar sesión'];
 export function ManagementPage(props) {
   const [value, setValue] = React.useState(0);
 
-  const handleChange = ( _, newValue) => {
+  const handleChange = (_, newValue) => {
     setValue(newValue);
   };
 
   return (
     <>
-			<AppBarHome pageToRouteMapping={pageToRouteMapping} settings={settings} logged />
-        <TranslucentBox maxWidth={'475px'}>
-            <Tabs color="info" value={value} onChange={handleChange} centered >
-              <Tab color="info" label="Empresas" />
-              <Tab color="info" label="Empleados" />
-            </Tabs>
-              {value === 0 && (
-                <Box sx={{ mt: 2 }}>
-                  <ButtonForm url='/management/view-companies'>Ver Empresas</ButtonForm>
-                  <ButtonForm url='/management/create-company'>Crear Empresa</ButtonForm>
-                  <ButtonForm url='/management/modify-company'>Modificar Empresa</ButtonForm>
-                  <ButtonForm url='/management/delete-company'>Eliminar Empresa</ButtonForm>
-                </Box>
-              )}
-              {value === 1 && (
-                <Box sx={{ mt: 2 }}>
-                  <ButtonForm url='/view-employees'>Ver Empleados</ButtonForm>
-                  <ButtonForm url='/create-employee'>Crear Empleado</ButtonForm>
-                  <ButtonForm url='/edit-employee'>Modificar Empleado</ButtonForm>
-                  <ButtonForm url='/delete-employee'>Eliminar Empleado</ButtonForm>
-                </Box>
-              )}
-              <GoBackButton/>
-			</TranslucentBox>
-		</>
+      <AppBarHome pageToRouteMapping={pageToRouteMapping} settings={settings} logged />
+      <TranslucentBox maxWidth={'475px'}>
+        <Tabs color="info" value={value} onChange={handleChange} centered >
+          <Tab color="info" label="Empresas" />
+          <Tab color="info" label="Empleados" />
+        </Tabs>
+        {value === 0 && (
+          <Box sx={{ mt: 2 }}>
+            <ButtonForm url='/management/view-companies'>Ver Empresas</ButtonForm>
+            <ButtonForm url='/management/create-company'>Crear Empresa</ButtonForm>
+            <ButtonForm url='/management/modify-company'>Modificar Empresa</ButtonForm>
+            <ButtonForm url='/management/delete-company'>Eliminar Empresa</ButtonForm>
+          </Box>
+        )}
+        {value === 1 && (
+          <Box sx={{ mt: 2 }}>
+            <ButtonForm url='/management/view-employees'>Ver Empleados</ButtonForm>
+            <ButtonForm url='/management/create-employee'>Crear Empleado</ButtonForm>
+            <ButtonForm url='/management/modify-employee'>Modificar Empleado</ButtonForm>
+            <ButtonForm url='/management/delete-employee'>Eliminar Empleado</ButtonForm>
+          </Box>
+        )}
+        <GoBackButton />
+      </TranslucentBox>
+    </>
   );
 }

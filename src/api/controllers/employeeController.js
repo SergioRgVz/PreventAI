@@ -14,7 +14,9 @@ import companyService from '../services/companyService.js';
  */
 export const getEmployees = async (req, res) => {
     try {
-        const employees = await employeeService.findAllEmployees();
+        const userId = req.user.id;
+        const employees = await employeeService.findEmployeesByUserId(userId);
+        console.log(employees);
         return res.status(200).json({ employees });
     } catch (error) {
         console.error(error);

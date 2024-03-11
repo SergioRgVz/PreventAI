@@ -1,7 +1,8 @@
 import { Button, TextField, Box } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { LocationSelector } from './LocationSelector';
-import { updateCompanyData } from '../services/companyService'; // Usa el servicio de actualización
+import { companyService } from '../hooks/useCompanies';
+
 import {
   getAllCCAAs,
   getProvincias,
@@ -41,7 +42,7 @@ export const FormularioCompany = ({ onSubmit, company }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      await updateCompanyData(formData.CIF, formData);
+      const response = await companyService.updateCompany(formData.CIF, formData);
       onSubmit();
     } catch (error) {
       console.error('Error al actualizar la empresa', error.response ? error.response.data : error);
