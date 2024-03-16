@@ -10,7 +10,8 @@ import axios from 'axios';
  * @type {import('axios').AxiosInstance}
  */
 const apiClient = axios.create({
-    baseURL: 'http://localhost:8080/', // Desarrollo
+    // baseURL: 'http://localhost:8080/', // Desarrollo
+    baseURL: 'http://13.51.242.248:8080/', // Producción
     headers: {
         'Content-Type': 'application/json'
     }
