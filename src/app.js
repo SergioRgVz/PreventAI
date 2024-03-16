@@ -32,10 +32,6 @@ app.use(cors({
 app.use(express.json()) //Para que el servidor entienda json
 
 // Rutas API
-app.use('/auth', authRoutes);
-app.use(verifyToken);
-app.use('/company', companyRoutes);
-app.use('/employee', employeeRoutes);
 
 // Ruta raíz
 app.get('/', (req, res) => {
@@ -47,9 +43,14 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(buildPath, 'index.html'));
 });
 
+app.use('/auth', authRoutes);
+app.use(verifyToken);
+app.use('/company', companyRoutes);
+app.use('/employee', employeeRoutes);
+
 function listEndpoints(app) {
   const routes = [];
-
+  
   app._router.stack.forEach(middleware => {
     if (middleware.route) {
       const { path, methods } = middleware.route;
