@@ -20,7 +20,6 @@ export default function AlertDialog({ handleDelete, color = "error", aria_label 
   };
 
   const handleDeleteInternal = () => {
-    console.log('Elemento eliminado');
     handleDelete();
     handleClose();
   };

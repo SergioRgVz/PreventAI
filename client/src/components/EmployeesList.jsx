@@ -1,4 +1,4 @@
-import { CompanyCard } from './CompanyCard';
+import { DataCard } from './DataCard'; 
 import Stack from '@mui/material/Stack';
 import { useState, useEffect } from 'react';
 import { employeeService } from '../hooks/useEmployees';
@@ -8,9 +8,8 @@ export const EmployeesList = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-
-  const handleRemoveEmployee = (CIF) => {
-    setEmployees(employees.filter(company => company.CIF !== CIF));
+  const handleRemoveEmployee = (DNI) => {
+    setEmployees(employees.filter(employee => employee.DNI !== DNI));
   };
 
   useEffect(() => {
@@ -18,9 +17,16 @@ export const EmployeesList = () => {
       setLoading(true);
       try {
         const data = await employeeService.getEmployees();
-        setEmployees(data);
+        console.log(data);
+        const processedEmployees = data.map(employee => ({
+          ...employee,
+          fullName: `${employee.name} ${employee.surname}`,
+          company: `${employee.company.name} (${employee.company.CIF})`
+        }));
+        setEmployees(processedEmployees);
       } catch (err) {
         setError(err);
+        console.log('Error: ', error);
       } finally {
         setLoading(false);
       }
@@ -29,6 +35,30 @@ export const EmployeesList = () => {
     fetchEmployees();
   }, []);
 
+  const employeeConfig = {
+    identifierKey: 'DNI',
+    fields: [
+      { name: 'fullName', label: 'Nombre completo' },
+      { name: 'DNI', label: 'DNI' },
+      { name: 'telephone', label: 'Teléfono' },
+      { name: 'age', label: 'Edad' },
+      { name: 'birth_date', label: 'Fecha de Nacimiento' },
+      { name: 'company', label: 'Compañía' },
+    ],
+    onView: (employee) => {
+      console.log("Viendo empleado", employee);
+    },
+    onEdit: (employee) => {
+      console.log("Editando empleado", employee);
+    },
+    deleteService: async (DNI) => {
+      await employeeService.deleteEmployee(DNI);
+    },
+    viewEnabled: true,
+    editEnabled: true,
+    deleteEnabled: true,
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -36,9 +66,14 @@ export const EmployeesList = () => {
   if (Array.isArray(employees)) {
     return (
       <Stack spacing={2}>
-        {/* {companies.map((company) => (
-          <CompanyCard company={company} key={company._id} onRemoveCompany={handleRemoveCompany} />
-        ))} */}
+        {employees.map((employee) => (
+          <DataCard
+            key={employee.DNI}
+            item={employee}
+            config={employeeConfig}
+            onRemove={handleRemoveEmployee}
+          />
+        ))}
       </Stack>
     );
   } else {

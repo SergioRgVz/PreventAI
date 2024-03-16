@@ -11,7 +11,7 @@ export const CompanyButton = ({ title, CIF, onClick }) => {
           <Typography gutterBottom variant="h5" component="div">
             {title}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="text.buttons">
             CIF: {CIF}
           </Typography>
         </CardContent>

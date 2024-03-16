@@ -16,7 +16,6 @@ export const getCompanies = async (req, res) => {
     try {
         const userId = req.user.userId;
         const companies = await companyService.findAllCompanies(userId);
-        console.log("companies", companies);
         return res.status(200).json({ companies });
     } catch (error) {
         console.error(error);
@@ -72,7 +71,6 @@ export const getCompanyByCIF = async (req, res) => {
 export const createCompany = async (req, res) => {
     try {
         const { CIF, name, technician, ccaa, provincia, municipio } = req.body;
-        console.log(technician);
         const user = await userService.findUser(technician);
         if (!user) {
             return res.status(404).json({ message: 'Usuario no encontrado' });

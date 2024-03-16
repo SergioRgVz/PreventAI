@@ -1,11 +1,11 @@
+// This component is a button that when clicked, it shows a list of companies to select from.
 // CompaniesListButton.js
 import { useState, useEffect } from 'react';
 import Stack from '@mui/material/Stack';
-import { CompanyButton } from './CompanyButton';
+import { DataListButton } from './DataListButton'; 
 import { companyService } from '../hooks/useCompanies';
 
 export const CompaniesListButton = ({ onCompanySelect, children }) => {
-  const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -13,8 +13,7 @@ export const CompaniesListButton = ({ onCompanySelect, children }) => {
     const fetchCompanies = async () => {
       setLoading(true);
       try {
-        const data = await companyService.getCompanies();
-        setCompanies(data);
+        await companyService.getCompanies();
       } catch (err) {
         setError(err);
       } finally {
@@ -25,24 +24,31 @@ export const CompaniesListButton = ({ onCompanySelect, children }) => {
     fetchCompanies();
   }, []);
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
+
+  const companyConfig = {
+    identifierKey: 'CIF',
+    fields: [
+      { name: 'name', label: 'Nombre', gutterBottom: true, variant: 'h5' },
+      { name: 'CIF', label: 'CIF', gutterBottom: false, variant: 'body2' },
+    ],
+  };
+
   return (
     <Stack spacing={2}>
-      {Array.isArray(companies) ? (
-        
-        companies.map((company) => (
-          <>
-            <CompanyButton
-              key={company.CIF}
-              title={company.name}
-              CIF={company.CIF}
-              onClick={() => onCompanySelect(company)}
-            />
-            {children}
-          </>
-        ))
-      ) : (
-        <div>Error: La respuesta no es un array.</div>
-      )}
+      <DataListButton
+        onItemSelect={onCompanySelect} 
+        service={{ getItems: companyService.getCompanies }}
+        config={companyConfig}
+      >
+        {children}
+      </DataListButton>
     </Stack>
   );
 };

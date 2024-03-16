@@ -15,7 +15,7 @@ connectDB();
 
 const app = express();
 const __dirname = path.resolve();
-const buildPath = path.join(__dirname, '../client/dist')
+const buildPath = path.join(__dirname, '../client/dist');
 
 // Middleware para servir archivos estáticos
 app.use(express.static(buildPath));
@@ -69,7 +69,6 @@ function listEndpoints(app) {
   return routes;
 }
 
-console.log(listEndpoints(app));
-
+// console.log(listEndpoints(app));
 
 export default app;

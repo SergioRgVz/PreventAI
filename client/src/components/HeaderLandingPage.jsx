@@ -3,7 +3,7 @@ import { AppBar, Toolbar, Button, Box } from '@mui/material';
 import { Logo } from '../components/Logo';
 
 
-export function HeaderLandingPage(props) {
+export function HeaderLandingPage() {
   const navigate = useNavigate();
 
   const handleRegister = () => {
@@ -20,10 +20,10 @@ export function HeaderLandingPage(props) {
       <Toolbar sx={{ justifyContent: 'space-between' }} >
         <Logo />
         <Box sx={{ display: 'flex', gap: 2 }}>
-          <Button variant='outlined' color='info' onClick={handleLogin}>
+          <Button variant='outlined' color='secondary' onClick={handleLogin}>
             Iniciar Sesión
           </Button>
-          <Button variant='outlined' color='info' onClick={handleRegister}>
+          <Button variant='outlined' color='secondary' onClick={handleRegister}>
             Registrarse
           </Button>
         </Box>

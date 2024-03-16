@@ -8,6 +8,9 @@ import Employee from "../models/employeeModel.js";
 import Company from "../models/companyModel.js";
 import mongoose from "mongoose";
 
+/**
+ * Service for managing employees.
+ */
 const employeeService = {
     /**
      * Busca un empleado por su DNI.
@@ -30,14 +33,19 @@ const employeeService = {
      */
     findEmployeesByUserId: async (userId) => {
         try {
-            console.log("User ID: ", userId);
-            const companies = await Company.find({ User: userId }); // Buscar empresas del usuario
-            const companyIds = companies.map(company => company._id); // Obtener IDs de empresas
-            console.log("Company IDs: ", companyIds);
+            const companies = await Company.find({ User: userId });
+            const companyIds = companies.map(company => company._id);
 
-            const employees = await Employee.find({ company: { $in: companyIds } }) // Buscar empleados de las empresas encontradas
-                .populate('company') // Poblar datos de la empresa
-                .select('-_id DNI name surname telephone age company birth_date'); // Seleccionar campos a devolver
+            // const employees = await Employee.find({ company: { $in: companyIds } }) 
+            //     .populate('company')
+            //     .select('-_id DNI name surname telephone age company birth_date');
+
+            const employees = await Employee.find({ company: { $in: companyIds } }) 
+            .populate({
+                path: 'company', 
+                select: 'CIF name' // Aquí especificas que quieres incluir el CIF y el nombre de la empresa
+            })
+            .select('-_id DNI name surname telephone age company birth_date');
 
             return employees;
         } catch (error) {
@@ -107,6 +115,29 @@ const employeeService = {
             throw error;
         }
     },
+    updateEmployee: async (DNI, name, surname, telephone, age, company, birth_date) => {
+        try {
+            let employee = await employeeService.findEmployee(DNI);
+            if (!employee) {
+                console.log('Employee does not exist:', employee);
+                return null;
+            }
+            employee = await Employee.updateOne({ DNI: DNI }, {
+                name: name,
+                surname: surname,
+                telephone: telephone,
+                age: age,
+                company: company,
+                birth_date: birth_date
+            });
+            console.log('Employee updated:', employee);
+            return employee;
+        } catch (error) {
+            console.error('Error updating employee:', error);
+            throw error;
+        }
+    },
+
 
     /**
      * Elimina un empleado por su DNI.

@@ -12,7 +12,7 @@ export const GoBackButton = () => {
   };
 
   return (
-    <IconButton color="info" onClick={goBack}>
+    <IconButton color="secondary" onClick={goBack}>
       <ArrowBackIcon />
     </IconButton>
   );

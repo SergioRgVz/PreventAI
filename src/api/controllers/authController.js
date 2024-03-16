@@ -11,26 +11,6 @@ import jwt from 'jsonwebtoken';
  * @param {Object} req - Objeto de solicitud Express.
  * @param {Object} res - Objeto de respuesta Express.
  */
-// export const login = async (req, res) => {
-//   try {
-//     const { email, password } = req.body;
-//     const user = await userService.validateUser(email, password);
-//     if (user === 0) {
-//       return res.status(401).json({ message: 'Contraseña incorrecta' });
-//     }
-
-//     if (user === 1) {
-//       return res.status(404).json({ message: 'Usuario no encontrado' });
-//     }
-    
-//     const token = jwt.sign({ userId: user.id }, process.env.SECRET_KEY_JWT, { expiresIn: '24h' });
-//     console.log("Usuario login, almaceno token: ", token);  
-//     return res.status(200).json({ token });
-//   } catch (error) {
-//     console.log(error)
-//     res.status(500).json({ message: 'Error interno del servidor' });
-//   }
-// }
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -42,7 +22,6 @@ export const login = async (req, res) => {
     }
 
     const token = jwt.sign({ userId: user.id }, process.env.SECRET_KEY_JWT, { expiresIn: '24h' });
-    console.log("Usuario login, almaceno token: ", token);
     res.setHeader('authorization', 'Bearer '+ token);
     return res.status(200).json({ message: 'Login successful' });
   } catch (error) {
@@ -64,7 +43,6 @@ export const getUserByEmail = async (req, res) => {
     if (user === null) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
-    console.log(user);
     return res.status(200).json(user);
   } catch (error) {
     console.log(error)
@@ -80,7 +58,6 @@ export const verifyToken = (req, res, next) => {
   }
 
   const token = authHeader.split(' ')[1];
-  console.log("en: ", token);
   jwt.verify(token, process.env.SECRET_KEY_JWT, (err, user) => {
     if (err) {
       return res.status(403).json({ message: 'Invalid token' });

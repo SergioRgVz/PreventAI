@@ -1,10 +1,11 @@
-// ModifyCompany.js
+// ModifyEmployee.js
 import { useState } from 'react';
 import AppBarHome from '../components/AppBarHome';
 import { TranslucentBox } from '../components/TranslucentBox';
 import { GoBackButton } from '../components/GoBackButton';
-import { CompaniesListButton } from '../components/CompaniesListButton';
-import { FormularioCompany } from '../components/FormularioCompany';
+import { EmployeesListButton } from '../components/EmployeesListButton';
+import { FormularioEmployee } from '../components/FormularioEmployee';
+import { employeeService } from '../hooks/useEmployees';
 import Typography from '@mui/material/Typography';
 
 const pageToRouteMapping = {
@@ -16,15 +17,16 @@ const pageToRouteMapping = {
 const settings = ['Perfil', 'Cerrar sesión'];
 
 export function ModifyEmployee() {
-  const [selectedCompany, setSelectedCompany] = useState(null);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
 
-  const handleCompanySelect = (company) => {
-    setSelectedCompany(company);
+  const handleEmployeeSelect = (employee) => {
+    setSelectedEmployee(employee);
   };
 
-  const handleFormSubmit = () => {
+  const handleFormSubmit = async (DNI, formData) => {
+    await employeeService.updateEmployee(DNI, formData);
     // Aquí puedes manejar la lógica después de enviar el formulario, como cerrarlo
-    setSelectedCompany(null);
+    setSelectedEmployee(null);
   };
 
   return (
@@ -32,10 +34,10 @@ export function ModifyEmployee() {
       <AppBarHome pageToRouteMapping={pageToRouteMapping} settings={settings} logged />
       <TranslucentBox maxWidth={'600px'} sx={{ overflow: 'auto' }}>
         <Typography variant="h4" component="h4" gutterBottom>
-          Tus empresas
+          Tus empleados
         </Typography>
-        <CompaniesListButton onCompanySelect={handleCompanySelect} />
-        {selectedCompany && <FormularioCompany company={selectedCompany} onSubmit={handleFormSubmit} sx={{}} />}
+        <EmployeesListButton onEmployeeSelect={handleEmployeeSelect} />
+        {selectedEmployee && <FormularioEmployee employee={selectedEmployee} onSubmit={handleFormSubmit} />}
         <GoBackButton />
       </TranslucentBox>
     </>

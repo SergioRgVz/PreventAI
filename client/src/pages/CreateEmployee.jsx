@@ -1,7 +1,7 @@
 import AppBarHome from '../components/AppBarHome';
 import { TranslucentBox } from '../components/TranslucentBox';
 import { GoBackButton } from '../components/GoBackButton';
-import { AddCompany } from '../components/AddCompany';
+import { AddEmployee } from '../components/AddEmployee';
 
 const pageToRouteMapping = {
   'Inicio': '/home',
@@ -17,7 +17,7 @@ export function CreateEmployee() {
     <>
       <AppBarHome pageToRouteMapping={pageToRouteMapping} settings={settings} logged />
       <TranslucentBox maxWidth={'600px'}>
-        <AddCompany />
+        <AddEmployee />
         <GoBackButton />
       </TranslucentBox>
     </>

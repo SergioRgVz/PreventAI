@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Box, Typography, TextField, Button } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
 import { companyService } from '../hooks/useCompanies';
 import { LocationSelector } from './LocationSelector';
 import { getAllCCAAs, getProvincias, getMunicipios } from '../services/locationService';
@@ -20,7 +19,6 @@ export function AddCompany() {
   const [provinciasList, setProvinciasList] = useState([]);
   const [municipiosList, setMunicipiosList] = useState([]);
   // const { createCompany, error, loading } = useCreateCompany();
-  const navigate = useNavigate();
 
 
 
@@ -103,9 +101,7 @@ export function AddCompany() {
     event.preventDefault();
     if (validateForm()) {
       try {
-        console.log("onButtonClick", formData);
-        const response = await companyService.createCompany(formData);
-        console.log("onButtonClick", response);
+        await companyService.createCompany(formData);
       } catch (error) {
         console.error('Error al añadir la empresa:', error);
         setErrors({ apiError: error.response?.data?.message || 'Error al conectar con el servicio' });

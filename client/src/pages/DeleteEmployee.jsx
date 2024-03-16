@@ -2,8 +2,11 @@ import AppBarHome from '../components/AppBarHome';
 import { TranslucentBox } from '../components/TranslucentBox';
 import { useState, useEffect } from 'react';
 import { GoBackButton } from '../components/GoBackButton';
+import { Typography } from '@mui/material';
 import Stack from '@mui/material/Stack';
-import { CompanyCardDelete } from '../components/CompanyCardDelete';
+import { employeeService } from '../hooks/useEmployees';
+
+import { EntityCardDelete } from '../components/EntityCardDelete';
 import axios from 'axios';
 
 const pageToRouteMapping = {
@@ -15,27 +18,50 @@ const pageToRouteMapping = {
 const settings = ['Perfil', 'Cerrar sesión'];
 
 export function DeleteEmployee() {
-  const [companies, setCompanies] = useState([]);
+  const [employees, setEmployees] = useState([]);
 
   useEffect(() => {
-    const fetchCompanies = async () => {
-      const response = await axios.get('/company/'); // Este endpoint no sirve para empleados #TODO
-      setCompanies(response.data.companies);
+    const fetchEmployees = async () => {
+      const response = await axios.get('/employee/'); // Este endpoint no sirve para empleados #TODO
+      const modifiedEmployees = response.data.employees.map(employee => ({
+        ...employee, 
+        company: employee.company.name,
+      }));
+      setEmployees(modifiedEmployees);
     };
 
-    fetchCompanies();
+    fetchEmployees();
   }, []);
 
-  const handleRemoveCompany = (CIF) => {
-    setCompanies(companies.filter(company => company.CIF !== CIF));
+  const handleRemoveEmployee = (DNI) => {
+    setEmployees(employees.filter(employee => employee.DNI !== DNI));
   };
+
+  
   return (
     <>
       <AppBarHome pageToRouteMapping={pageToRouteMapping} settings={settings} logged />
       <TranslucentBox maxWidth={'600px'}>
+      <Typography variant="h4" align="center" gutterBottom>
+          Eliminar empleados
+        </Typography>
         <Stack spacing={2}>
-          {companies.map((company) => (
-            <CompanyCardDelete company={company} key={company._id} onRemoveCompany={handleRemoveCompany} />
+          {employees.map((employee) => (
+            <EntityCardDelete
+            key={employee.DNI}
+            entity={employee}
+            onRemoveEntity={handleRemoveEmployee}
+            deleteService={employeeService.deleteEmployee}
+            entityIdentifier="DNI"
+            entityDisplayFields={[
+              { key: 'name', label: 'Nombre' },
+              { key: 'surname', label: 'Apellidos'},
+              { key: 'DNI', label: 'DNI' },
+              { key: 'telephone', label: 'Teléfono' },
+              { key: 'age', label: 'Edad'},
+              { key: 'company', label: 'Empresa'},
+            ]}
+          />
           ))}
           <GoBackButton />
         </Stack>

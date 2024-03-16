@@ -7,28 +7,27 @@ export function TranslucentBox({ children, maxWidth }) {
       backgroundImage: `url(${Image})`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
-      minHeight: '100vh', // Esto mantiene el fondo extendiéndose verticalmente
+      minHeight: '100vh',
       display: 'flex',
-      flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
       overflowY: 'auto'
     }}>
 
       <Box sx={{
-        width: 'auto', // Ancho automático para ajustarse al contenido
-        maxWidth: maxWidth || 'auto', // Un maxWidth menor para que no se haga demasiado ancho
+        width: 'auto',
+        maxWidth: maxWidth || 'auto',
         padding: theme => theme.spacing(2),
         backgroundColor: 'rgba(255, 255, 255, 0.9)',
         borderRadius: '15px',
-        p: 3, // Incrementa el padding para más espacio interno
-        boxShadow: 3,
+        p: 4, 
+        boxShadow: 5,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
         '& > *': {
-          margin: '8px 0' // Espacio adicional entre elementos hijos si es necesario
+          margin: '8px 0'
         }
       }}>
         {children}

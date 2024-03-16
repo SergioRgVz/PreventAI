@@ -25,7 +25,6 @@ apiClient.interceptors.request.use(
     config => {
         const token = localStorage.getItem('token');
         if (token) {
-            console.log("Guardo token en headers: ", token);
             config.headers.authorization = `${token}`;
         }
         return config;

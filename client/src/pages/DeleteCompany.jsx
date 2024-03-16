@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import { GoBackButton } from '../components/GoBackButton';
 import Stack from '@mui/material/Stack';
 import { companyService } from '../hooks/useCompanies';
-import { CompanyCardDelete } from '../components/CompanyCardDelete';
+import { EntityCardDelete } from '../components/EntityCardDelete';
+import { Typography } from '@mui/material';
 
 const pageToRouteMapping = {
   'Inicio': '/home',
@@ -42,9 +43,25 @@ export function DeleteCompany() {
     <>
       <AppBarHome pageToRouteMapping={pageToRouteMapping} settings={settings} logged />
       <TranslucentBox maxWidth={'600px'}>
+        <Typography variant="h4" align="center" gutterBottom>
+          Eliminar empresas
+        </Typography>
         <Stack spacing={2}>
           {companies.map((company) => (
-            <CompanyCardDelete company={company} key={company._id} onRemoveCompany={handleRemoveCompany} />
+            <EntityCardDelete
+              key={company.CIF} // Add key prop with a unique value
+              entity={company}
+              onRemoveEntity={handleRemoveCompany}
+              deleteService={companyService.deleteCompany}
+              entityIdentifier="CIF"
+              entityDisplayFields={[
+                { key: 'name', label: 'Nombre' },
+                { key: 'CIF', label: 'CIF' },
+                { key: 'ccaa', label: 'Comunidad Autónoma' },
+                { key: 'provincia', label: 'Provincia' },
+                { key: 'municipio', label: 'Municipio' },
+              ]}
+            />
           ))}
           <GoBackButton />
         </Stack>

@@ -23,7 +23,6 @@ export function ModifyCompany() {
   };
 
   const handleFormSubmit = () => {
-    // Aquí puedes manejar la lógica después de enviar el formulario, como cerrarlo
     setSelectedCompany(null);
   };
 

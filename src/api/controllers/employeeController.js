@@ -16,7 +16,6 @@ export const getEmployees = async (req, res) => {
     try {
         const userId = req.user.userId;
         const employees = await employeeService.findEmployeesByUserId(userId);
-        console.log(employees);
         return res.status(200).json({ employees });
     } catch (error) {
         console.error(error);
@@ -51,7 +50,6 @@ export const getEmployeeByDNI = async (req, res) => {
 export const createEmployee = async (req, res) => {
     try {
         const { DNI, name, surname, telephone, age, company, birth_date } = req.body;
-        console.log(DNI, name, surname, telephone, age, company, birth_date);
         const companyExists = await companyService.findCompany(company);
         if (!companyExists) {
             return res.status(404).json({ message: 'Empresa no encontrada' });
@@ -76,11 +74,13 @@ export const updateEmployeeByDNI = async (req, res) => {
     try {
         const { DNI } = req.params;
         const { name, surname, telephone, age, company, birth_date } = req.body;
+        const dateObject = new Date(birth_date);
+                
         const companyExists = await companyService.findCompany(company);
         if (!companyExists) {
             return res.status(404).json({ message: 'Empresa no encontrada' });
         }
-        const employee = await employeeService.updateEmployee( DNI, name, surname, telephone, age, company, birth_date);
+        const employee = await employeeService.updateEmployee( DNI, name, surname, telephone, age, companyExists, dateObject);
         if (!employee) {
             return res.status(404).json({ message: 'Empleado no encontrado' });
         }
@@ -98,7 +98,7 @@ export const updateEmployeeByDNI = async (req, res) => {
  */
 export const deleteEmployeeByDNI = async (req, res) => {
     try {
-        const { DNI } = req.body;
+        const { DNI } = req.params;
         const employee = await employeeService.deleteEmployee(DNI);
         if (!employee) {
             return res.status(404).json({ message: 'Empleado no encontrado' });

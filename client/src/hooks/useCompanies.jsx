@@ -3,7 +3,6 @@ import apiClient from './useAxiosAuth';
 
 export const getCompanies = async () => {
   const response = await apiClient.get('/company');
-  console.log("getCompanies", response );
   return response.data.companies;
 }
 
@@ -18,6 +17,7 @@ export const updateCompany = async (CIF, formData) => {
 }
 
 export const deleteCompany = async (CIF) => {
+  console.log("ELiminando empresa con CIF: ", CIF);
   const response = await apiClient.delete(`/company/delete/${CIF}`);
   return response.data;
 }

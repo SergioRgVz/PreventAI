@@ -14,7 +14,7 @@ const pageToRouteMapping = {
 };
 const settings = ['Perfil', 'Cerrar sesión'];
 
-export function ManagementPage(props) {
+export function ManagementPage() {
   const [value, setValue] = React.useState(0);
 
   const handleChange = (_, newValue) => {
@@ -25,9 +25,9 @@ export function ManagementPage(props) {
     <>
       <AppBarHome pageToRouteMapping={pageToRouteMapping} settings={settings} logged />
       <TranslucentBox maxWidth={'475px'}>
-        <Tabs color="info" value={value} onChange={handleChange} centered >
-          <Tab color="info" label="Empresas" />
-          <Tab color="info" label="Empleados" />
+        <Tabs color="secondary" value={value} onChange={handleChange} centered >
+          <Tab color="secondary" label="Empresas" />
+          <Tab color="secondary" label="Empleados" />
         </Tabs>
         {value === 0 && (
           <Box sx={{ mt: 2 }}>

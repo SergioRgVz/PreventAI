@@ -55,6 +55,12 @@ export function RegisterPage({ setLoggedIn }) {
     }
   }
 
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      onButtonClick();
+    }
+  };
+
   return (
     <TranslucentBox maxWidth={'700px'}>
       <Logo />
@@ -74,6 +80,7 @@ export function RegisterPage({ setLoggedIn }) {
           onChange={e => setName(e.target.value)}
           required
           value={name}
+          onKeyPress={handleKeyPress}
           sx={{ width: '500px', mb: 2 }}
         />
         <TextField
@@ -85,6 +92,7 @@ export function RegisterPage({ setLoggedIn }) {
           onChange={e => setSurname(e.target.value)}
           required
           value={surname}
+          onKeyPress={handleKeyPress}
           sx={{ width: '500px', mb: 2 }}
         />
         <TextField
@@ -97,6 +105,7 @@ export function RegisterPage({ setLoggedIn }) {
           required
           type="email"
           value={email}
+          onKeyPress={handleKeyPress}
           sx={{ width: '500px', mb: 2 }}
         />
         <TextField
@@ -109,6 +118,7 @@ export function RegisterPage({ setLoggedIn }) {
           required
           type="tel"
           value={telephone}
+          onKeyPress={handleKeyPress}
           sx={{ width: '500px', mb: 2 }}
         />
         <TextField
@@ -121,10 +131,11 @@ export function RegisterPage({ setLoggedIn }) {
           required
           type="password"
           value={password}
+          onKeyPress={handleKeyPress}
           sx={{ width: '500px', mb: 2 }}
         />
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', my: 2 }}>
-          <Button color='info' variant="contained" type="submit" onClick={onButtonClick}>
+          <Button color='info' variant="contained" type="submit" onClick={onButtonClick} onKeyDown={onButtonClick}>
             Registrarse
           </Button>
         </Box>

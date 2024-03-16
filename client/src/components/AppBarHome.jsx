@@ -1,16 +1,14 @@
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
-import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
+import Grid from '@mui/material/Grid';
 import { useNavigate } from 'react-router-dom';
 import Userlogo from '/user.svg';
 
@@ -35,9 +33,6 @@ export function AppBarHome(props) {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
-  const handleOpenNavMenu = (event) => {
-    setAnchorElNav(event.currentTarget);
-  };
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
@@ -51,53 +46,44 @@ export function AppBarHome(props) {
   };
 
   return (
-    <AppBar color='primary' sx={{ position: 'sticky', top: 0 }}>
-      <Container maxWidth="xl">
-        <Toolbar disableGutters>
+    <AppBar color='primary'>
+      <Toolbar disableGutters>
+        <Grid container
+          direction="row"
+          justifyContent="space-between"
+          alignItems="flex-start" >
           <Logo />
-
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
-            >
-              <MenuIcon />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
-              sx={{
-                display: { xs: 'block', md: 'none' },
-              }}
-            >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={() => {
-                  const route = pageToRouteMapping[page];
-                  if (route)
-                    navigate(route);
-                }}>
-                  <Typography textAlign="center">{page}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+          <Menu
+            id="menu-appbar"
+            anchorEl={anchorElNav}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'left',
+            }}
+            keepMounted
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'left',
+            }}
+            open={Boolean(anchorElNav)}
+            onClose={handleCloseNavMenu}
+          >
             {pages.map((page) => (
+              <MenuItem key={page} onClick={() => {
+                const route = pageToRouteMapping[page];
+                if (route)
+                  navigate(route);
+              }}>
+                <Typography >{page}</Typography>
+              </MenuItem>
+            ))}
+          </Menu>
+          {pages.map((page) => (
+            <Grid item
+            key={page}
+              justifyContent="center"
+              alignItems="stretch"
+            >
               <Button
                 key={page}
                 onClick={() => {
@@ -105,44 +91,38 @@ export function AppBarHome(props) {
                   if (route)
                     navigate(route);
                 }}
-                sx={{ my: 2, color: 'inherit', display: 'block' }}
+                sx={{ my: 2, color: 'inherit'}}
               >
                 {page}
               </Button>
+            </Grid>
+          ))}
+          <Tooltip title="Abrir configuración">
+            <IconButton onClick={handleOpenUserMenu} >
+              <Avatar alt="usuario" src={Userlogo} />
+            </IconButton>
+          </Tooltip>
+          <Menu
+            sx={{ mt: '45px' }}
+            id="menu-appbar"
+            anchorEl={anchorElUser}
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            keepMounted
+            
+            open={Boolean(anchorElUser)}
+            onClose={handleCloseUserMenu}
+          >
+            {settings.map((setting) => (
+              <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                <Typography>{setting}</Typography>
+              </MenuItem>
             ))}
-          </Box>
-
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Abrir configuración">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="usuario" src={Userlogo} />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: '45px' }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
-        </Toolbar>
-      </Container>
+          </Menu>
+        </Grid>
+      </Toolbar>
     </AppBar>
   );
 }

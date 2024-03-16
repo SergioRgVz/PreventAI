@@ -23,8 +23,7 @@ export function LoginPage({ setLoggedIn }) {
     return Object.keys(newErrors).length === 0;
   };
 
-  const onButtonClick = async (event) => {
-    event.preventDefault();
+  const onButtonClick = async () => {
 
     if (validateForm()) {
       try {
@@ -51,6 +50,12 @@ export function LoginPage({ setLoggedIn }) {
     }
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      onButtonClick();
+    }
+  };
+
   return (
     <TranslucentBox maxWidth={'700px'}>
       <Logo />
@@ -69,6 +74,7 @@ export function LoginPage({ setLoggedIn }) {
           variant="filled"
           onChange={e => setEmail(e.target.value)}
           value={email}
+          onKeyPress={handleKeyPress}
           sx={{ width: '500px', mb: 2 }}
         />
         <TextField
@@ -80,6 +86,7 @@ export function LoginPage({ setLoggedIn }) {
           onChange={e => setPassword(e.target.value)}
           value={password}
           type="password"
+          onKeyPress={handleKeyPress}
           sx={{ width: '500px', mb: 2 }}
         />
         <FormControlLabel
@@ -87,7 +94,7 @@ export function LoginPage({ setLoggedIn }) {
           label="Recuérdame"
           sx={{ mb: 2 }}
         />
-        <Button color='info' variant="contained" type="submit" value={"Log in"} onClick={onButtonClick} sx={{ mb: 2, width: 'fit-content', ml: 'auto' }}>
+        <Button color='info' variant="contained" type="submit" value={"Log in"} onClick={onButtonClick} onKeyDown={onButtonClick} sx={{ mb: 2, width: 'fit-content', ml: 'auto' }}>
           Iniciar sesión
         </Button>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', my: 2 }}>
