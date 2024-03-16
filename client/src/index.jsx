@@ -4,7 +4,7 @@ import App from './App.jsx'
 import './index.css'
 import axios from 'axios'
 
-axios.defaults.baseURL = 'http://54.91.214.76:8080/'
+axios.defaults.baseURL = 'http://54.226.166.92:8080/'
 // axios.defaults.baseURL = 'http://localhost:8080/'
 
 axios.interceptors.request.use( 

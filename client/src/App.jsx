@@ -45,7 +45,7 @@ export function App() {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
       <ThemeProvider theme={theme}>
-        <script src="http://localhost:8097"></script>
+        {/* <script src="http://localhost:8097"></script> */}
         <Router>
           <Routes>
             <Route path="/" element={<LandingPage email={email} loggedIn={loggedIn} setLoggedIn={setLoggedIn} />} />
