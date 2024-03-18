@@ -60,6 +60,8 @@ export function DeleteEmployee() {
               { key: 'telephone', label: 'Teléfono' },
               { key: 'age', label: 'Edad'},
               { key: 'company', label: 'Empresa'},
+              { key: 'work_center', label: 'Centro de trabajo'},
+              { key: 'position', label: 'Puesto' },
             ]}
           />
           ))}
