@@ -9,7 +9,7 @@
  * @module models/Employee
  */
 
-import { Schema, model } from 'mongoose';
+import { Schema } from 'mongoose';
 import mongoose from '../../../config/db.js';
 
 const employeeSchema = new mongoose.Schema({
@@ -19,6 +19,8 @@ const employeeSchema = new mongoose.Schema({
     telephone: { type: String, required: true, trim: true },
     age: { type: Number, required: true },
     company: { type: Schema.Types.ObjectId, ref: 'Company', required: true },
+    work_center: { type: String, required: true, trim: true },
+    position: { type: String, required: true, trim: true },
     birth_date: { type: Date, required: true },
 });
 

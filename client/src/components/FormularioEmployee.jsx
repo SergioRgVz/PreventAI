@@ -19,6 +19,8 @@ export const FormularioEmployee = ({ onSubmit, employee }) => {
     age: employee.age || '',
     telephone: employee.telephone || '',
     company: employee.company.CIF || '',
+    work_center: employee.work_center || '',
+    position: employee.position || '',
   });
 
   // Actualiza formData cuando company cambia
@@ -31,6 +33,8 @@ export const FormularioEmployee = ({ onSubmit, employee }) => {
       age: employee.age || '',
       telephone: employee.telephone || '',
       company: employee.company.CIF || '',
+      work_center: employee.work_center || '',
+      position: employee.position || '',
     });
   }, [employee, date]);
 
@@ -77,16 +81,6 @@ export const FormularioEmployee = ({ onSubmit, employee }) => {
 
     fetchCompanies();
   }, []);
-
-  // const handleDateChange = (newDate) => {
-  //   setFormData({ ...formData, birth_date: newDate });
-  // };
-
-  // const findCompanyNameByCIF = (CIF) => {
-  //   const company = companiesList.find(company => company.CIF === CIF);
-  //   return company ? company.name : '';
-  // }
-
 
   return (
     <Box component="form" display="flex" flexDirection="column" justifyContent="center" alignItems="center" onSubmit={handleSubmit} sx={{ overflow: 'auto', mt: 2 }}>
@@ -157,6 +151,28 @@ export const FormularioEmployee = ({ onSubmit, employee }) => {
         onChange={handleChange} // Asegúrate de que handleChange actualiza correctamente formData
         options={companiesList}
         sx={{ width: 'calc(100% - 16px)', mb: 2 }}
+      />
+      <TextField
+        margin="normal"
+        required
+        fullWidth
+        id="work_center"
+        label="Centro de trabajo"
+        name="work_center"
+        autoComplete="work_center"
+        onChange={handleChange}
+        value={formData.work_center}
+      />
+      <TextField
+        margin="normal"
+        required
+        fullWidth
+        id="position"
+        label="Puesto"
+        name="position"
+        autoComplete="position"
+        onChange={handleChange}
+        value={formData.position}
       />
 
       <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>

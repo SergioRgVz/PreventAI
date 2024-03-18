@@ -23,6 +23,7 @@ export const EmployeesList = () => {
           fullName: `${employee.name} ${employee.surname}`,
           company: `${employee.company.name} (${employee.company.CIF})`
         }));
+        
         setEmployees(processedEmployees);
       } catch (err) {
         setError(err);
@@ -44,6 +45,8 @@ export const EmployeesList = () => {
       { name: 'age', label: 'Edad' },
       { name: 'birth_date', label: 'Fecha de Nacimiento' },
       { name: 'company', label: 'Compañía' },
+      { name: 'work_center', label: 'Centro de trabajo' },
+      { name: 'position', label: 'Puesto' },
     ],
     onView: (employee) => {
       console.log("Viendo empleado", employee);

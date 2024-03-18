@@ -29,6 +29,8 @@ export function AddEmployee() {
     address: '',
     role: '',
     company: '',
+    work_center: '',
+    position: '',
   };
 
   return (

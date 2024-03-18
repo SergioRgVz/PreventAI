@@ -36,16 +36,12 @@ const employeeService = {
             const companies = await Company.find({ User: userId });
             const companyIds = companies.map(company => company._id);
 
-            // const employees = await Employee.find({ company: { $in: companyIds } }) 
-            //     .populate('company')
-            //     .select('-_id DNI name surname telephone age company birth_date');
-
             const employees = await Employee.find({ company: { $in: companyIds } }) 
             .populate({
                 path: 'company', 
                 select: 'CIF name' // Aquí especificas que quieres incluir el CIF y el nombre de la empresa
             })
-            .select('-_id DNI name surname telephone age company birth_date');
+            .select('-_id DNI name surname telephone age company work_center position birth_date');
 
             return employees;
         } catch (error) {
@@ -89,10 +85,12 @@ const employeeService = {
      * @param {string} telephone - Teléfono del empleado.
      * @param {number} age - Edad del empleado.
      * @param {Schema.Types.ObjectId} company - La compañía asociada al empleado.
+     * * @param {string} work_center - Centro de trabajo del empleado.
+     * * @param {string} position - Puesto de trabajo del empleado.
      * @param {Date} birth_date - Fecha de nacimiento del empleado.
      * @returns {Promise<Employee|null>} El empleado creado o null si el empleado ya existe.
      */
-    createEmployee: async (DNI, name, surname, telephone, age, company, birth_date) => {
+    createEmployee: async (DNI, name, surname, telephone, age, company, work_center, position, birth_date) => {
         try {
             let employee = await employeeService.findEmployee(DNI);
             if (employee) {
@@ -106,6 +104,8 @@ const employeeService = {
                 telephone: telephone,
                 age: age,
                 company: company,
+                work_center: work_center,
+                position: position,
                 birth_date: birth_date
             });
             console.log('Employee created:', employee);
@@ -115,7 +115,7 @@ const employeeService = {
             throw error;
         }
     },
-    updateEmployee: async (DNI, name, surname, telephone, age, company, birth_date) => {
+    updateEmployee: async (DNI, name, surname, telephone, age, company, work_center, position, birth_date) => {
         try {
             let employee = await employeeService.findEmployee(DNI);
             if (!employee) {
@@ -128,6 +128,8 @@ const employeeService = {
                 telephone: telephone,
                 age: age,
                 company: company,
+                work_center: work_center,
+                position: position,
                 birth_date: birth_date
             });
             console.log('Employee updated:', employee);
