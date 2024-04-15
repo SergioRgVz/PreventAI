@@ -59,6 +59,8 @@ const companyService = {
                 provincia: await getProvinciaByCode(company.provincia),
                 municipio: await getPoblacionByCode(company.municipio)
             })));
+
+            console.log('FindallCompanies:', companiesWithLocations);
     
             return companiesWithLocations;
         } catch (error) {

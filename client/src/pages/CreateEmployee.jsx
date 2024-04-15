@@ -1,11 +1,11 @@
-import AppBarHome from '../components/AppBarHome';
-import { TranslucentBox } from '../components/TranslucentBox';
-import { GoBackButton } from '../components/GoBackButton';
-import { AddEmployee } from '../components/AddEmployee';
+import AppBarHome from '../components/utils/AppBarHome';
+import { TranslucentBox } from '../components/utils/TranslucentBox';
+import { GoBackButton } from '../components/utils/GoBackButton';
+import { AddEmployee } from '../components/CrudEmpleados/AddEmployee';
 
 const pageToRouteMapping = {
   'Inicio': '/home',
-  'Nueva evaluación': '/new-report',
+  'Nueva evaluación': '/create-report',
   'Abrir evaluación': '/open-report',
   'Gestionar': '/management',
 };

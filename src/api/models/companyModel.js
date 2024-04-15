@@ -14,7 +14,7 @@ const companySchema = new mongoose.Schema({
     ccaa: { type: String, required: true },
     provincia: { type: String, required: true },
     municipio: { type: String, required: true }
-});
+}); 
 
 const Company = mongoose.model('Company', companySchema);
 

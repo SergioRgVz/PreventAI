@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const { Schema } = mongoose;
+import { Schema } from 'mongoose';
+import mongoose from '../../../config/db.js';
 
 const reportBaseSchema = new Schema({
     tecnico_id: { type: Schema.Types.ObjectId, ref: 'User', required: true },
@@ -12,12 +12,12 @@ const reportBaseSchema = new Schema({
     referencia: { type: String, required: true },
     indicacionesYMedidasPreventivas: {
         indicaciones: { type: String, required: true },
-        medidasPreventivasAdjuntas: { type: String, required: true }
+        medidasPreventivasAdjuntas: { type: String, required: true },
     },
 });
-
-const reportPWDSchema = new mongoose.Schema({
-    ...reportBaseSchema,
+const reportPWDSchema = new mongoose.Schema();
+reportPWDSchema.add(reportBaseSchema.obj);
+reportPWDSchema.add({
     descripcionDelTrabajoConPantallas: { type: String, required: true },
     equipodeTrabajo: {
         pantalla: {
@@ -98,9 +98,9 @@ const reportPWDSchema = new mongoose.Schema({
     },
 });
 
-
-const reportGINSHTSchema = new mongoose.Schema({
-    ...reportBaseSchema,
+const reportGINSHTSchema = new mongoose.Schema();
+reportGINSHTSchema.add(reportBaseSchema.obj);
+reportGINSHTSchema.add({
     descripcionDelTrabajo: 
     {
         datosDeElevacion: { type: String, required: true },
@@ -131,4 +131,4 @@ const reportGINSHTSchema = new mongoose.Schema({
 const ReportPWD = mongoose.model('ReportPWD', reportPWDSchema);
 const ReportGINSHT = mongoose.model('ReportGINSHT', reportGINSHTSchema);
 
-module.exports = { ReportPWD, ReportGINSHT };
+export default { ReportPWD, ReportGINSHT };

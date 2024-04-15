@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
+import svgr from '@svgr/rollup';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -15,7 +16,11 @@ export default defineConfig({
       jsxImportSource: '@emotion/react',
       babel: {
         plugins: ['@emotion/babel-plugin'],
+        
       },
+    }),
+    svgr({
+      exportAsDefault: true,
     }),
   ],
   build: { chunkSizeWarningLimit: 1600, }

@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Button, Box, Typography } from '@mui/material';
-import { HeaderLandingPage } from '../components/HeaderLandingPage';
+import { HeaderLandingPage } from '../components/utils/HeaderLandingPage';
 
 export function LandingPage(props) {
   const { loggedIn, email, setLoggedIn } = props

@@ -5,6 +5,7 @@ import cors from 'cors';
 import authRoutes from './api/routes/authRoutes.js';
 import companyRoutes from './api/routes/companyRoutes.js';
 import employeeRoutes from './api/routes/employeeRoutes.js';
+import reportRoutes from './api/routes/reportRoutes.js';
 import { verifyToken } from './api/controllers/authController.js';
 import { connectDB } from '../config/db.js';
 
@@ -21,14 +22,15 @@ app.use(express.json()); // Para que el servidor entienda JSON
 app.use(cors({
     origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true, 
+    credentials: true,
     exposedHeaders: 'Authorization',
 }));
 
 // Rutas API
-app.use('/auth', authRoutes); // La autenticación no requiere token
+app.use('/auth', authRoutes); 
 app.use('/company', verifyToken, companyRoutes); // Estas rutas requieren autenticación
 app.use('/employee', verifyToken, employeeRoutes); // Estas rutas requieren autenticación
+app.use('/report', verifyToken, reportRoutes); // Estas rutas requieren autenticación
 
 // Middleware para servir archivos estáticos
 app.use(express.static(buildPath));

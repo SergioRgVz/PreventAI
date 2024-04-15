@@ -6,6 +6,11 @@ export const getCompanies = async () => {
   return response.data.companies;
 }
 
+export const getEmployees = async (CIF) => {
+  const response = await apiClient.get(`/company/getEmployees/${CIF}`);
+  return response.data.employees;
+}
+
 export const createCompany = async (formData) => {
   const response = await apiClient.post('/company/create', formData);
   return response.data;
@@ -24,6 +29,7 @@ export const deleteCompany = async (CIF) => {
 
 export const companyService = {
   getCompanies,
+  getEmployees,
   createCompany,
   updateCompany,
   deleteCompany

@@ -1,13 +1,13 @@
-import AppBarHome from '../components/AppBarHome';
+import AppBarHome from '../components/utils/AppBarHome';
 import Typography from '@mui/material/Typography';
-import { TranslucentBox } from '../components/TranslucentBox';
-import { EmployeesList } from '../components/EmployeesList';
+import { TranslucentBox } from '../components/utils/TranslucentBox';
+import { EmployeesList } from '../components/CrudEmpleados/EmployeesList';
 import Divider from '@mui/material/Divider';
-import { GoBackButton } from '../components/GoBackButton';
+import { GoBackButton } from '../components/utils/GoBackButton';
 
 const pageToRouteMapping = {
   'Inicio': '/home',
-  'Nueva evaluación': '/new-report',
+  'Nueva evaluación': '/create-report',
   'Abrir evaluación': '/open-report',
   'Gestionar': '/management',
 };

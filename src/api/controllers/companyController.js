@@ -13,6 +13,7 @@ import userService from '../services/userService.js';
  * @param {Object} res - Objeto de respuesta Express.
  */
 export const getCompanies = async (req, res) => {
+    console.log("getCompanies", req.user.userId);
     try {
         const userId = req.user.userId;
         const companies = await companyService.findAllCompanies(userId);

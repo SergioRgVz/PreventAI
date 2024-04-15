@@ -1,16 +1,16 @@
 // ModifyEmployee.js
 import { useState } from 'react';
-import AppBarHome from '../components/AppBarHome';
-import { TranslucentBox } from '../components/TranslucentBox';
-import { GoBackButton } from '../components/GoBackButton';
-import { EmployeesListButton } from '../components/EmployeesListButton';
-import { FormularioEmployee } from '../components/FormularioEmployee';
+import AppBarHome from '../components/utils/AppBarHome';
+import { TranslucentBox } from '../components/utils/TranslucentBox';
+import { GoBackButton } from '../components/utils/GoBackButton';
+import { EmployeesListButton } from '../components/CrudEmpleados/EmployeesListButton';
+import { FormularioEmployee } from '../components/CrudEmpleados/FormularioEmployee';
 import { employeeService } from '../hooks/useEmployees';
 import Typography from '@mui/material/Typography';
 
 const pageToRouteMapping = {
   'Inicio': '/home',
-  'Nueva evaluación': '/new-report',
+  'Nueva evaluación': '/create-report',
   'Abrir evaluación': '/open-report',
   'Gestionar': '/management',
 };

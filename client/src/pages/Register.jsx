@@ -1,8 +1,8 @@
 import { Box, Typography, FormControl, TextField, Button } from '@mui/material'
 import { useState, } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
-import { Logo } from '../components/Logo'
-import { TranslucentBox } from '../components/TranslucentBox';
+import { Logo } from '../components/utils/Logo'
+import { TranslucentBox } from '../components/utils/TranslucentBox';
 import { registerUser as registerUserService } from '../services/authService';
 
 

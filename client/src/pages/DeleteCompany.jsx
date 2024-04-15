@@ -1,15 +1,15 @@
-import AppBarHome from '../components/AppBarHome';
-import { TranslucentBox } from '../components/TranslucentBox';
+import AppBarHome from '../components/utils/AppBarHome';
+import { TranslucentBox } from '../components/utils/TranslucentBox';
 import { useState, useEffect } from 'react';
-import { GoBackButton } from '../components/GoBackButton';
+import { GoBackButton } from '../components/utils/GoBackButton';
 import Stack from '@mui/material/Stack';
 import { companyService } from '../hooks/useCompanies';
-import { EntityCardDelete } from '../components/EntityCardDelete';
+import { EntityCardDelete } from '../components/utils/EntityCardDelete';
 import { Typography } from '@mui/material';
 
 const pageToRouteMapping = {
   'Inicio': '/home',
-  'Nueva evaluación': '/new-report',
+  'Nueva evaluación': '/create-report',
   'Abrir evaluación': '/open-report',
   'Gestionar': '/management',
 };

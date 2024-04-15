@@ -3,6 +3,7 @@ import apiClient from './useAxiosAuth';
 
 export const getEmployees = async () => {
   const response = await apiClient.get('/employee');
+  console.log("getEmployees front: ", response.data.employees);
   return response.data.employees;
 }
 

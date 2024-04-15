@@ -1,8 +1,8 @@
 import { Box, Typography, FormControl, TextField, FormControlLabel, Checkbox, Button } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { Logo } from '../components/Logo';
-import { TranslucentBox } from '../components/TranslucentBox';
+import { Logo } from '../components/utils/Logo';
+import { TranslucentBox } from '../components/utils/TranslucentBox';
 import { loginUser as loginUserService } from '../services/authService';
 
 export function LoginPage({ setLoggedIn }) {

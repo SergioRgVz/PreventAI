@@ -1,14 +1,14 @@
 import React from 'react';
 import { Box, Tabs, Tab } from '@mui/material';
-import AppBarHome from '../components/AppBarHome';
-import { TranslucentBox } from '../components/TranslucentBox';
-import { ButtonForm } from '../components/ButtonForm';
-import { GoBackButton } from '../components/GoBackButton';
+import AppBarHome from '../components/utils/AppBarHome';
+import { TranslucentBox } from '../components/utils/TranslucentBox';
+import { ButtonForm } from '../components/utils/ButtonForm';
+import { GoBackButton } from '../components/utils/GoBackButton';
 
 
 const pageToRouteMapping = {
   'Inicio': '/home',
-  'Nueva evaluación': '/new-report',
+  'Nueva evaluación': '/create-report',
   'Abrir evaluación': '/open-report',
   'Gestionar': '/management',
 };
