@@ -28,7 +28,8 @@ const {
         distanciaDeDesplazamientos,
         listaDeFactoresPuesto, 
         listaDeFactoresTrabajador,
-        indicaciones
+        indicaciones,
+        images
     }
 } = GINSHTForm;
 
@@ -41,24 +42,25 @@ export default {
     [referencia.name]: '',
     [datosDeElevacion.name]: '',
     [datosDeTransporte.name]: '',
-    [pesoRealManejado.name]: '',
-    [pesoTeoricoRecomendado.name]: '',
-    [duracionTarea.name]: '',
-    [posturaLevantamiento.name]: '',
-    [alturaLevantamiento.name]: '2',
-    [separacionLevantamiento.name]: '0',
-    [desplazamientoVertical.name]: '',
-    [giroDelTronco.name]: '',
-    [tipoDeAgarre.name]: '',
-    [duracionManipulacion.name]: '',
-    [frecuenciaDeManipulacion.name]: '',
-    [valorFinalFrecuencia.name]: '',
-    [pesoAceptable.name]: '',
-    [indiceRiesgoElevacion.name]: '',  
-    [indiceRiesgoTransporte.name]: '',  
-    [numeroDeDesplazamientos.name]: '',
-    [distanciaDeDesplazamientos.name]: '',
+    [pesoRealManejado.name]: 0,
+    [pesoTeoricoRecomendado.name]: 0,
+    [duracionTarea.name]: 0,
+    [posturaLevantamiento.name]: 0,
+    [alturaLevantamiento.name]: 0,
+    [separacionLevantamiento.name]: 0,
+    [desplazamientoVertical.name]: 0,
+    [giroDelTronco.name]: 0,
+    [tipoDeAgarre.name]: 0,
+    [duracionManipulacion.name]: 0,
+    [frecuenciaDeManipulacion.name]: 0,
+    [valorFinalFrecuencia.name]: 0,
+    [pesoAceptable.name]: 0,
+    [indiceRiesgoElevacion.name]: 0,  
+    [indiceRiesgoTransporte.name]: 0,  
+    [numeroDeDesplazamientos.name]: 0,
+    [distanciaDeDesplazamientos.name]: 0,
     [listaDeFactoresPuesto.name]: [],
     [listaDeFactoresTrabajador.name]: [],
-    [indicaciones.name]: ''
+    [indicaciones.name]: '',
+    [images]: []
 }

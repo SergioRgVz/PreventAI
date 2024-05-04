@@ -6,7 +6,7 @@ import { TranslucentBox } from '../components/utils/TranslucentBox';
 const pageToRouteMapping = {
   'Inicio': '/home',
   'Nueva evaluación': '/create-report',
-  'Abrir evaluación': '/open-report',
+  'Abrir evaluación': '/view-reports',
   'Gestionar': '/management',
 };
 const settings = ['Perfil', 'Cerrar sesión'];
@@ -17,7 +17,7 @@ export function HomePage() {
       <AppBarHome pageToRouteMapping={pageToRouteMapping} settings={settings} logged />
       <TranslucentBox maxWidth={'300px'}>
         <ButtonForm url='/create-report'>Nueva evaluación</ButtonForm>
-        <ButtonForm url='/open-report'>Abrir evaluación</ButtonForm>
+        <ButtonForm url='/view-reports'>Abrir evaluación</ButtonForm>
         <ButtonForm url='/management'>Empresas/Empleados</ButtonForm>
       </TranslucentBox>
     </>

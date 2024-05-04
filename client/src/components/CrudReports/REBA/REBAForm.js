@@ -31,8 +31,8 @@ export default {
             label: 'Referencia*',
             requiredErrorMsg: 'Referencia es requerida'
         },
-        descripcionTrabajo: {
-            name: 'descripcionTrabajo',
+        descripcionTrabajoREBA: {
+            name: 'descripcionTrabajoREBA',
             label: 'Descripción del trabajo*',
             requiredErrorMsg: 'Descripción del trabajo es requerida'
         },
@@ -146,5 +146,11 @@ export default {
             label: 'Cambios rápidos*',
             requiredErrorMsg: 'Cambios rápidos son requeridos'
         },
+        images:
+        {
+            name: 'images',
+            label: 'Imágenes*',
+            requiredErrorMsg: 'Las imágenes son requeridas'
         }
+    }
 };

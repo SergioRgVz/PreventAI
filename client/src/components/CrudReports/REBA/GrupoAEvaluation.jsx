@@ -24,18 +24,29 @@ export default function GrupoAEvaluation(props) {
 
     useEffect(() => {
         let valores = ['/REBA/GrupoA/Cuello_0_20.png', '/REBA/GrupoA/Cuello_mayor_0_mayor_20.png'];
-
-        setValueNeckImage(valores[values.puntuacionCuello - 1]);
+        if (values.puntuacionCuello != 0) {
+            setValueNeckImage(valores[values.puntuacionCuello - 1]);
+        } else {
+            setValueNeckImage('/REBA/GrupoA/Cuello_0_20.png');
+        }
     }, [values.puntuacionCuello]);
 
     useEffect(() => {
         let valores = ['/REBA/GrupoA/Tronco_recto.png', '/REBA/GrupoA/Tronco_0_20.png', '/REBA/GrupoA/Tronco_20_60.png', '/REBA/GrupoA/Tronco_mas_60.png'];
-        setValueTrunkImage(valores[values.puntuacionTronco -1 ]);
+        if (values.puntuacionTronco != 0) {
+            setValueTrunkImage(valores[values.puntuacionTronco - 1]);
+        } else {
+            setValueTrunkImage('/REBA/GrupoA/Tronco_recto.png');
+        }
     }, [values.puntuacionTronco]);
 
     useEffect(() => {
         let valores = ['/REBA/GrupoA/flexion_rodilla_30.png', '/REBA/GrupoA/flexion_rodilla_mas_60.png'];
-        setValueLegsImage(valores[values.puntuacionPiernas -1]);
+        if (values.puntuacionPiernas != 0) {
+            setValueLegsImage(valores[values.puntuacionPiernas - 1]);
+        } else {
+            setValueLegsImage('/REBA/GrupoA/flexion_rodilla_30.png');
+        }
     }, [values.puntuacionPiernas]);
 
 

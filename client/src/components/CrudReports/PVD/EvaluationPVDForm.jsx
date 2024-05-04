@@ -1,14 +1,8 @@
 import React from 'react';
 import { Typography, Stack } from '@mui/material';
 import { FormikCheckbox } from '../../FormFields/FormikCheckbox';
-import InputField from '../../FormFields/InputField';
 export default function EvaluationPVDForm(props) {
 
-    const {
-        formField: {
-            indicaciones
-        }
-    } = props;
 
     return (
         <React.Fragment>

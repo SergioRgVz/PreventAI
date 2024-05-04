@@ -8,6 +8,7 @@ import employeeRoutes from './api/routes/employeeRoutes.js';
 import reportRoutes from './api/routes/reportRoutes.js';
 import { verifyToken } from './api/controllers/authController.js';
 import { connectDB } from '../config/db.js';
+// import multer from 'multer';
 
 dotenv.config({path:'../.env'})
 
@@ -17,6 +18,30 @@ connectDB();
 const app = express();
 const __dirname = path.resolve();
 const buildPath = path.join(__dirname, '../client/dist');
+
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, 'uploads/');
+//   },
+//   filename: function (req, file, cb) {
+//     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+//     cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+//   }
+// });
+
+// const upload = multer({ storage: storage });
+
+// app.post('/upload', upload.single('image'), (req, res) => {
+//   if(req.file) {
+//     res.status(200).send({
+//       message: 'Imagen subida',
+//       filename: req.file.path
+//     });
+//     } else {
+//       res.status(500).send('Error al subir la imagen');
+//     }
+// });
+
 
 app.use(express.json()); // Para que el servidor entienda JSON
 app.use(cors({

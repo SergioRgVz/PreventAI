@@ -31,7 +31,8 @@ export const getEmployees = async (req, res) => {
 export const getEmployeeByDNI = async (req, res) => {
     try {
         const { DNI } = req.params;
-        const employee = await employeeService.findEmployeeById(DNI);
+        const employee = await employeeService.findEmployee(DNI);
+        // const employee = await employeeService.findEmployeeById(DNI);
         if (!employee) {
             return res.status(404).json({ message: 'Empleado no encontrado' });
         }

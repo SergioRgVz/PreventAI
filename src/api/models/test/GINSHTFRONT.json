@@ -1,0 +1,63 @@
+{
+    INFO BASICA
+    {
+        "DNI": "981861486H",
+        "CIF": "12",
+        "centroDeTrabajo": "asodom",
+        "puestoDeTrabajo": "doemfoeom",
+        "fecha": "2024-04-16T15:35:04+02:00",
+        "referencia": "512561",
+        "indicaciones": "adsds",
+    }
+    
+    DESCRIPCION TRABAJO {
+        "datosDeElevacion": "adsadd",
+        "datosDeTransporte": "adada",
+    }
+
+    EVALUACION ELEVACION {
+        "pesoRealManejado": "20",
+        "pesoTeoricoRecomendado": "",
+        factoresCorrectores: {
+            "tipoDeAgarre": "1",
+            "giroDelTronco": "0.9",
+            "desplazamientoVertical": "0.91",
+            "frecuenciaDeManipulacion": "1",
+            "frecuenciaDeManipulacionRadio": "1",
+            "valorFinalFrecuencia": 0.94,
+        }
+        "pesoAceptable": 0,
+        "indiceRiesgoElevacion": null,
+        "posturaLevantamiento": "0",
+        "alturaLevantamiento": "3",
+        "separacionLevantamiento": "1",
+        "duracionTarea": 2,
+        "duracionManipulacion": "0",
+    }
+
+    EVALUACION TRANSPORTE {
+        "numeroDeDesplazamientos": "1",
+        "distanciaDeDesplazamientos": "0",
+        "indiceRiesgoTransporte": 20,
+
+    }
+
+    FACTORES {
+        "listaDeFactoresPuesto": [
+            "Se ejercen fuerzas de empuje o tracción elevadas.",
+            "Se puede desplazar el centro de gravedad.",
+            "Carece el trabajador de autonomía para regular su ritmo de trabajo",
+            "Se realiza la tarea con el cuerpo en posición inestable."
+        ],
+        "listaDeFactoresTrabajador": [
+            "Es el trabajador especialmente sensible al riesgo: mujeres embarazadas, trabajadores con patologías\r\ndorsolumbares, etc.",
+            "Carece el trabajador de información sobre el peso de la carga.",
+            "Carece el trabajador de entrenamiento para realizar la manipulación con seguridad."
+        ],
+
+    }
+
+
+    
+    
+}

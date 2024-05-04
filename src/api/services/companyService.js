@@ -60,7 +60,7 @@ const companyService = {
                 municipio: await getPoblacionByCode(company.municipio)
             })));
 
-            console.log('FindallCompanies:', companiesWithLocations);
+            // console.log('FindallCompanies:', companiesWithLocations);
     
             return companiesWithLocations;
         } catch (error) {
@@ -119,7 +119,7 @@ const companyService = {
                 return null;
             }
             const employees = await Employee.find({ company: company._id }).exec();
-            console.log('Employees found:', employees);
+            // console.log('Employees found:', employees);
             return employees;
         } catch (error) {
             console.error('Error getting employees:', error);

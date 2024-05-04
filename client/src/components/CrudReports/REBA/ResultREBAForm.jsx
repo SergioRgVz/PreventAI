@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useFormikContext } from 'formik';
 import { Grid, Typography, Card, CardContent } from '@mui/material';
-import ListaConPuntos from '../../utils/ListaConPuntos';
 
 export default function ResultREBAForm(props) {
     const { values, setFieldValue } = useFormikContext();

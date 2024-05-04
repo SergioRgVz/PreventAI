@@ -27,7 +27,9 @@ const {
         puntuacionAgarre,
         estatismo,
         accionesRepetidas,
-        cambiosRapidos
+        cambiosRapidos,
+        descripcionTrabajoREBA,
+        images
     }
 } = REBAForm;
 
@@ -38,25 +40,27 @@ export default {
     [puestoDeTrabajo.name]: '',
     [fecha.name]: '',
     [referencia.name]: '',
-    [puntuacionCuello.name]: 0,
+    [puntuacionCuello.name]: 1,
     [cambioCuello.name]: 0,
-    [puntuacionPiernas.name]: 0,
+    [puntuacionPiernas.name]: 1,
     [cambioPiernas.name]: 0,
-    [puntuacionTronco.name]: 0,
+    [puntuacionTronco.name]: 1,
     [cambioTronco.name]: 0,
     [cambioPiernas1.name]: 0,
     [cambioPiernas2.name]: 0,
-    [puntuacionAntebrazos.name]: 0,
-    [puntuacionMunecas.name]: 0,
+    [puntuacionAntebrazos.name]: 1,
+    [puntuacionMunecas.name]: 1,
     [cambioMunecas.name]: 0,
-    [puntuacionBrazos.name]: 0,
+    [puntuacionBrazos.name]: 1,
     [cambioBrazosAbducido.name]: 0,
     [cambioBrazosHombroLevantado.name]: 0,
     [cambioBrazosApoyado.name]: 0,
-    [puntuacionCarga.name]: 0,
+    [puntuacionCarga.name]: 1,
     [cambioCarga.name]: 0,
-    [puntuacionAgarre.name]: 0,
+    [puntuacionAgarre.name]: 1,
     [estatismo.name]: 0,
     [accionesRepetidas.name]: 0,
-    [cambiosRapidos.name]: 0
+    [cambiosRapidos.name]: 0,
+    [descripcionTrabajoREBA.name]: '',
+    [images.name]: []
 }

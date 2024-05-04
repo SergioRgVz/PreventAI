@@ -1,6 +1,9 @@
 import userService from '../services/userService.js';
 import reportService from '../services/reportService.js';
 import HttpError from '../../utils/HttpError.js';
+import { validateReportGINSHTData } from '../../utils/validateReports.js';
+import multer from 'multer';
+const upload = multer({ dest: 'uploads/' });  // Configura multer para guardar archivos en la carpeta 'uploads'
 
 export const getReports = async (req, res) => {
     const userId = req.user.userId;
@@ -56,7 +59,16 @@ export const getReportByCompany = async (req, res) => {
 export const createReportGINSHT = async (req, res) => {
     const userId = req.user.userId;
     const reportData = req.body;
+
+    // const validationErrors = validateReportGINSHTData(reportData);
+    // if (validationErrors.length > 0) {
+    //     return res.status(400).json({ errors: validationErrors });
+    // }
+
     try {
+        const imagePaths = files.map(file => file.path);
+
+        reportData.images = imagePaths;
         const report = await reportService.createReportGINSHT(userId, reportData);
         res.status(201).json(report);
     } catch (error) {
@@ -71,9 +83,36 @@ export const createReportGINSHT = async (req, res) => {
 
 export const createReportPWD = async (req, res) => {
     const userId = req.user.userId;
+    const reportData = req.body; 
+    const files = req.files; 
+
+    try {
+        const imagePaths = files.map(file => file.path);
+
+        reportData.images = imagePaths;
+
+        const report = await reportService.createReportPWD(userId, reportData);
+        res.status(201).json(report);
+    } catch (error) {
+        if (error instanceof HttpError) {
+            res.status(error.status).json({ message: error.message });
+        } else {
+            res.status(500).json({ message: 'Error interno del servidor' });
+        }
+    }
+};
+
+
+
+
+export const createReportREBA = async (req, res) => {
+    const userId = req.user.userId;
     const reportData = req.body;
     try {
-        const report = await reportService.createReportPWD(userId, reportData);
+        const imagePaths = files.map(file => file.path);
+
+        reportData.images = imagePaths;
+        const report = await reportService.createReportREBA(userId, reportData);
         res.status(201).json(report);
     } catch (error) {
         if (error instanceof HttpError) {
@@ -109,6 +148,21 @@ export const modifyPWD = async (req, res) => {
     const reportData = req.body;
     try {
         const report = await reportService.modifyPWD(userId, reportId, reportData);
+        res.status(200).json(report);
+    } catch (error) {
+        if (error instanceof HttpError) {
+            res.status(error.status).json({ message: error.message });
+        } else {
+
+            res.status(500).json({ message: 'Error interno del servidor' });
+        }
+    }
+}
+
+export const deleteReport = async (req, res) => {
+    const reportId = req.params.id;
+    try {
+        const report = await reportService.deleteReport(reportId);
         res.status(200).json(report);
     } catch (error) {
         if (error instanceof HttpError) {

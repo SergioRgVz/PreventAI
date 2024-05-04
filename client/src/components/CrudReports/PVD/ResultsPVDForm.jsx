@@ -93,7 +93,7 @@ const ResultsPVDForm = (props ) => {
             </Typography>
             <Grid container spacing={3} paddingBottom={'10px'}>
                 <Grid item xs={12} sm={12}>
-                    <Typography>{values.indicaciones}</Typography>
+                    <Typography>Indicaciones</Typography>
                 </Grid>
             </Grid>
             <InputField name={indicaciones.name} multiline rows={7} label={indicaciones.label} fullWidth />

@@ -138,6 +138,12 @@ export default {
             name: 'indicaciones',
             label: 'Indicaciones*',
             requiredErrorMsg: 'Las indicaciones son requeridas',
+        },
+        images:
+        {
+            name: 'images',
+            label: 'Imágenes*',
+            requiredErrorMsg: 'Las imágenes son requeridas'
         }
     }
 };

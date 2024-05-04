@@ -25,8 +25,13 @@ const ResultGINSHTForm = (props) => {
         let pesoAceptablecalc = values.pesoTeoricoRecomendado * values.desplazamientoVertical * values.giroDelTronco * values.tipoDeAgarre * values.valorFinalFrecuencia;
         setPesoAceptablecalc(pesoAceptablecalc);
         setFieldValue(pesoAceptable.name, pesoAceptablecalc);
-
-        let IRElevacion = values.pesoRealManejado / pesoAceptablecalc;
+        let IRElevacion = 0;
+        if(pesoAceptablecalc === 0) {
+            IRElevacion = 15;
+        }
+        else {
+            IRElevacion = values.pesoRealManejado / pesoAceptablecalc;
+        }
         setIndiceElevacion(IRElevacion);
         setFieldValue(indiceRiesgoElevacion.name, IRElevacion);
 

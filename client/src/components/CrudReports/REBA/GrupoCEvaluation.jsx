@@ -27,6 +27,8 @@ export default function GrupoCEvaluation(props) {
         let valores = ['/REBA/GrupoC/agarrebueno.png', '/REBA/GrupoC/agarreregular.png', '/REBA/GrupoC/agarremalo.png'];
         if (values.puntuacionAgarre != 3)
             setValueHoldImage(valores[values.puntuacionAgarre]);
+        else
+            setValueHoldImage('/REBA/GrupoC/agarreinaceptable.png');
     }, [values.puntuacionAgarre]);
 
     return (

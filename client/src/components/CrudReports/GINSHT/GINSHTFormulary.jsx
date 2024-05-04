@@ -11,6 +11,9 @@ import { CircularProgress } from '@mui/material';
 import { Formik, Form } from "formik";
 import formInitialValues from "./GINSHTFormInitialValues";
 import ReportSuccess from '../ReportSuccess';
+import { reportService } from '../../../hooks/useReports';
+import { ImageUploadProvider } from '../../utils/ImageUploadContext';
+
 
 const steps = ['Datos identificativos', 'Imágenes', 'Descripción del trabajo de manipulación manual de cargas', 'Evaluación', 'Resultados', 'Enviar'];
 const { formId, formField } = GINSHTForm;
@@ -20,7 +23,7 @@ function _renderStepContent(step) {
     case 0:
       return <DatosIdentificativosForm formField={formField} />;
     case 1:
-      return <ImageUploadStep />;
+      return <ImageUploadStep formField={formField} />;
     case 2:
       return <DescripcionGINSHTForm formField={formField} />;
     case 3:
@@ -34,6 +37,57 @@ function _renderStepContent(step) {
   }
 }
 
+function create_GINSHT_report(values) {
+  const report = {
+    empleado: values.DNI,
+    fecha: values.fecha,
+    empresa: values.CIF,
+    centroDeTrabajo: values.centroDeTrabajo,
+    puestoDeTrabajo: values.puestoDeTrabajo,
+    referencia: values.referencia,
+    descripcionDelTrabajo: {
+      datosDeElevacion: values.datosDeElevacion,
+      datosDeTransporte: values.datosDeTransporte
+    },
+    indicacionesYMedidasPreventivas: {
+      indicaciones: values.indicaciones
+    },
+    evaluacionDeLaElevacion: {
+      pesoRealManejado: values.pesoRealManejado,
+      pesoTeoricoRecomendado: values.pesoTeoricoRecomendado,
+      factoresCorrectores: {
+        tipoDeAgarre: values.tipoDeAgarre,
+        giroDelTronco: values.giroDelTronco,
+        desplazamientoVertical: values.desplazamientoVertical,
+        frecuenciaDeManipulacion: values.frecuenciaDeManipulacion,
+        frecuenciaDeManipulacionRadio: values.frecuenciaDeManipulacionRadio,
+        valorFinalFrecuencia: values.valorFinalFrecuencia
+      },
+      pesoAceptable: values.pesoAceptable,
+      indiceDeRiesgoElevacion: values.indiceRiesgoElevacion,
+      posturaLevantamiento: values.posturaLevantamiento,
+      alturaLevantamiento: values.alturaLevantamiento,
+      separacionLevantamiento: values.separacionLevantamiento,
+      duracionTarea: values.duracionTarea,
+      duracionManipulacion: values.duracionManipulacion
+    },
+    evaluacionDelTransporte: {
+      numeroDeDesplazamientos: values.numeroDeDesplazamientos,
+      distanciaDeDesplazamientos: values.distanciaDeDesplazamientos,
+      indiceRiesgoTransporte: values.indiceRiesgoTransporte
+    },
+    factoresErgonomicosEIndividuales: {
+      listaDeFactoresPuesto: values.listaDeFactoresPuesto,
+      listaDeFactoresTrabajador: values.listaDeFactoresTrabajador
+    },
+    images: values.images
+  };
+  return report;
+}
+
+
+
+
 export function GINSHTFormulary() {
   const [activeStep, setActiveStep] = useState(0);
   // const currentValidationSchema = validationSchema[activeStep]; //TODO: Implement validation schema
@@ -45,7 +99,11 @@ export function GINSHTFormulary() {
 
   async function _submitForm(values, actions) {
     await _sleep(1000);
-    alert(JSON.stringify(values, null, 2));
+    let report = create_GINSHT_report(values);
+    alert(JSON.stringify(report));
+    reportService.createReportGINSHT(report);
+    console.log("VALUES GINSHT", report);
+
     actions.setSubmitting(false);
 
     setActiveStep(activeStep + 1);
@@ -95,40 +153,42 @@ export function GINSHTFormulary() {
                   </Button>
                 </React.Fragment>
               ) : (
-                <Formik
-                  initialValues={formInitialValues}
-                  // validationSchema={currentValidationSchema}
-                  onSubmit={_handleSubmit}
-                >
-                  {({ isSubmitting }) => (
-                    <Form id={formId}>
-                      {_renderStepContent(activeStep)}
+                <ImageUploadProvider>
+                  <Formik
+                    initialValues={formInitialValues}
+                    // validationSchema={currentValidationSchema}
+                    onSubmit={_handleSubmit}
+                  >
+                    {({ isSubmitting }) => (
+                      <Form id={formId}>
+                        {_renderStepContent(activeStep)}
 
-                      <div>
-                        {activeStep !== 0 && (
-                          <Button onClick={_handleBack}>
-                            Atrás
-                          </Button>
-                        )}
-                        <div >
-                          <Button
-                            disabled={isSubmitting}
-                            type="submit"
-                            variant="contained"
-                            color="primary"
-                          >
-                            {isLastStep ? "Subir informe" : "Siguiente"}
-                          </Button>
-                          {isSubmitting && (
-                            <CircularProgress
-                              size={24}
-                            />
+                        <div>
+                          {activeStep !== 0 && (
+                            <Button onClick={_handleBack}>
+                              Atrás
+                            </Button>
                           )}
+                          <div >
+                            <Button
+                              disabled={isSubmitting}
+                              type="submit"
+                              variant="contained"
+                              color="primary"
+                            >
+                              {isLastStep ? "Subir informe" : "Siguiente"}
+                            </Button>
+                            {isSubmitting && (
+                              <CircularProgress
+                                size={24}
+                              />
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    </Form>
-                  )}
-                </Formik>
+                      </Form>
+                    )}
+                  </Formik>
+                </ImageUploadProvider>
               )}
           </Paper>
         </Grid>

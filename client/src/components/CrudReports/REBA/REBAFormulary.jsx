@@ -12,6 +12,7 @@ import { CircularProgress } from '@mui/material';
 import { Formik, Form } from "formik";
 import formInitialValues from "./REBAFormInitialValues";
 import ReportSuccess from '../ReportSuccess';
+import { reportService } from '../../../hooks/useReports';
 
 const steps = ['Datos identificativos', 'Imágenes', 'Descripción', 'Valoración grupo A', 'Valoración grupo B', 'Valoración de fuerzas y cargas', 'Resultados', 'Enviar'];
 const { formId, formField } = REBAForm;
@@ -21,7 +22,7 @@ function _renderStepContent(step) {
         case 0:
             return <DatosIdentificativosForm formField={formField} />;
         case 1:
-            return <ImageUploadStep />;
+            return <ImageUploadStep formField={formField} />;
         case 2:
             return (
                 <React.Fragment>
@@ -30,7 +31,7 @@ function _renderStepContent(step) {
                     </Typography>
                     <Grid container spacing={3} paddingBottom={'20px'}>
                         <Grid item xs={12}>
-                            <InputField name={formField.descripcionTrabajo.name} multiline rows={7} label={formField.descripcionTrabajo.name} fullWidth />
+                            <InputField name={formField.descripcionTrabajoREBA.name} multiline rows={7} label={formField.descripcionTrabajoREBA.name} fullWidth />
                         </Grid>
                     </Grid>
                 </React.Fragment>
@@ -41,7 +42,7 @@ function _renderStepContent(step) {
             return <GrupoBEvaluation formField={formField} />;
         case 5:
             return <GrupoCEvaluation formField={formField} />;
-        case 6: 
+        case 6:
             return <ResultREBAForm formField={formField} />;
         case 7:
             return <Grid containter display={"flex"} justifyContent={"center"} spacing={4} paddingBottom={"30px"}>
@@ -53,6 +54,45 @@ function _renderStepContent(step) {
             return <div>No encontrado</div>;
     }
 }
+
+function create_REBA_report(values) {
+    const report = {
+        empleado: values.DNI,
+        fecha: values.fecha,
+        empresa: values.CIF,
+        centroDeTrabajo: values.centroDeTrabajo,
+        puestoDeTrabajo: values.puestoDeTrabajo,
+        referencia: values.referencia,
+        descripcionTrabajoREBA: values.descripcionTrabajoREBA,
+        puntuacionCuello: parseInt(values.puntuacionCuello),
+        cambioCuello: parseInt(values.cambioCuello),
+        puntuacionTronco: parseInt(values.puntuacionTronco),
+        cambioTronco: parseInt(values.cambioTronco),
+        puntuacionPiernas: parseInt(values.puntuacionPiernas),
+        cambioPiernas1: parseInt(values.cambioPiernas1),
+        cambioPiernas2: parseInt(values.cambioPiernas2),
+        puntuacionBrazos: parseInt(values.puntuacionBrazos),
+        cambioBrazosAbducido: parseInt(values.cambioBrazosAbducido),
+        cambioBrazosHombroLevantado: parseInt(values.cambioBrazosHombroLevantado),
+        cambioBrazosApoyado: parseInt(values.cambioBrazosApoyado),
+        puntuacionAntebrazos: parseInt(values.puntuacionAntebrazos),
+        puntuacionMunecas: parseInt(values.puntuacionMunecas),
+        cambioMunecas: parseInt(values.cambioMunecas),
+        puntuacionCarga: parseInt(values.puntuacionCarga),
+        cambioCarga: parseInt(values.cambioCarga),
+        puntuacionAgarre: parseInt(values.puntuacionAgarre),
+        estatismo: parseInt(values.estatismo),
+        accionesRepetidas: parseInt(values.accionesRepetidas),
+        cambiosRapidos: parseInt(values.cambiosRapidos),
+        indicacionesYMedidasPreventivas: {
+            indicaciones: 'No hay indicaciones ni medidas preventivas'
+        },
+        images: values.images
+
+    }
+    return report;
+};
+
 
 export function REBAFormulary() {
     const [activeStep, setActiveStep] = useState(0);
@@ -66,6 +106,9 @@ export function REBAFormulary() {
     async function _submitForm(values, actions) {
         await _sleep(1000);
         alert(JSON.stringify(values, null, 2));
+        console.log("VALUES REBA", values);
+        let report = create_REBA_report(values);
+        reportService.createReportREBA(report);
         actions.setSubmitting(false);
 
         setActiveStep(activeStep + 1);

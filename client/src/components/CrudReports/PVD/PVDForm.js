@@ -3,38 +3,39 @@ export default {
     formField: {
         empleado: {
             name: 'DNI',
-            label: 'DNI del empleado*',
-            requiredErrorMsg: 'DNI del empleado es requerido'
-        },
-        empresa: {
-            name: 'CIF',
-            label: 'CIF Empresa*',
-            requiredErrorMsg: 'CIF de la empresa es requerido'
-        },
-        centroDeTrabajo: {
-            name: 'centroDeTrabajo',
-            label: 'Centro de trabajo*',
-            requiredErrorMsg: 'Centro de trabajo es requerido'
-        },
-        puestoDeTrabajo: {
-            name: 'puestoDeTrabajo',
-            label: 'Puesto de trabajo*',
-            requiredErrorMsg: 'Puesto de trabajo es requerido'
+            label: 'DNI*',
+            requiredErrorMsg: 'El dni es requerido'
         },
         fecha: {
             name: 'fecha',
             label: 'Fecha*',
-            requiredErrorMsg: 'Fecha es requerida'
+            requiredErrorMsg: 'La fecha es requerida'
+        },
+        empresa: {
+            name: 'CIF',
+            label: 'CIF*',
+            requiredErrorMsg: 'El CIF es requerido'
+        },
+        centroDeTrabajo: {
+            name: 'centroDeTrabajo',
+            label: 'Centro de trabajo*',
+            requiredErrorMsg: 'El centro de trabajo es requerido'
+        },
+        puestoDeTrabajo: {
+            name: 'puestoDeTrabajo',
+            label: 'Puesto de trabajo*',
+            requiredErrorMsg: 'El puesto de trabajo es requerido'
         },
         referencia: {
             name: 'referencia',
             label: 'Referencia*',
-            requiredErrorMsg: 'Referencia es requerida'
+            requiredErrorMsg: 'La referencia es requerida'
+
         },
         descripcionTrabajoPVD: {
             name: 'descripcionTrabajoPVD',
             label: 'Descripción del trabajo con pantallas*',
-            requiredErrorMsg: 'Descripción del trabajo con pantallas es requerida'
+            requiredErrorMsg: 'La descripción del trabajo con pantallas es requerida'
         },
         aspectosPantalla:
         {
@@ -96,11 +97,18 @@ export default {
             label: 'Aspectos de la organización del trabajo*',
             requiredErrorMsg: 'Los aspectos de la organización son requeridos'
         },
-        indicaciones: 
+        indicaciones:
         {
             name: 'indicaciones',
             label: 'Indicaciones*',
             requiredErrorMsg: 'Las indicaciones son requeridas'
+        },
+        images:
+        {
+            name: 'images',
+            label: 'Imágenes*',
+            requiredErrorMsg: 'Las imágenes son requeridas'
         }
     }
+
 };

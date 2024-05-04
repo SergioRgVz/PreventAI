@@ -10,32 +10,61 @@ import { CircularProgress } from '@mui/material';
 import { Formik, Form } from "formik";
 import formInitialValues from "../PVD/PVDFormInitialValues";
 import ReportSuccess from '../ReportSuccess';
+import {reportService} from '../../../hooks/useReports';
 
 const steps = ['Datos identificativos', 'Imágenes', 'Descripción', 'Valoración', 'Resultados', 'Enviar'];
-const { formId, formField } = PVDForm; 
+const { formId, formField } = PVDForm;
 
 function _renderStepContent(step) {
   switch (step) {
     case 0:
       return <DatosIdentificativosForm formField={formField} />;
     case 1:
-      return <ImageUploadStep />;
+      return <ImageUploadStep formField={formField} />;
     case 2:
-        return <DescripcionPVDForm formField={formField} />; 
-      case 3:
-      return <EvaluationPVDForm formField={formField} />; 
+      return <DescripcionPVDForm formField={formField} />;
+    case 3:
+      return <EvaluationPVDForm formField={formField} />;
     case 4:
       return <ResultsPVDForm formField={formField} />;
     case 5:
       return <Grid containter display={"flex"} justifyContent={"center"} spacing={4} paddingBottom={"30px"}>
-      <Grid item xs={12} sm={4}>
-        <Button variant='contained' color='buttons' type="submit">Guardar PDF</Button>
+        <Grid item xs={12} sm={4}>
+          <Button variant='contained' color='buttons' type="submit">Guardar PDF</Button>
+        </Grid>
       </Grid>
-    </Grid>
     default:
       return <div>No encontrado</div>;
   }
 }
+
+function create_PVD_report(values) {
+  const report = {
+    empleado : values.DNI,
+    fecha : values.fecha,
+    empresa : values.CIF,
+    centroDeTrabajo : values.centroDeTrabajo,
+    puestoDeTrabajo : values.puestoDeTrabajo,
+    referencia : values.referencia,
+    descripcionTrabajoPVD: values.descripcionTrabajoPVD,
+    aspectosPantalla: values.aspectosPantalla,
+    aspectosTeclado: values.aspectosTeclado,
+    aspectosMesa: values.aspectosMesa,
+    aspectosSilla: values.aspectosSilla,
+    aspectosEspacio: values.aspectosEspacio,
+    aspectosIluminacion: values.aspectosIluminacion,
+    aspectosRuido: values.aspectosRuido,
+    aspectosTemeperatura: values.aspectosTemperatura,
+    aspectosProgramas: values.aspectosProgramas,
+    aspectosOrganizacion: values.aspectosOrganizacion,
+    indicacionesYMedidasPreventivas : {
+      indicaciones : values.indicaciones
+    },
+    images: values.images
+  };
+  return report;
+}
+
 
 export function PVDFormulary() {
   const [activeStep, setActiveStep] = useState(0);
@@ -48,7 +77,9 @@ export function PVDFormulary() {
 
   async function _submitForm(values, actions) {
     await _sleep(1000);
-    alert(JSON.stringify(values, null, 2));
+    let report = create_PVD_report(values);
+    reportService.createReportPVD(report);
+    // alert(JSON.stringify(values, null, 2));  
     actions.setSubmitting(false);
 
     setActiveStep(activeStep + 1);

@@ -9,7 +9,7 @@ import { GoBackButton } from '../components/utils/GoBackButton';
 const pageToRouteMapping = {
   'Inicio': '/home',
   'Nueva evaluación': '/create-report',
-  'Abrir evaluación': '/open-report',
+  'Abrir evaluación': '/view-reports',
   'Gestionar': '/management',
 };
 const settings = ['Perfil', 'Cerrar sesión'];

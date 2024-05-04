@@ -19,9 +19,11 @@ const employeeService = {
      */
     findEmployee: async (DNI) => {
         try {
-            const employee = await Employee.findOne({ DNI }).exec();
+            const employee = await Employee.findOne({ DNI: DNI }).exec();
+            console.log("INSIDE FIND EMPLOYEE DNI: ", DNI, "EMPLOYEE: ", employee);
             return employee;
         } catch (error) {
+            console.error('Error al buscar empleado por DNI:', error);
             return null;
         }
     },

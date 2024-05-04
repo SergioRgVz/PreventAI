@@ -61,7 +61,17 @@ export default function EvaluationGINSHTForm(props) {
         ];
         const selectedRadioValue = event.target.value;
         const alturaSelected = parseInt(values.alturaLevantamiento, 10);
-        setFieldValue('pesoTeoricoRecomendado', valores[alturaSelected][selectedRadioValue]);
+        setFieldValue('pesoTeoricoRecomendado', valores[selectedRadioValue][alturaSelected]);
+    };
+
+    const handleChangeAltura = (event) => {
+        let valores = [
+            [13, 19, 25, 20, 14], //TODO: tener en cuenta sexo
+            [7, 11, 13, 12, 8]
+        ];
+        const selectedRadioValue = event.target.value;
+        const separacionSelected = parseInt(values.separacionLevantamiento, 10);
+        setFieldValue('pesoTeoricoRecomendado', valores[separacionSelected][selectedRadioValue]);
     };
 
     useEffect(() => {
@@ -112,8 +122,8 @@ export default function EvaluationGINSHTForm(props) {
                         label={posturaLevantamiento.label}
                         row
                         data={[
-                            { value: '0', label: 'De pie' },
-                            { value: '1', label: 'Sentado' }
+                            { value: 0, label: 'De pie' },
+                            { value: 1, label: 'Sentado' }
                         ]}
                     />
                 </Grid>
@@ -123,8 +133,8 @@ export default function EvaluationGINSHTForm(props) {
                         label={distanciaDeDesplazamientos.label}
                         row
                         data={[
-                            { value: '0', label: 'Hasta 10 metros' },
-                            { value: '1', label: 'Más de 10 metros' }
+                            { value: 0, label: 'Hasta 10 metros' },
+                            { value: 1, label: 'Más de 10 metros' }
                         ]}
                     />
                 </Grid>
@@ -145,13 +155,13 @@ export default function EvaluationGINSHTForm(props) {
                     <RadioInputField
                         name={alturaLevantamiento.name}
                         label={alturaLevantamiento.label}
-
+                        onChange={handleChangeAltura}
                         data={[
-                            { value: '0', label: 'Altura de la vista' },
-                            { value: '1', label: 'Encima del codo' },
-                            { value: '2', label: 'Debajo del codo' },
-                            { value: '3', label: 'Altura del muslo' },
-                            { value: '4', label: 'Altura de la pantorrilla' }
+                            { value: 0, label: 'Altura de la vista' },
+                            { value: 1, label: 'Encima del codo' },
+                            { value: 2, label: 'Debajo del codo' },
+                            { value: 3, label: 'Altura del muslo' },
+                            { value: 4, label: 'Altura de la pantorrilla' }
                         ]}
                     />
                     <RadioInputField
@@ -159,8 +169,8 @@ export default function EvaluationGINSHTForm(props) {
                         label={separacionLevantamiento.label}
                         onChange={handleChangeSeparacion}
                         data={[
-                            { value: '0', label: 'Carga cerca del cuerpo' },
-                            { value: '1', label: 'Carga lejos del cuerpo' }
+                            { value: 0, label: 'Carga cerca del cuerpo' },
+                            { value: 1, label: 'Carga lejos del cuerpo' }
                         ]}
                     />
                 </Stack>
@@ -175,11 +185,11 @@ export default function EvaluationGINSHTForm(props) {
                     label={desplazamientoVertical.label}
                     row
                     data={[
-                        { value: '1', label: 'Hasta 25 cm' },
-                        { value: '0.91', label: 'Hasta 50 cm' },
-                        { value: '0.87', label: 'Hasta 100 cm' },
-                        { value: '0.84', label: 'Hasta 175 cm' },
-                        { value: '0', label: 'Más de 175 cm' }
+                        { value: 1, label: 'Hasta 25 cm' },
+                        { value: 0.91, label: 'Hasta 50 cm' },
+                        { value: 0.87, label: 'Hasta 100 cm' },
+                        { value: 0.84, label: 'Hasta 175 cm' },
+                        { value: 0, label: 'Más de 175 cm' }
                     ]}
                 />
 
@@ -188,10 +198,10 @@ export default function EvaluationGINSHTForm(props) {
                     label={giroDelTronco.label}
                     row
                     data={[
-                        { value: '1', label: 'Sin giro' },
-                        { value: '0.9', label: 'Poco girado (hasta 30º)' },
-                        { value: '0.8', label: 'Girado (hasta 60º)' },
-                        { value: '0.7', label: 'Muy girado (90º)' }
+                        { value: 1, label: 'Sin giro' },
+                        { value: 0.9, label: 'Poco girado (hasta 30º)' },
+                        { value: 0.8, label: 'Girado (hasta 60º)' },
+                        { value: 0.7, label: 'Muy girado (90º)' }
                     ]}
                 />
 
@@ -200,9 +210,9 @@ export default function EvaluationGINSHTForm(props) {
                     label={tipoDeAgarre.label}
                     row
                     data={[
-                        { value: '1', label: 'Agarre bueno' },
-                        { value: '0.95', label: 'Agarre regular' },
-                        { value: '0.9', label: 'Agarre malo' }
+                        { value: 1, label: 'Agarre bueno' },
+                        { value: 0.95, label: 'Agarre regular' },
+                        { value: 0.9, label: 'Agarre malo' }
                     ]}
                 />
 
@@ -211,9 +221,9 @@ export default function EvaluationGINSHTForm(props) {
                     label={duracionManipulacion.label}
                     row
                     data={[
-                        { value: '0', label: 'Menos de 1 hora al día' },
-                        { value: '1', label: 'Entre 1 y 2 horas al día' },
-                        { value: '2', label: 'Entre 2 y 8 horas al día' }
+                        { value: 0, label: 'Menos de 1 hora al día' },
+                        { value: 1, label: 'Entre 1 y 2 horas al día' },
+                        { value: 2, label: 'Entre 2 y 8 horas al día' }
                     ]}
                 />
 
@@ -223,12 +233,12 @@ export default function EvaluationGINSHTForm(props) {
                     row
                     onChange={handleChangeFrecuencia}
                     data={[
-                        { value: '0', label: '1 vez cada 5 minutos' },
-                        { value: '1', label: '1 vez/minuto' },
-                        { value: '2', label: '4 veces/minuto' },
-                        { value: '3', label: '9 veces/minuto' },
-                        { value: '4', label: '12 veces/minuto' },
-                        { value: '5', label: 'Más de 15 veces/minuto' },
+                        { value: 0, label: '1 vez cada 5 minutos' },
+                        { value: 1, label: '1 vez/minuto' },
+                        { value: 2, label: '4 veces/minuto' },
+                        { value: 3, label: '9 veces/minuto' },
+                        { value: 4, label: '12 veces/minuto' },
+                        { value: 5, label: 'Más de 15 veces/minuto' },
                     ]}
                 />
             </Stack>

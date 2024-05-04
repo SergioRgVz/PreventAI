@@ -17,6 +17,7 @@ import { DeleteEmployee } from './pages/DeleteEmployee';
 import { CreateGINSHT } from './pages/CreateGINSHT';
 import { CreatePVD } from './pages/CreatePVD';
 import { CreateREBA } from './pages/CreateREBA';
+import { ReportsPage } from './pages/ReportsPage';
 import { ThemeProvider } from '@mui/material/styles';
 import { createTheme } from '@mui/material/styles';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -59,6 +60,7 @@ export function App() {
             <Route path="/create-GINSHT" element={<CreateGINSHT/> }/>
             <Route path="/create-PVD" element={<CreatePVD/> }/>
             <Route path="/create-REBA" element={<CreateREBA/> }/>
+            <Route path="/view-reports" element={<ReportsPage setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
             <Route path="/management" element={<ManagementPage setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
             <Route path="/management/view-companies" element={<CompaniesPage setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
             <Route path="/management/create-company" element={<CreateCompany setLoggedIn={setLoggedIn} setEmail={setEmail} />} />

@@ -1,69 +1,26 @@
-import { useState } from 'react';
-import React  from 'react';
-import { Typography, Grid, Box, IconButton } from '@mui/material';
+// Componente ImageUploadStep ajustado para recibir la configuración completa de 'images'
+import React from 'react';
+import { useFormikContext } from 'formik';
+import { Grid, Typography, Box, IconButton } from '@mui/material';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
+import ImageUploadField from './ImageUploadField.jsx';  // Asegúrate de importar tu componente personalizado
 
-function ImageUploadStep() {
-  const [images, setImages] = useState([]);
+export default function ImageUploadStep({ formField }) {
+    const { values, setFieldValue } = useFormikContext();
 
-  const handleImageChange = (event) => {
-    setImages([...images, ...event.target.files]);
-  };
+    // Asegúrate de que 'formField.images' exista y sea un objeto correcto
+    const imagesField = formField.images;
 
-  return (
-    <React.Fragment>
-      <Typography variant="h4" gutterBottom>
-        Imágenes
-      </Typography>
-      <Typography variant="subtitle1">
-        Adjunta aquí tus imágenes, máximo 4.
-      </Typography>
-
-      <Box sx={{ mt: 2, mb: 2 }}>
-        <label htmlFor="icon-button-file">
-          <input
-            accept="image/*"
-            id="icon-button-file"
-            type="file"
-            style={{ display: 'none' }}
-            multiple
-            onChange={handleImageChange}
-          />
-          <IconButton color="primary" aria-label="upload picture" component="span">
-            <PhotoCamera />
-          </IconButton>
-        </label>
-      </Box>
-
-      <Grid container spacing={2} paddingBottom={'20px'}>
-        {Array.from({ length: 4 }).map((_, index) => (
-          <Grid item xs={6} sm={3} key={index}>
-            <Box
-              sx={{
-                width: '100%',
-                height: 140,
-                backgroundColor: images[index] ? 'transparent' : '#eee',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                border: '1px dashed grey',
-              }}
-            >
-              {images[index] ? (
-                <img
-                  src={URL.createObjectURL(images[index])}
-                  alt={`upload-preview-${index}`}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
-              ) : (
-                <PhotoCamera sx={{ color: 'grey.500' }} />
-              )}
-            </Box>
-          </Grid>
-        ))}
-      </Grid>
-    </React.Fragment>
-  );
+    return (
+        <React.Fragment>
+            <Typography variant="h4" gutterBottom>
+                {imagesField.label}
+            </Typography>
+            <Grid container spacing={3} paddingBottom={'20px'}>
+                <Grid item xs={12}>
+                    <ImageUploadField name={imagesField.name} />
+                </Grid>
+            </Grid>
+        </React.Fragment>
+    );
 }
-
-export default ImageUploadStep;

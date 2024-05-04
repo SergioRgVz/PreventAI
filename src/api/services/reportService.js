@@ -1,21 +1,42 @@
 import ReportGINSHT from "../models/reportModel.js";
-import  ReportPWD from "../models/reportModel.js";
+import { ReportPWD } from "../models/reportModel.js";
+import { ReportREBA } from "../models/reportModel.js";
 import employeeService from "./employeeService.js";
 import companyService from "./companyService.js";
 import Company from "../models/companyModel.js";
 import HttpError from "../../utils/HttpError.js";
+import mongoose from "mongoose";
 
 const reportService = {
-    getAllReports: async (userId) => {
+    getAllReports: async function getAllReports(userId) {
         if (!userId) {
             throw new HttpError(400, 'Falta el userId');
         }
         try {
-            const reports = await ReportGINSHT.find({ User: userId }).exec();
-            if (!reports || reports.length === 0) {
+            console.log("Buscando los informes del usuario: ", userId);
+            let reports = [];
+            
+            const reportsREBA = await ReportREBA.find({ tecnico_id: userId });
+            if (reportsREBA.length > 0) {
+                reports = reports.concat(reportsREBA);
+            }
+    
+            const reportsPWD = await ReportPWD.find({ tecnico_id: userId });
+            if (reportsPWD.length > 0) {
+                reports = reports.concat(reportsPWD);
+            }
+    
+            const reportsGINSHT = await ReportGINSHT.find({ tecnico_id: userId });
+            if (reportsGINSHT.length > 0) {
+                reports = reports.concat(reportsGINSHT);
+            }
+    
+            if (reports.length === 0) {
                 throw new HttpError(404, 'No se encontraron informes para el usuario proporcionado.');
             }
-            reports.push(await ReportPWD.find({ User: userId }).exec());
+    
+            console.log("Numero de informes encontrados: ", reports.length);
+            console.log("Informes encontrados: ", reports);
             return reports;
         } catch (error) {
             if (error instanceof HttpError) {
@@ -47,6 +68,7 @@ const reportService = {
             if (!filteredReports || filteredReports.length === 0) {
                 throw new HttpError(204, 'No se encontraron informes para el empleado especificado.');
             }
+
 
             return filteredReports;
         } catch (error) {
@@ -89,14 +111,18 @@ const reportService = {
         try {
             const reportGINSHT = await ReportGINSHT.findById(reportId).exec();
             const reportPWD = await ReportPWD.findById(reportId).exec();
+            
             if (!reportGINSHT && !reportPWD) {
                 throw new HttpError(404, 'No se encontró el informe solicitado.');
             }
+
             let report = reportGINSHT || reportPWD;
             if (report.User.toString() !== userId) {
                 throw new HttpError(403, 'No está autorizado para ver este informe.');
             }
+
             return report;
+
         } catch (error) {
             console.error('Error al buscar informe por ID:', error);
             throw new HttpError(500, 'Error interno del servidor');
@@ -106,23 +132,41 @@ const reportService = {
         if (!userId || !reportData) {
             throw new HttpError(400, 'Falta información necesaria para crear el informe.');
         }
+
         try {
-            const company = await companyService.findCompanyByCIF(reportData.company);
+            const company = await companyService.findCompanyByCIF(reportData.empresa);
             if (!company) {
                 throw new HttpError(404, 'No se encontró la empresa especificada.');
             }
-            const employee = await employeeService.findEmployee({ DNI: reportData.employee });
+
+            const employee = await employeeService.findEmployee(reportData.empleado);
             if (!employee) {
                 throw new HttpError(404, 'No se encontró el empleado especificado.');
             }
-            const report = new ReportGINSHT({
+
+            if (reportData.indicacionesYMedidasPreventivas && typeof reportData.indicacionesYMedidasPreventivas === 'string') {
+                reportData.indicacionesYMedidasPreventivas = JSON.parse(reportData.indicacionesYMedidasPreventivas);
+            }
+            // console.log("ReportData original: ", reportData);
+
+            let _id = new mongoose.Types.ObjectId();
+            const modifiedReportData = ({
                 ...reportData,
-                User: userId,
-                company: company._id,
-                employee: employee._id
+                tecnico_id: userId,
+                empresa: company._id,
+                empleado: employee._id,
+                _id: _id,
+                indicacionesYMedidasPreventivas: reportData.indicacionesYMedidasPreventivas,
+                images: reportData.images  
             });
-            await report.save();
+
+
+            const report = new ReportGINSHT(modifiedReportData);
+
+            await report.save(); 
+            console.log('Reporte GINSHT guardado con éxito:', report);
             return report;
+
         } catch (error) {
             console.error('Error al crear informe GINSHT:', error);
             throw new HttpError(500, 'Error interno del servidor');
@@ -133,20 +177,35 @@ const reportService = {
             throw new HttpError(400, 'Falta información necesaria para crear el informe.');
         }
         try {
-            const company = await companyService.findCompanyByCIF(reportData.company);
+            const company = await companyService.findCompanyByCIF(reportData.empresa);
             if (!company) {
                 throw new HttpError(404, 'No se encontró la empresa especificada.');
             }
-            const employee = await employeeService.findEmployee({ DNI: reportData.employee });
+    
+            const employee = await employeeService.findEmployee(reportData.empleado);
             if (!employee) {
                 throw new HttpError(404, 'No se encontró el empleado especificado.');
             }
+    
+            let _id = new mongoose.Types.ObjectId();
+            
+            if (reportData.indicacionesYMedidasPreventivas && typeof reportData.indicacionesYMedidasPreventivas === 'string') {
+                reportData.indicacionesYMedidasPreventivas = JSON.parse(reportData.indicacionesYMedidasPreventivas);
+            }
+
+            console.log("INDICACIONES INDICADAS: ", reportData.indicacionesYMedidasPreventivas);
+
+
             const report = new ReportPWD({
                 ...reportData,
-                User: userId,
-                company: company._id,
-                employee: employee._id
+                tecnico_id: userId,
+                empresa: company._id,
+                empleado: employee._id,
+                _id: _id,
+                indicacionesYMedidasPreventivas: reportData.indicacionesYMedidasPreventivas,
+                images: reportData.images  
             });
+    
             await report.save();
             return report;
         } catch (error) {
@@ -154,6 +213,49 @@ const reportService = {
             throw new HttpError(500, 'Error interno del servidor');
         }
     },
+
+    createReportREBA: async (userId, reportData) => {
+        if (!userId || !reportData) {
+            throw new HttpError(400, 'Falta información necesaria para crear el informe.');
+        }
+        try {
+            
+            const company = await companyService.findCompanyByCIF(reportData.empresa);
+            if (!company) {
+                throw new HttpError(404, 'No se encontró la empresa especificada.');
+            }
+
+            const employee = await employeeService.findEmployee(reportData.empleado);
+            if (!employee) {
+                throw new HttpError(404, 'No se encontró el empleado especificado.');
+            }
+
+            if (reportData.indicacionesYMedidasPreventivas && typeof reportData.indicacionesYMedidasPreventivas === 'string') {
+                reportData.indicacionesYMedidasPreventivas = JSON.parse(reportData.indicacionesYMedidasPreventivas);
+            }
+
+            let _id = new mongoose.Types.ObjectId();
+
+            const report = new ReportREBA({
+                ...reportData,
+                tecnico_id: userId,
+                empresa: company._id,
+                empleado: employee._id,
+                _id: _id,
+                indicacionesYMedidasPreventivas: reportData.indicacionesYMedidasPreventivas,
+                images: reportData.images  
+            });
+
+            await report.save();
+            return report;
+
+        } catch (error) {
+            console.error('Error al crear informe REBA:', error);
+            throw new HttpError(500, 'Error interno del servidor');
+        }
+    },
+    
+
     modifyGINSHT: async (userId, reportId, reportData) => {
         if (!userId || !reportId || !reportData) {
             throw new HttpError(400, 'Falta información necesaria para modificar el informe.');
@@ -163,22 +265,27 @@ const reportService = {
             if (!report) {
                 throw new HttpError(404, 'No se encontró el informe especificado.');
             }
+
             // Similar a create, verificamos la empresa y el empleado antes de proceder
             const company = await companyService.findCompanyByCIF(reportData.company);
             if (!company) {
                 throw new HttpError(404, 'No se encontró la empresa especificada.');
             }
+
             const employee = await employeeService.findEmployee({ DNI: reportData.employee });
             if (!employee) {
                 throw new HttpError(404, 'No se encontró el empleado especificado.');
             }
+
             report.set({
                 ...reportData,
                 company: company._id,
                 employee: employee._id
             });
+
             await report.save();
             return report;
+
         } catch (error) {
             console.error('Error al modificar informe GINSHT:', error);
             throw new HttpError(500, 'Error interno del servidor');
@@ -193,25 +300,54 @@ const reportService = {
             if (!report) {
                 throw new HttpError(404, 'No se encontró el informe especificado.');
             }
+
             // Similar a create, verificamos la empresa y el empleado antes de proceder
             const company = await companyService.findCompanyByCIF(reportData.company);
             if (!company) {
                 throw new HttpError(404, 'No se encontró la empresa especificada.');
             }
+
             const employee = await employeeService.findEmployee({ DNI: reportData.employee });
             if (!employee) {
                 throw new HttpError(404, 'No se encontró el empleado especificado.');
             }
+
             report.set({
                 ...reportData,
                 company: company._id,
                 employee: employee._id
             });
+
             await report.save();
             return report;
+
         } catch (error) {
             console.error('Error al modificar informe PWD:', error);
             throw new HttpError(500, 'Error interno del servidor');
+        }
+    },
+    deleteReport: async(reportId) => {
+        if(!reportId)
+        {
+            throw new HttpError(400, 'Falta información necesaria para eliminar el informe.');
+        }
+        const models = [ReportGINSHT, ReportPWD, ReportREBA];
+
+        for (const model of models) {
+            try {
+                const reportExists = await model.findOne({ _id: reportId });
+                if(reportExists) {
+                    const result = await model.deleteOne({ _id: reportId });
+                    if (result.deletedCount === 1) {
+                        console.log('Informe eliminado con éxito:', reportId);  
+                        return { message: 'Informe eliminado con éxito' };
+                    }
+                }
+            }
+            catch(error) {
+                console.error('Error al eliminar informe:', error);
+                throw new HttpError(500, 'Error interno del servidor');
+            }
         }
     },
     deleteReportGINSHT: async (userId, reportId) => {

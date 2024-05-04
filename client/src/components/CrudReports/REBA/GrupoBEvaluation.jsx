@@ -23,20 +23,30 @@ export default function GrupoBEvaluation(props) {
 
     useEffect(() => {
         let valores = ['/REBA/GrupoB/flexion_brazo_20.png', '/REBA/GrupoB/flexion_brazo_20_45.png', '/REBA/GrupoB/flexion_brazo_45_90.png', '/REBA/GrupoB/flexion_brazo_mas_90.png'];
-
-        setValueArmsImage(valores[values.puntuacionBrazos - 1]);
+        if(values.puntuacionBrazos != 0){
+            setValueArmsImage(valores[values.puntuacionBrazos - 1]);
+        } else {
+            setValueArmsImage('/REBA/GrupoB/flexion_brazo_20.png');
+        }
     }, [values.puntuacionBrazos]);
 
     useEffect(() => {
         let valores = ['/REBA/GrupoB/flexion_antebrazo_60_100.png', '/REBA/GrupoB/flexion_antebrazo_mas_100.png'];
 
-        setValueForearmsImage(valores[values.puntuacionAntebrazos -1]);
+        if(values.puntuacionAntebrazos != 0){
+            setValueForearmsImage(valores[values.puntuacionAntebrazos -1]);
+        } else {
+            setValueForearmsImage('/REBA/GrupoB/flexion_antebrazo_60_100.png');
+        }
     }, [values.puntuacionAntebrazos]);
 
     useEffect(() => {
         let valores = ['/REBA/GrupoB/muneca_0_15.png', '/REBA/GrupoB/muneca_mas_15.png'];
-
-        setValueWristsImage(valores[values.puntuacionMunecas - 1]);
+        if(values.puntuacionMunecas != 0){
+            setValueWristsImage(valores[values.puntuacionMunecas - 1]);
+        } else {
+            setValueWristsImage('/REBA/GrupoB/muneca_0_15.png');
+        }
     }, [values.puntuacionMunecas]);
 
 

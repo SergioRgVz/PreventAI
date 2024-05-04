@@ -9,7 +9,7 @@ import Typography from '@mui/material/Typography';
 const pageToRouteMapping = {
   'Inicio': '/home',
   'Nueva evaluación': '/create-report',
-  'Abrir evaluación': '/open-report',
+  'Abrir evaluación': '/view-reports',
   'Gestionar': '/management',
 };
 

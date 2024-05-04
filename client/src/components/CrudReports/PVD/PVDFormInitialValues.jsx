@@ -18,7 +18,8 @@ const {
         aspectosTemperatura,
         aspectosProgramas,
         aspectosOrganizacion,
-        indicaciones
+        indicaciones,
+        images
         
     }
 } = PVDForm;
@@ -42,4 +43,5 @@ export default {
     [aspectosProgramas.name]: [],
     [aspectosOrganizacion.name]: [],
     [indicaciones.name]: '', 
+    [images]: []
 }

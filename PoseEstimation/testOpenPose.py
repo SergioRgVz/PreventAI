@@ -23,4 +23,6 @@ def detect_pose(image_path):
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
-detect_pose('imagenpostura.jpg')
+# detect_pose('imagenpostura.jpg')
+detect_pose('weirdpose.jpg')
+# detect_pose('weirdpose2.jpeg')
