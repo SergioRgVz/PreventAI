@@ -25,6 +25,6 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     # Aquí puedes descomentar y ajustar los comandos según sea necesario
-    - run: npm ci
+    - run: npm install
     # - run: npm test
     - run: pm2 restart backendserver
