@@ -1,0 +1,30 @@
+
+name: Node.js CI/CD
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    if: contains(github.event.head_commit.message, 'deploy') || github.event_name == 'workflow_dispatch'
+    runs-on: self-hosted
+    strategy:
+      matrix:
+        node-version: [20.x]
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Create .env file MongoDB
+      run: |
+        echo "DB_URI=${{ secrets.DB_URI }}" > .env
+        echo "DB_CODE_URI=${{ secrets.DB_CODE_URI }}" >> .env
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    # Aquí puedes descomentar y ajustar los comandos según sea necesario
+    - run: npm install
+    # - run: npm test
+    - run: pm2 restart backendserver
