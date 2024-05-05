@@ -11,7 +11,7 @@
 
 import { Schema } from 'mongoose';
 import mongoose from '../../../config/db.js';
-
+ 
 const employeeSchema = new mongoose.Schema({
     DNI: { type: String, required: true, trim: true }, 
     name: { type: String, required: true, trim: true },
