@@ -13,9 +13,9 @@ const apiClient = axios.create({
     // baseURL: 'http://localhost:8080/', // Desarrollo
     baseURL: 'http://3.93.240.154:8080/', // Producción
     headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json' 
     }
-});
+}); 
 
 /**
  * Request interceptor to add authorization token to headers.
