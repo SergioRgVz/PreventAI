@@ -6,55 +6,52 @@ import { CompanySelector } from '../CrudEmpresas/CompanySelector';
 import { DatePicker } from '@mui/x-date-pickers';
 import { companyService } from '../../hooks/useCompanies';
 import dayjs from 'dayjs';
-// import 'dayjs/locale/es';
 
-
-export const FormularioEmployee = ({ onSubmit, employee }) => {
-  const [date, setDate] = useState(null);
+export const FormularioEmployee = ({ onSubmit, employee = {} }) => {
+  const [date, setDate] = useState(dayjs(employee.FechaNacimiento) || dayjs());
   const [formData, setFormData] = useState({
     DNI: employee.DNI || '',
-    name: employee.name || '',
-    surname: employee.surname || '',
-    birth_date: dayjs(employee.birth_date) || dayjs(),
-    age: employee.age || '',
-    telephone: employee.telephone || '',
-    company: employee.company.CIF || '',
-    work_center: employee.work_center || '',
-    position: employee.position || '',
+    Nombre: employee.Nombre || '',
+    Apellidos: employee.Apellidos || '',
+    Telefono: employee.Telefono || '',
+    Correo: employee.Correo || '',
+    Edad: employee.Edad || '',
+    Sexo: employee.Sexo || '',
+    PuestoTrabajo: employee.PuestoTrabajo || '',
+    FechaNacimiento: dayjs(employee.FechaNacimiento) || dayjs(),
+    ID_Empresa: employee.ID_Empresa || '',
   });
-
-  // Actualiza formData cuando company cambia
-  useEffect(() => {
-    setFormData({
-      DNI: employee.DNI || '',
-      name: employee.name || '',
-      surname: employee.surname || '',
-      birth_date: dayjs(date) || '',
-      age: employee.age || '',
-      telephone: employee.telephone || '',
-      company: employee.company.CIF || '',
-      work_center: employee.work_center || '',
-      position: employee.position || '',
-    });
-  }, [employee, date]);
 
   const [companiesList, setCompaniesList] = useState([]);
 
-  const handleSubmit = async (event) => {
-    const formattedDate = date.toISOString(); // Convierte la fecha a una cadena ISO 8601
+  useEffect(() => {
+    setFormData({
+      DNI: employee.DNI || '',
+      Nombre: employee.Nombre || '',
+      Apellidos: employee.Apellidos || '',
+      Telefono: employee.Telefono || '',
+      Correo: employee.Correo || '',
+      Edad: employee.Edad || '',
+      Sexo: employee.Sexo || '',
+      PuestoTrabajo: employee.PuestoTrabajo || '',
+      FechaNacimiento: dayjs(date) || '',
+      ID_Empresa: employee.ID_Empresa || '',
+    });
+  }, [employee, date]);
 
-    setFormData(prevFormData => ({
-      ...prevFormData,
-      birth_date: formattedDate,
-    }));
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    const formattedDate = date.toISOString(); // Convierte la fecha a una cadena ISO 8601
+    const formDataToSend = {
+      ...formData,
+      FechaNacimiento: formattedDate,
+    };
+
     try {
-      onSubmit(formData.DNI, formData);
+      onSubmit(formData.DNI, formDataToSend);
     } catch (error) {
       console.error('Error al actualizar el empleado', error.response ? error.response.data : error);
     }
-
-
   };
 
   const handleChange = (e) => {
@@ -65,9 +62,14 @@ export const FormularioEmployee = ({ onSubmit, employee }) => {
     }));
   };
 
+  const handleDateChange = (newDate) => {
+    setDate(newDate);
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      FechaNacimiento: newDate,
+    }));
+  };
 
-
-  // cargar compañias
   useEffect(() => {
     const fetchCompanies = async () => {
       try {
@@ -82,18 +84,26 @@ export const FormularioEmployee = ({ onSubmit, employee }) => {
     fetchCompanies();
   }, []);
 
+  const handleCompanyChange = (e) => {
+    const { value } = e.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      ID_Empresa: value,
+    }));
+  };
+
   return (
     <Box component="form" display="flex" flexDirection="column" justifyContent="center" alignItems="center" onSubmit={handleSubmit} sx={{ overflow: 'auto', mt: 2 }}>
       <TextField
         margin="normal"
         required
         fullWidth
-        id="name"
+        id="Nombre"
         label="Nombre"
-        name="name"
+        name="Nombre"
         autoComplete="name"
         onChange={handleChange}
-        value={formData.name}
+        value={formData.Nombre}
         autoFocus
         variant='filled'
       />
@@ -101,12 +111,12 @@ export const FormularioEmployee = ({ onSubmit, employee }) => {
         margin="normal"
         required
         fullWidth
-        id="surname"
+        id="Apellidos"
         label="Apellidos"
-        name="surname"
+        name="Apellidos"
         autoComplete="surname"
         onChange={handleChange}
-        value={formData.surname}
+        value={formData.Apellidos}
         variant='filled'
       />
       <TextField
@@ -121,66 +131,89 @@ export const FormularioEmployee = ({ onSubmit, employee }) => {
         value={formData.DNI}
         variant='filled'
       />
-      <LocalizationProvider margin="normal" required fullWidth dateAdapter={AdapterDayjs}>
-        <DatePicker margin="normal" required defaultValue={formData.birth_date} fullWidth onChange={(newValue) => setDate(newValue)} /> {/*Esto se puede optimizar seguro*/}
+      <TextField
+        margin="normal"
+        required
+        fullWidth
+        id="Telefono"
+        label="Teléfono"
+        name="Telefono"
+        autoComplete="telephone"
+        onChange={handleChange}
+        value={formData.Telefono}
+        variant='filled'
+      />
+      <TextField
+        margin="normal"
+        required
+        fullWidth
+        id="Correo"
+        label="Correo"
+        name="Correo"
+        autoComplete="email"
+        onChange={handleChange}
+        value={formData.Correo}
+        variant='filled'
+      />
+      <TextField
+        margin="normal"
+        required
+        fullWidth
+        id="Edad"
+        label="Edad"
+        name="Edad"
+        autoComplete="age"
+        onChange={handleChange}
+        value={formData.Edad}
+        variant='filled'
+      />
+      <TextField
+        margin="normal"
+        required
+        fullWidth
+        id="Sexo"
+        label="Sexo"
+        name="Sexo"
+        autoComplete="sex"
+        onChange={handleChange}
+        value={formData.Sexo}
+        variant='filled'
+      />
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <DatePicker
+          margin="normal"
+          required
+          fullWidth
+          label="Fecha de Nacimiento"
+          value={date}
+          onChange={handleDateChange}
+          renderInput={(params) => <TextField {...params} variant='filled' />}
+        />
       </LocalizationProvider>
       <TextField
         margin="normal"
         required
         fullWidth
-        id="age"
-        label="Edad"
-        name="age"
-        autoComplete="age"
+        id="PuestoTrabajo"
+        label="Puesto de Trabajo"
+        name="PuestoTrabajo"
+        autoComplete="position"
         onChange={handleChange}
-        value={formData.age}
-        variant='filled'
-      />
-      <TextField
-        margin="normal"
-        required
-        fullWidth
-        id="telephone"
-        label="Teléfono"
-        name="telephone"
-        autoComplete="telephone"
-        onChange={handleChange}
-        value={formData.telephone}
+        value={formData.PuestoTrabajo}
         variant='filled'
       />
       <CompanySelector
-        id="company"
-        name="company"
+        id="ID_Empresa"
+        name="ID_Empresa"
         label="Empresa"
-        value={formData.company}
-        onChange={handleChange} // Asegúrate de que handleChange actualiza correctamente formData
-        options={companiesList}
+        value={formData.ID_Empresa}
+        onChange={handleCompanyChange}
+        options={companiesList.map((company) => ({
+          code: company.ID,
+          label: company.Nombre,
+        }))}
       />
-      <TextField
-        margin="normal"
-        required
-        fullWidth
-        id="work_center"
-        label="Centro de trabajo"
-        name="work_center"
-        autoComplete="work_center"
-        onChange={handleChange}
-        value={formData.work_center}
-        variant='filled'
-      />
-      <TextField
-        margin="normal"
-        required
-        fullWidth
-        id="position"
-        label="Puesto"
-        name="position"
-        autoComplete="position"
-        onChange={handleChange}
-        value={formData.position}
-        variant='filled'
-      />
-
+    
       <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
         Enviar
       </Button>

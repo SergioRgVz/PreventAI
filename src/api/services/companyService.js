@@ -1,187 +1,212 @@
-/**
- * Servicio que proporciona funciones para gestionar empresas en la base de datos.
- * Incluye operaciones como encontrar, crear, actualizar y eliminar empresas.
- * @module services/companyService
- */
-
-import Company from '../models/companyModel.js';
-import Employee from '../models/employeeModel.js';
-import userService from './userService.js';
-import { getComunidadAutonomaByCode, getProvinciaByCode, getPoblacionByCode } from './locationService.js';
+import Empresa from '../models/Empresa.js';
+import Municipio from '../models/Municipio.js';
+import Usuario from '../models/Usuario.js';
+import UsuarioEmpresa from '../models/UsuarioEmpresa.js';
 
 const companyService = {
-    /**
-     * Encuentra una empresa por CIF.
-     * @param {string} CIF - CIF de la empresa a encontrar.
-     * @returns {Promise<Company|null>} La empresa encontrada o null si no se encuentra.
-     */
-    findCompany: async (CIF) => {
+    createCompany: async (data) => {
         try {
-            const company = await Company.findOne({ CIF }).exec();
-            return company;
-        } catch (error) {
-            return null;
-        }
-    },
-        /**
-     * Encuentra una empresa por su ID.
-     * @param {string} id - El ID de la empresa a encontrar.
-     * @returns {Promise<Company|null>} La empresa encontrada o null si no existe.
-     */
-    findCompanyById: async (id) => {
-        try {
-            const company = await Company.findById(id).exec();
-            return company;
-        } catch (error) {
-            return null;
-        }
-    },
-    findCompanyByCIF: async (CIF) => {
-        try {
-            const company = await Company.findOne({ CIF }).exec();
-            return company;
-        } catch (error) {
-            return null;
-        }
-    },
-    /**
-     * Encuentra todas las empresas.
-     * @returns {Promise<Array>} Lista de todas las empresas.
-     */
-    findAllCompanies: async (userId) => {
-        try {
-            const companies = await Company.find({ User: userId }).exec();
-            // Transforma cada compañía para incluir las localizaciones por nombre
-            const companiesWithLocations = await Promise.all(companies.map(async (company) => ({
-                ...company._doc,
-                User: await userService.getUserById(company.User),
-                ccaa: await getComunidadAutonomaByCode(company.ccaa),
-                provincia: await getProvinciaByCode(company.provincia),
-                municipio: await getPoblacionByCode(company.municipio)
-            })));
-
-            // console.log('FindallCompanies:', companiesWithLocations);
-    
-            return companiesWithLocations;
-        } catch (error) {
-            console.error(error); 
-            return null;
-        }
-    },
-    
-    /**
-     * Crea una nueva empresa.
-     * @param {string} CIF - CIF de la nueva empresa.
-     * @param {string} name - Nombre de la nueva empresa.
-     * @param {Schema.Types.ObjectId} User - ID del usuario asociado a la empresa.
-     * @param {string} ccaa - Comunidad autónoma de la empresa.
-     * @param {string} provincia - Provincia de la empresa.
-     * @param {string} municipio - Municipio de la empresa.
-     * @returns {Promise<Company|null>} La empresa creada o null si ya existe.
-     */
-    createCompany: async (CIF, name ,User, ccaa, provincia, municipio) => {
-        try {
-            let company = await companyService.findCompany(CIF);
-            if (company) {
-                console.log('Company already exists:', company);
-                return null;
+            const existingCompany = await Empresa.findOne({ where: { CIF: data.CIF } });
+            if (existingCompany) {
+                const userCompanyRelation = await UsuarioEmpresa.create({
+                    ID_Empresa: existingCompany.ID,
+                    ID_Usuario: data.ID_Usuario
+                });
+                console.log('Relación Usuario-Empresa creada:', userCompanyRelation);
+                return existingCompany;
             }
-            company = await Company.create({
-                CIF: CIF,
-                name: name,
-                User: User,
-                ccaa: ccaa,
-                provincia: provincia,
-                municipio: municipio
+
+            // Crear una nueva empresa si no existe
+            const newCompany = await Empresa.create({ID_Municipio: data.municipio,Nombre: data.Nombre,CIF: data.CIF});
+            console.log('Empresa creada:', newCompany);
+
+            // Crear la relación entre la nueva empresa y el usuario
+            const userCompanyRelation = await UsuarioEmpresa.create({
+                ID_Empresa: newCompany.ID,
+                ID_Usuario: data.ID_Usuario
             });
-            console.log('Company created:', company);
-            return company;
+            console.log('Relación Usuario-Empresa creada:', userCompanyRelation);
+
+            return newCompany;
         } catch (error) {
-            console.error('Error creating company:', error);
+            console.error('Error al crear Empresa:', error);
             throw error;
         }
     },
-    /**
-     * Obtiene todos los empleados asociados a una empresa por su CIF.
-     * @param {string} CIF - CIF de la empresa para buscar sus empleados.
-     * @returns {Promise<Array>|null} Los empleados de la empresa o null si la empresa no existe.
-     * @async
-     * @function
-     * @name getAllEmployees
-     * @memberof module:services/companyService
-     * @returns {Promise<Array>|null} Los empleados de la empresa o null si la empresa no existe.
-     */
-    getAllEmployees: async (CIF) => {
+    getAllCompanies: async () => {
         try {
-            const company = await companyService.findCompany(CIF);
+            const companies = await Empresa.findAll({
+                include: {
+                    model: Municipio,
+                    attributes: ['Nombre', 'ID_Provincia']
+                }
+            });
+            console.log('Todas las Empresas:', companies);
+            return companies;
+        } catch (error) {
+            console.error('Error al obtener todas las Empresas:', error);
+            throw error;
+        }
+    },
+    getCompaniesByUserId: async (userId) => {
+        try {
+            const companies = await Empresa.findAll({
+                include: [
+                    {
+                        model: Usuario,
+                        through: { attributes: [] }, // No necesitamos atributos de la tabla intermedia
+                        where: { ID: userId },
+                        attributes: [] // No necesitamos atributos del usuario
+                    },
+                    {
+                        model: Municipio,
+                        attributes: ['Nombre', 'ID_Provincia']
+                    }
+                ]
+            });
+            console.log(`Empresas del usuario ${userId}:`, companies);
+            return companies;
+        } catch (error) {
+            console.error(`Error al obtener las Empresas del usuario ${userId}:`, error);
+            throw error;
+        }
+    },
+    getCompanyById: async (id) => {
+        try {
+            const company = await Empresa.findByPk(id, {
+                include: {
+                    model: Municipio,
+                    attributes: ['Nombre']
+                }
+            });
             if (!company) {
-                console.log('Company does not exist:', company);
+                console.log('Empresa no encontrada:', id);
                 return null;
             }
-            const employees = await Employee.find({ company: company._id }).exec();
-            // console.log('Employees found:', employees);
-            return employees;
+            console.log('Empresa encontrada:', company);
+            return company;
         } catch (error) {
-            console.error('Error getting employees:', error);
+            console.error('Error al obtener Empresa por ID:', error);
+            throw error;
+        }
+    },
+    getCompanyByCIF: async (CIF) => {
+        try {
+            const company = await Empresa.findOne({
+                where: { CIF },
+                include: [
+                    {
+                        model: Municipio,
+                        attributes: ['Nombre', 'ID_Provincia']
+                    }
+                ]
+            });
+            if (!company) {
+                console.log('Empresa no encontrada:', CIF);
+                return null;
+            }
+            console.log('Empresa encontrada:', company);
+            return company;
+        } catch (error) {
+            console.error('Error al obtener Empresa por CIF:', error);
+            throw error;
+        }
+    },
+    updateCompanyByID: async (id, CIF, name, user, ccaa, provincia, municipio) => {
+        try {
+            const company = await Empresa.findByPk(id);
+            if (!company) {
+                console.log('Empresa no encontrada:', id);
+                return null;
+            }
+            await company.update(id, CIF, name, user, ccaa, provincia, municipio);
+            console.log('Empresa actualizada:', company);
+            return company;
+        } catch (error) {
+            console.error('Error al actualizar Empresa:', error);
+            throw error;
+        }
+    },
+    updateCompanyByCIF: async (CIF, data) => {
+        try {
+            const company = await companyService.getCompanyByCIF(CIF);
+            if (!company) {
+                console.log('Empresa no encontrada:', id);
+                return null;
+            }
+            await company.update(data);
+            console.log('Empresa actualizada:', company);
+            return company;
+        } catch (error) {
+            console.error('Error al actualizar Empresa:', error);
+            throw error;
+        }
+    },
+    deleteUserCompanyRelation: async (userId, companyId) => {
+        try {
+            const userCompanyRelation = await UsuarioEmpresa.findOne({
+                where: {
+                    ID_Usuario: userId,
+                    ID_Empresa: companyId
+                }
+            });
+            if (!userCompanyRelation) {
+                console.log('Relación Usuario-Empresa no encontrada:', userId, companyId);
+                return null;
+            }
+            await userCompanyRelation.destroy();
+            console.log('Relación Usuario-Empresa eliminada:', userId, companyId);
+            return userCompanyRelation;
+        } catch (error) {
+            console.error('Error al eliminar la relación Usuario-Empresa:', error);
+            throw error;
+        }
+    },
+    deleteCompanyRelations: async (companyId) => {
+        try {
+            const userCompanyRelations = await UsuarioEmpresa.findAll({
+                where: { ID_Empresa: companyId }
+            });
+            if (userCompanyRelations.length === 0) {
+                console.log('Relaciones Usuario-Empresa no encontradas:', companyId);
+                return null;
+            }
+            await userCompanyRelations.destroy();
+            console.log('Relaciones Usuario-Empresa eliminadas:', companyId);
+            return userCompanyRelations;
+        } catch (error) {
+            console.error('Error al eliminar las relaciones Usuario-Empresa:', error);
             throw error;
         }
     },
 
-    /**
-     * Elimina una empresa por su CIF.
-cif     * @returns {Promise<Company|null>} La empresa eliminada o null si no existe.
-     */
-    deleteCompany: async (cif) => {
-        try {
-            const company = await companyService.findCompany(cif);
-            if (!company) {
-                console.log('Company does not exist:', company);
-                return null;
-            }
-            await Company.deleteOne({ CIF: cif }).exec();
-            console.log('Company deleted:', company);
-            return company;
-        } catch (error) {
-            console.error('Error deleting company:', error);
-            throw error;
-        }
-    },
-    /**
-     * Elimina una empresa por su ID.
-     * @param {string} id - ID de la empresa a eliminar.
-     * @returns {Promise<Company|null>} La empresa eliminada o null si no existe.
-     */
     deleteCompanyById: async (id) => {
         try {
-            const company = await Company.findByIdAndDelete(id).exec();
+            const company = await Empresa.findByPk(id);
             if (!company) {
-                console.log('Company does not exist:', company);
+                console.log('Empresa no encontrada:', id);
                 return null;
             }
-            console.log('Company deleted:', company);
+            await company.destroy();
+            console.log('Empresa eliminada:', id);
             return company;
         } catch (error) {
-            console.error('Error deleting company:', error);
+            console.error('Error al eliminar Empresa:', error);
             throw error;
         }
     },
-    updateCompany: async (CIF, name, User, ccaa, provincia, municipio) => {
+    deleteCompanyByCIF: async (CIF) => {
         try {
-            const company = await companyService.findCompany(CIF);
+            const company = await companyService.getCompanyByCIF(CIF);
             if (!company) {
-                console.log('Company does not exist:', company);
+                console.log('Empresa no encontrada:', CIF);
                 return null;
             }
-            company.name = name,
-            company.User = User;
-            company.ccaa = ccaa;
-            company.provincia = provincia;
-            company.municipio = municipio;
-            await company.save();
-            console.log('Company updated:', company);
+            await company.destroy();
+            console.log('Empresa eliminada:', CIF);
             return company;
         } catch (error) {
-            console.error('Error updating company:', error);
+            console.error('Error al eliminar Empresa:', error);
             throw error;
         }
     }

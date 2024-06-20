@@ -20,8 +20,10 @@ export const EmployeesList = () => {
         console.log(data);
         const processedEmployees = data.map(employee => ({
           ...employee,
-          fullName: `${employee.name} ${employee.surname}`,
-          company: `${employee.company.name} (${employee.company.CIF})`
+          fullName: `${employee.Nombre} ${employee.Apellidos}`,
+          company: employee.Empresa ? `${employee.Empresa.Nombre} (${employee.Empresa.CIF})` : 'Sin Empresa',
+          birth_date: new Date(employee.FechaNacimiento).toLocaleDateString(),
+          position: employee.PuestoTrabajo || '',
         }));
         
         setEmployees(processedEmployees);
@@ -39,14 +41,16 @@ export const EmployeesList = () => {
   const employeeConfig = {
     identifierKey: 'DNI',
     fields: [
-      { name: 'fullName', label: 'Nombre completo' },
       { name: 'DNI', label: 'DNI' },
-      { name: 'telephone', label: 'Teléfono' },
-      { name: 'age', label: 'Edad' },
+      { name: 'Nombre', label: 'Nombre' },
+      { name: 'Apellidos', label: 'Apellidos' },
+      { name: 'Telefono', label: 'Teléfono' },
+      { name: 'Correo', label: 'Correo' },
+      { name: 'Edad', label: 'Edad' },
+      { name: 'Sexo', label: 'Sexo' },
+      { name: 'PuestoTrabajo', label: 'Puesto de Trabajo' },
       { name: 'birth_date', label: 'Fecha de Nacimiento' },
-      { name: 'company', label: 'Compañía' },
-      { name: 'work_center', label: 'Centro de trabajo' },
-      { name: 'position', label: 'Puesto' },
+      { name: 'company', label: 'Empresa' },
     ],
     onView: (employee) => {
       console.log("Viendo empleado", employee);
@@ -66,6 +70,10 @@ export const EmployeesList = () => {
     return <div>Loading...</div>;
   }
 
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
+
   if (Array.isArray(employees)) {
     return (
       <Stack spacing={2}>
@@ -74,7 +82,7 @@ export const EmployeesList = () => {
             key={employee.DNI}
             item={employee}
             config={employeeConfig}
-            onRemove={handleRemoveEmployee}
+            onRemove={() => handleRemoveEmployee(employee.DNI)}
           />
         ))}
       </Stack>

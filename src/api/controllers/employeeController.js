@@ -1,131 +1,113 @@
-/**
- * Controlador para gestionar las operaciones relacionadas con empleados.
- * Incluye funciones para obtener, crear, actualizar y eliminar empleados.
- * @module controllers/employeeController
- */
-
 import employeeService from '../services/employeeService.js';
-import companyService from '../services/companyService.js';
 
-/**
- * Obtiene y devuelve todos los empleados registrados.
- * @param {Object} req - Objeto de solicitud Express.
- * @param {Object} res - Objeto de respuesta Express.
- */
-export const getEmployees = async (req, res) => {
-    try {
-        const userId = req.user.userId;
-        const employees = await employeeService.findEmployeesByUserId(userId);
-        return res.status(200).json({ employees });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error interno del servidor' });
+class employeeController {
+    async getEmployees(req, res) {
+        try {
+            const userId = req.user.userId; // Suponiendo que el userId viene del middleware de autenticación
+            const empleados = await employeeService.getEmployees(userId);
+            if (empleados.length) {
+                res.status(200).json(empleados);
+            } else {
+                res.status(404).json({ message: 'No se encontraron empleados' });
+            }
+        } catch (error) {
+            res.status(500).json({ message: 'Error al obtener empleados', error: error.message });
+        }
+    }
+
+    async getEmployeesByCompanyId(req, res) {
+        try {
+            const userId = req.user.userId; // Suponiendo que el userId viene del middleware de autenticación
+            const companyId = req.params.companyId;
+            const empleados = await employeeService.getEmployeesByCompanyId(userId, companyId);
+            if (empleados.length) {
+                res.status(200).json(empleados);
+            } else {
+                res.status(404).json({code: 404, message: 'No se encontraron empleados para la empresa especificada' });
+            }
+        } catch (error) {
+            res.status(500).json({ message: 'Error al obtener empleados por ID de empresa', error: error.message });
+        }
+    }
+
+    async getEmployeeById(req, res) {
+        try {
+            const userId = req.user.userId; // Suponiendo que el userId viene del middleware de autenticación
+            const employeeId = req.params.employeeId;
+            const empleado = await employeeService.getEmployeeById(userId, employeeId);
+            if (empleado) {
+                res.status(200).json(empleado);
+            } else {
+                res.status(404).json({ message: 'Empleado no encontrado' });
+            }
+        } catch (error) {
+            res.status(500).json({ message: 'Error al obtener empleado por ID', error: error.message });
+        }
+    }
+
+    async getEmployeeByDNI(req, res) {
+        try {
+            const userId = req.user.userId; // Suponiendo que el userId viene del middleware de autenticación
+            const DNI = req.params.DNI;
+            const empleado = await employeeService.getEmployeeByDNI(userId, DNI);
+            if (empleado) {
+                res.status(200).json(empleado);
+            } else {
+                res.status(404).json({ code: 404, message: 'Empleado no encontrado' });
+            }
+        } catch (error) {
+            res.status(500).json({ message: 'Error al obtener empleado por DNI', error: error.message });
+        }
+    }
+
+    async createEmployee(req, res) {
+        try {
+            const userId = req.user.userId; // Suponiendo que el userId viene del middleware de autenticación
+            const { DNI, Nombre, Apellidos, Telefono, Correo, Edad, Sexo, PuestoTrabajo, FechaNacimiento, ID_Empresa } = req.body;
+            const result = await employeeService.createEmployee(userId, DNI, Nombre, Apellidos, Telefono, Correo, Edad, Sexo, PuestoTrabajo, FechaNacimiento, ID_Empresa);
+
+            if (result.status === 'success') {
+                res.status(201).json(result.data); // Cambiado a 201 para indicar creación exitosa
+            } else {
+                res.status(result.code).json({ message: result.message });
+            }
+        } catch (error) {
+            res.status(500).json({ message: 'Error al crear empleado', error: error.message });
+        }
+    }
+
+
+    async updateEmployee(req, res) {
+        try {
+            const userId = req.user.userId; // Suponiendo que el userId viene del middleware de autenticación
+            const employeeDNI = req.params.employeeDNI;
+            const employee = await employeeService.getEmployeeByDNI(userId, employeeDNI);
+            const { DNI, Nombre, Apellidos, Telefono, Correo, Edad, Sexo, PuestoTrabajo, FechaNacimiento, ID_Empresa } = req.body;
+            const empleadoActualizado = await employeeService.updateEmployee(userId, employee.ID, DNI, Nombre, Apellidos, Telefono, Correo, Edad, Sexo, PuestoTrabajo, FechaNacimiento, ID_Empresa);
+            if (empleadoActualizado) {
+                res.status(200).json(empleadoActualizado);
+            } else {
+                res.status(400).json({ code: 400, message: 'No se pudo actualizar el empleado' });
+            }
+        } catch (error) {
+            res.status(500).json({ message: 'Error al actualizar empleado', error: error.message });
+        }
+    }
+
+    async deleteEmployee(req, res) {
+        try {
+            const userId = req.user.userId; // Suponiendo que el userId viene del middleware de autenticación
+            const employeeId = req.params.employeeId;
+            const empleadoEliminado = await employeeService.deleteEmployee(userId, employeeId);
+            if (empleadoEliminado) {
+                res.status(200).json({ message: 'Empleado eliminado', empleado: empleadoEliminado });
+            } else {
+                res.status(400).json({code:400, message: 'No se pudo eliminar el empleado' });
+            }
+        } catch (error) {
+            res.status(500).json({ message: 'Error al eliminar empleado', error: error.message });
+        }
     }
 }
 
-/**
- * Obtiene un empleado por su ID y lo devuelve.
- * @param {Object} req - Objeto de solicitud Express, contiene el ID del empleado en `req.params`.
- * @param {Object} res - Objeto de respuesta Express.
- */
-export const getEmployeeByDNI = async (req, res) => {
-    try {
-        const { DNI } = req.params;
-        const employee = await employeeService.findEmployee(DNI);
-        // const employee = await employeeService.findEmployeeById(DNI);
-        if (!employee) {
-            return res.status(404).json({ message: 'Empleado no encontrado' });
-        }
-        return res.status(200).json({ employee });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error interno del servidor' });
-    }
-}
-
-/**
- * Crea un nuevo empleado en la base de datos.
- * @param {Object} req - Objeto de solicitud Express, contiene los datos del empleado en `req.body`.
- * @param {Object} res - Objeto de respuesta Express.
- */
-export const createEmployee = async (req, res) => {
-    try {
-        const { DNI, name, surname, telephone, age, company, work_center, position, birth_date } = req.body;
-        const companyExists = await companyService.findCompany(company);
-        if (!companyExists) {
-            return res.status(404).json({ message: 'Empresa no encontrada' });
-        }
-        const employee = await employeeService.createEmployee(DNI, name, surname, telephone, age, companyExists, work_center, position, birth_date);
-        if (!employee) {
-            return res.status(409).json({ message: 'El empleado ya existe' });
-        }
-        return res.status(201).json({ message: 'Empleado creado', employee });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error interno del servidor' });
-    }
-}
-
-/**
- * Actualiza un empleado por su ID con los datos proporcionados.
- * @param {Object} req - Objeto de solicitud Express, contiene el ID del empleado y los datos a actualizar en `req.params` y `req.body`.
- * @param {Object} res - Objeto de respuesta Express.
- */
-export const updateEmployeeByDNI = async (req, res) => {
-    try {
-        const { DNI } = req.params;
-        const { name, surname, telephone, age, company, work_center, position, birth_date } = req.body;
-        const dateObject = new Date(birth_date);
-                
-        const companyExists = await companyService.findCompany(company);
-        if (!companyExists) {
-            return res.status(404).json({ message: 'Empresa no encontrada' });
-        }
-        const employee = await employeeService.updateEmployee( DNI, name, surname, telephone, age, companyExists, work_center, position, dateObject);
-        if (!employee) {
-            return res.status(404).json({ message: 'Empleado no encontrado' });
-        }
-        return res.status(200).json({ message: 'Empleado actualizado', employee });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error interno del servidor' });
-    }
-}
-
-/**
- * Elimina un empleado por su DNI.
- * @param {Object} req - Objeto de solicitud Express, contiene el DNI del empleado en `req.body`.
- * @param {Object} res - Objeto de respuesta Express.
- */
-export const deleteEmployeeByDNI = async (req, res) => {
-    try {
-        const { DNI } = req.params;
-        const employee = await employeeService.deleteEmployee(DNI);
-        if (!employee) {
-            return res.status(404).json({ message: 'Empleado no encontrado' });
-        }
-        return res.status(200).json({ message: 'Empleado eliminado', employee });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error interno del servidor' });
-    }
-}
-
-/**
- * Elimina un empleado por su ID.
- * @param {Object} req - Objeto de solicitud Express, contiene el ID del empleado en `req.params`.
- * @param {Object} res - Objeto de respuesta Express.
- */
-export const deleteEmployeeById = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const employee = await employeeService.deleteEmployeeById(id);
-        if (!employee) {
-            return res.status(404).json({ message: 'Empleado no encontrado' });
-        }
-        return res.status(200).json({ message: 'Empleado eliminado', employee });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error interno del servidor' });
-    }
-}
+export default new employeeController();

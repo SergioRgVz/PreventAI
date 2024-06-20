@@ -1,117 +1,355 @@
-import React, { useState } from 'react';
-import { Grid, Paper, Button, Stepper, Step, StepLabel, Typography } from '@mui/material';
-import ImageUploadStep from '../ImageUploadStep';
-import DatosIdentificativosForm from './DatosIdentificativosForm';
-import EvaluationPVDForm from './EvaluationPVDForm';
-import DescripcionPVDForm from './DescripcionPVDForm';
-import ResultsPVDForm from './ResultsPVDForm';
-import PVDForm from './PVDForm';
-import { CircularProgress } from '@mui/material';
-import { Formik, Form } from "formik";
-import formInitialValues from "../PVD/PVDFormInitialValues";
-import ReportSuccess from '../ReportSuccess';
-import {reportService} from '../../../hooks/useReports';
+import { useState, useEffect } from "react";
+import Identificacion from "../GINSHT/Identificacion";
+import SubirImagenes from "../GINSHT/SubirImagenes";
+import EvaluacionPVD from "./EvaluacionPVD";
+import ResultadosPVD from "./ResultadosPVD";
+import {
+  Grid,
+  Stepper,
+  Step,
+  StepLabel,
+  Button,
+  Typography,
+  Paper,
+  TextField,
+} from "@mui/material";
 
-const steps = ['Datos identificativos', 'Imágenes', 'Descripción', 'Valoración', 'Resultados', 'Enviar'];
-const { formId, formField } = PVDForm;
+import { useParams } from "react-router-dom";
+import { companyService } from "../../../hooks/useCompanies";
+import jsPDF from "jspdf";
+import apiClient from "../../../hooks/useAxiosAuth";
+import { reportService } from "../../../hooks/useReports";
 
-function _renderStepContent(step) {
-  switch (step) {
-    case 0:
-      return <DatosIdentificativosForm formField={formField} />;
-    case 1:
-      return <ImageUploadStep formField={formField} />;
-    case 2:
-      return <DescripcionPVDForm formField={formField} />;
-    case 3:
-      return <EvaluationPVDForm formField={formField} />;
-    case 4:
-      return <ResultsPVDForm formField={formField} />;
-    case 5:
-      return <Grid containter display={"flex"} justifyContent={"center"} spacing={4} paddingBottom={"30px"}>
-        <Grid item xs={12} sm={4}>
-          <Button variant='contained' color='buttons' type="submit">Guardar PDF</Button>
-        </Grid>
-      </Grid>
-    default:
-      return <div>No encontrado</div>;
+const steps = [
+  "Datos identificativos",
+  "Imágenes",
+  "Descripción",
+  "Valoración",
+  "Resultados",
+  "Enviar",
+];
+
+const fetchFactors = async (tipo) => {
+  try {
+    const response = await apiClient.get(`/factor/type/${tipo}`);
+    return response.data.factors;
+  } catch (error) {
+    console.error("Error fetching factors:", error);
+    return [];
   }
-}
+};
 
-function create_PVD_report(values) {
-  const report = {
-    empleado : values.DNI,
-    fecha : values.fecha,
-    empresa : values.CIF,
-    centroDeTrabajo : values.centroDeTrabajo,
-    puestoDeTrabajo : values.puestoDeTrabajo,
-    referencia : values.referencia,
-    descripcionTrabajoPVD: values.descripcionTrabajoPVD,
-    aspectosPantalla: values.aspectosPantalla,
-    aspectosTeclado: values.aspectosTeclado,
-    aspectosMesa: values.aspectosMesa,
-    aspectosSilla: values.aspectosSilla,
-    aspectosEspacio: values.aspectosEspacio,
-    aspectosIluminacion: values.aspectosIluminacion,
-    aspectosRuido: values.aspectosRuido,
-    aspectosTemeperatura: values.aspectosTemperatura,
-    aspectosProgramas: values.aspectosProgramas,
-    aspectosOrganizacion: values.aspectosOrganizacion,
-    indicacionesYMedidasPreventivas : {
-      indicaciones : values.indicaciones
-    },
-    images: values.images
-  };
-  return report;
-}
-
-
-export function PVDFormulary() {
+export const PVDFormulary = () => {
+  const { reportId } = useParams();
   const [activeStep, setActiveStep] = useState(0);
-  // const currentValidationSchema = validationSchema[activeStep]; //TODO: Implement validation schema
-  const isLastStep = activeStep === steps.length - 1;
+  const [formData, setFormData] = useState({
+    CIF_Empresa: "",
+    ID_Empresa: "",
+    DNI_Empleado: "",
+    ID_Empleado: "",
+    Sexo: "",
+    PuestoTrabajo: "",
+    Fecha: null,
+    Referencia: "",
+    Desc_TrabajoPVD: "",
+    factoresPantalla: [],
+    factoresTeclado: [],
+    factoresMesa: [],
+    factoresSilla: [],
+    factoresIluminacion: [],
+    factoresRuido: [],
+    factoresTemperatura: [],
+    factoresProgramas: [],
+    factoresOrganizacion: [],
+    indicaciones: "",
+  });
 
-  function _sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
+  const [images, setImages] = useState([]);
+  const [employeesList, setEmployeesList] = useState([]);
+  const [pantallaFactors, setPantallaFactors] = useState([]);
+  const [tecladoFactors, setTecladoFactors] = useState([]);
+  const [mesaFactors, setMesaFactors] = useState([]);
+  const [sillaFactors, setSillaFactors] = useState([]);
+  const [iluminacionFactors, setIluminacionFactors] = useState([]);
+  const [ruidoFactors, setRuidoFactors] = useState([]);
+  const [temperaturaFactors, setTemperaturaFactors] = useState([]);
+  const [programasFactors, setProgramasFactors] = useState([]);
+  const [organizacionFactors, setOrganizacionFactors] = useState([]);
 
-  async function _submitForm(values, actions) {
-    await _sleep(1000);
-    let report = create_PVD_report(values);
-    reportService.createReportPVD(report);
-    // alert(JSON.stringify(values, null, 2));  
-    actions.setSubmitting(false);
+  useEffect(() => {
+    const fetchReportData = async () => {
+      if (reportId) {
+        // const reportData = await reportService.getReportById(reportId);
+        // setFormData(reportData);
+      }
+    };
 
-    setActiveStep(activeStep + 1);
-  }
+    fetchReportData();
+  }, [reportId]);
 
-  function _handleSubmit(values, actions) {
-    if (isLastStep) {
-      _submitForm(values, actions);
-    } else {
-      setActiveStep(activeStep + 1);
-      actions.setTouched({});
-      actions.setSubmitting(false);
+  const handleNext = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  };
+
+  const handleBack = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
+  };
+
+  const handleCompanyChange = async (event) => {
+    const selectedCompanyId = event.target.value;
+    const companiesList = await companyService.getCompanies();
+    const selectedCompany = companiesList.find(
+      (company) => company.ID === selectedCompanyId
+    );
+
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      ID_Empresa: selectedCompany.ID,
+      CIF_Empresa: selectedCompany.CIF,
+    }));
+
+    const employeesResponse = await companyService.getEmployees(
+      selectedCompany.ID
+    );
+    setEmployeesList(employeesResponse);
+  };
+
+  const handleEmployeeChange = (event) => {
+    const selectedEmployeeDNI = event.target.value;
+    const selectedEmployee = employeesList.find(
+      (employee) => employee.DNI === selectedEmployeeDNI
+    );
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      DNI_Empleado: selectedEmployee.DNI,
+      ID_Empleado: selectedEmployee.ID,
+    }));
+  };
+
+  const handleReset = () => {
+    setActiveStep(0);
+    setFormData({
+      CIF_Empresa: "",
+      ID_Empresa: "",
+      DNI_Empleado: "",
+      ID_Empleado: "",
+      Sexo: "",
+      PuestoTrabajo: "",
+      Fecha: null,
+      Referencia: "",
+      Desc_TrabajoPVD: "",
+      factoresPantalla: [],
+      factoresTeclado: [],
+      factoresMesa: [],
+      factoresSilla: [],
+      factoresIluminacion: [],
+      factoresRuido: [],
+      factoresTemperatura: [],
+      factoresProgramas: [],
+      factoresOrganizacion: [],
+      indicaciones: "",
+    });
+    setEmployeesList([]);
+    setImages([]);
+}
+
+// TODO: Implementar la función para guardar el PDF
+const handleSavePDF = () => {
+};
+
+      // Función para convertir imagen a base64
+  const toBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
+  const convertirDatosInforme = (formData) => {
+    return {
+    ID_Empresa: formData.ID_Empresa,
+    ID_Empleado: formData.ID_Empleado,
+    Referencia: formData.Referencia,
+    Fecha: formData.Fecha,
+    Indicaciones: formData.indicaciones, // Agrega aquí cualquier indicación adicional si es necesario
+    tipo: "PVD", // Define el tipo si es necesario
+    detalles: {
+      DescROL: formData.Desc_TrabajoPVD,
+    },
+      imagenes: formData.imagenes,  
+      factores: {
+        pantalla: formData.factoresPantalla,
+        teclado: formData.factoresTeclado,
+        mesa: formData.factoresMesa,
+        silla: formData.factoresSilla,
+        iluminacion: formData.factoresIluminacion,
+        ruido: formData.factoresRuido,
+        temperatura: formData.factoresTemperatura,
+        programas: formData.factoresProgramas,
+        organizacion: formData.factoresOrganizacion
+      },
+    };
+  };
+
+  const subirImagen = async (image) => {
+    const formData = new FormData();
+    formData.append("image", image.file);
+
+    try {
+      const response = await apiClient.post("/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      return response.data.filename;
+    } catch (error) {
+      console.error("Error subiendo la imagen:", error);
+      throw error;
     }
-  }
+  };
 
-  function _handleBack() {
-    setActiveStep(activeStep - 1);
-  }
-  function _handleHome() {
-    window.location.href = '/home';
-  }
+  const handleSave = async () => {
+    try {
+      // Subir imágenes y obtener las rutas
+      const imagenesRutas = await Promise.all(
+        images.map(async (image) => {
+          const ruta = await subirImagen(image);
+          return ruta;
+        })
+      );
 
-  return (
-    <React.Fragment>
-      <Typography component="h1" variant="h2" align="center" paddingTop={'10px'}>
-        Informe PVD
+      // Convertir datos del formulario
+      const datosInforme = convertirDatosInforme(formData);
+
+      // Incluir las rutas de las imágenes en los datos del informe
+      datosInforme.imagenes = imagenesRutas;
+
+      console.log(datosInforme);
+
+      if (reportId) {
+        // await reportService.updateReport(reportId, datosInforme);
+      } else {
+        await reportService.createReport(datosInforme);
+      }
+
+      console.log("Informe creado exitosamente");
+    } catch (error) {
+      console.error("Error creando el informe:", error);
+    }
+  };
+
+  const getStepContent = (step) => {
+    switch (step) {
+      case 0:
+        return (
+          <Identificacion
+            formData={formData}
+            handleChange={handleChange}
+            handleCompanyChange={handleCompanyChange}
+            employeesList={employeesList}
+            handleEmployeeChange={handleEmployeeChange}
+          />
+        );
+      case 1:
+        return <SubirImagenes images={images} setImages={setImages} />;
+    case 2: 
+    return (
+        <Grid container spacing={2}>
+          <Typography variant="h6" gutterBottom>
+            Descripción del trabajo de pantallas
+          </Typography>
+          <Grid item xs={12}>
+            <Typography variant="body1" gutterBottom>
+            Introduzca una breve descripción de los datos referentes al trabajo con pantallas.
+            </Typography>
+            <TextField
+              name="DescripcionTrabajoPVD"
+              label="Descripción de trabajo con Pantallas"
+              value={formData.Desc_TrabajoPVD}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+              multiline
+              rows={4}
+            />
+          </Grid>
+        </Grid>
+      );
+    case 3:
+        return (
+            <EvaluacionPVD formData={formData} handleChange={handleChange} />
+        );
+
+    case 4:
+        return (
+            <ResultadosPVD formData={formData} handleChange={handleChange} />
+        );
+    case 5:
+        return (
+            <>
+              <Typography variant="h6" gutterBottom>
+                Enviar
+              </Typography>
+              <Grid
+                containter
+                display={"flex"}
+                justifyContent={"center"}
+                spacing={4}
+                paddingBottom={"30px"}
+              >
+                <Button
+                  variant="contained"
+                  color="buttons"
+                  onClick={handleSavePDF}
+                >
+                  Guardar PDF
+                </Button>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={handleSave}
+                >
+                  Enviar
+                </Button>
+              </Grid>
+            </>
+          );
+        default:
+            return "Paso no encontrado";
+    }
+};
+
+return (
+    <div>
+      <Typography
+        component="h1"
+        variant="h2"
+        align="center"
+        paddingTop={"10px"}
+      >
+        Informe GINSHT
       </Typography>
-      <Grid container spacing={2} paddingTop={'10px'} paddingLeft={'20px'} paddingRight={'30px'}>
+      <Grid
+        container
+        spacing={2}
+        paddingTop={"10px"}
+        paddingLeft={"20px"}
+        paddingRight={"30px"}
+      >
         <Grid item xs={6} md={3} lg={3}>
-
-          <Stepper activeStep={activeStep} orientation='vertical'>
-            {steps.map((label, index) => (
+          <Stepper activeStep={activeStep} orientation="vertical">
+            {steps.map((label) => (
               <Step key={label}>
                 <StepLabel>{label}</StepLabel>
               </Step>
@@ -119,54 +357,44 @@ export function PVDFormulary() {
           </Stepper>
         </Grid>
         <Grid item xs={6} md={9} lg={9}>
-          <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-            {
-              activeStep === steps.length ? (
-                <React.Fragment>
-                  <ReportSuccess />
-                  <Button onClick={_handleHome}>
-                    Volver a la página principal
-                  </Button>
-                </React.Fragment>
+          <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
+            <div>
+              {activeStep === steps.length ? (
+                <div>
+                  <Typography variant="h6" gutterBottom>
+                    Todos los pasos completados
+                  </Typography>
+                  <Button onClick={handleReset}>Resetear</Button>
+                </div>
               ) : (
-                <Formik
-                  initialValues={formInitialValues}
-                  // validationSchema={currentValidationSchema}
-                  onSubmit={_handleSubmit}
-                >
-                  {({ isSubmitting }) => (
-                    <Form id={formId}>
-                      {_renderStepContent(activeStep)}
-
-                      <div>
-                        {activeStep !== 0 && (
-                          <Button onClick={_handleBack}>
-                            Atrás
-                          </Button>
-                        )}
-                        <div >
-                          <Button
-                            disabled={isSubmitting}
-                            type="submit"
-                            variant="contained"
-                            color="primary"
-                          >
-                            {isLastStep ? "Subir informe" : "Siguiente"}
-                          </Button>
-                          {isSubmitting && (
-                            <CircularProgress
-                              size={24}
-                            />
-                          )}
-                        </div>
-                      </div>
-                    </Form>
-                  )}
-                </Formik>
+                <div>
+                  {getStepContent(activeStep)}
+                  <div>
+                    <Button
+                      disabled={activeStep === 0}
+                      onClick={handleBack}
+                      sx={{ mt: 2 }}
+                    >
+                      Atrás
+                    </Button>
+                    <Button
+                      variant="contained"
+                      onClick={handleNext}
+                      sx={{ mt: 2, ml: 2 }}
+                    >
+                      {activeStep === steps.length - 1
+                        ? "Finalizar"
+                        : "Siguiente"}
+                    </Button>
+                  </div>
+                </div>
               )}
+            </div>
           </Paper>
         </Grid>
       </Grid>
-    </React.Fragment>
+    </div>
   );
-}
+};
+
+export default PVDFormulary;

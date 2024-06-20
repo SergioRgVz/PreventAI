@@ -4,165 +4,261 @@
  * @module services/employeeService
  */
 
-import Employee from "../models/employeeModel.js";
-import Company from "../models/companyModel.js";
-import mongoose from "mongoose";
-
-/**
- * Service for managing employees.
- */
+import Empleado from '../models/Empleado.js';
+import Company from '../models/Empresa.js';
+import userService from './userService.js';
+import companyService from './companyService.js';
 const employeeService = {
-    /**
-     * Busca un empleado por su DNI.
-     * @param {string} DNI - El DNI del empleado a buscar.
-     * @returns {Promise<Employee|null>} El empleado encontrado o null si no existe.
-     */
-    findEmployee: async (DNI) => {
+
+    getEmployees: async (userId) => {
         try {
-            const employee = await Employee.findOne({ DNI: DNI }).exec();
-            console.log("INSIDE FIND EMPLOYEE DNI: ", DNI, "EMPLOYEE: ", employee);
-            return employee;
+            const esTecnico = await userService.checkIfTechnician(userId);
+
+            let empleados = [];
+
+            //Obtenemos las compañías del usuario para obtener los empleados
+            if (esTecnico) {
+                const companies = await companyService.getCompaniesByUserId(userId);
+                const companyIds = companies.map(company => company.ID);
+
+                empleados = await Empleado.findAll({
+                    where: { ID_Empresa: companyIds },
+                    include: {
+                        model: Company,
+                        attributes: ['CIF', 'Nombre'],
+                    }
+                });
+
+            } else {
+                empleados = await Empleado.findAll({
+                    include: {
+                        model: Company,
+                        attributes: ['CIF', 'Nombre'],
+                    }
+                });
+            }
+
+            return empleados;
         } catch (error) {
-            console.error('Error al buscar empleado por DNI:', error);
+            console.error('Error al obtener empleados:', error);
             return null;
         }
     },
 
-    /**
-     * Busca todos los empleados asociados a empresas relacionadas con un usuario.
-     * @param {string} userId - El ID del usuario cuyas empresas se deben buscar.
-     * @returns {Promise<Array<Employee>|null>} Una lista de empleados o null si hay un error.
-     */
-    findEmployeesByUserId: async (userId) => {
+    getEmployeesByCompanyId: async (userId, companyId) => {
         try {
-            const companies = await Company.find({ User: userId });
-            const companyIds = companies.map(company => company._id);
-
-            const employees = await Employee.find({ company: { $in: companyIds } }) 
-            .populate({
-                path: 'company', 
-                select: 'CIF name' // Aquí especificas que quieres incluir el CIF y el nombre de la empresa
-            })
-            .select('-_id DNI name surname telephone age company work_center position birth_date');
+            const esTecnico = await userService.checkIfTechnician(userId);
+            let employees = null;
+            
+            if (esTecnico) {
+                const companies = await companyService.getCompaniesByUserId(userId);
+                if (!companies.some(c => c.ID === companyId)) {
+                    console.log('La empresa no pertenece al usuario:', companyId);
+                    return null;
+                }
+            }
+            employees = await Empleado.findAll({
+                where: { ID_Empresa: companyId },
+                include: {
+                    model: Company,
+                    attributes: ['CIF', 'Nombre'],
+                }
+            });
 
             return employees;
         } catch (error) {
-            console.error('Error al buscar empleados por ID de usuario:', error);
+            console.error('Error al obtener empleados por ID de empresa:', error);
             return null;
         }
     },
 
-    /**
-     * Busca un empleado por su ID.
-     * @param {string} id - El ID del empleado a buscar.
-     * @returns {Promise<Employee|null>} El empleado encontrado o null si no existe.
-     */
-    findEmployeeById: async (id) => {
+
+    getEmployeeById: async (userId, employeeId) => {
         try {
-            const employee = await Employee.findById(id).exec();
+            const esTecnico = await userService.checkIfTechnician(userId);
+            let employee = null;
+
+            if (esTecnico) {
+                const companies = await companyService.getCompaniesByUserId(userId);
+                const companyIds = companies.map(company => company.ID);
+
+                employee = await Empleado.findOne({
+                    where: { ID: employeeId, ID_Empresa: companyIds },
+                    include: {
+                        model: Company,
+                        attributes: ['CIF', 'Nombre'],
+                    }
+                });
+
+            } else {
+                employee = await Empleado.findByPk(employeeId, {
+                    include: {
+                        model: Company,
+                        attributes: ['CIF', 'Nombre'],
+                    }
+                });
+            }
+
             return employee;
         } catch (error) {
+            console.error('Error al obtener empleado por ID:', error);
             return null;
         }
     },
 
-    /**
-     * Encuentra todos los empleados registrados.
-     * @returns {Promise<Array<Employee>>} Una lista de todos los empleados.
-     */
-    findAllEmployees: async () => {
+    getEmployeeByDNI: async (userId, DNI) => {
         try {
-            const employees = await Employee.find().exec();
-            return employees;
-        } catch (error) {
-            return null;
-        }
-    },
+            const esTecnico = await userService.checkIfTechnician(userId);
+            let employee = null;
 
-    /**
-     * Crea un nuevo empleado en la base de datos.
-     * @param {string} DNI - DNI del empleado.
-     * @param {string} name - Nombre del empleado.
-     * @param {string} surname - Apellido del empleado.
-     * @param {string} telephone - Teléfono del empleado.
-     * @param {number} age - Edad del empleado.
-     * @param {Schema.Types.ObjectId} company - La compañía asociada al empleado.
-     * * @param {string} work_center - Centro de trabajo del empleado.
-     * * @param {string} position - Puesto de trabajo del empleado.
-     * @param {Date} birth_date - Fecha de nacimiento del empleado.
-     * @returns {Promise<Employee|null>} El empleado creado o null si el empleado ya existe.
-     */
-    createEmployee: async (DNI, name, surname, telephone, age, company, work_center, position, birth_date) => {
-        try {
-            let employee = await employeeService.findEmployee(DNI);
-            if (employee) {
-                console.log('Employee already exists:', employee);
-                return null;
+            if (esTecnico) {
+                const companies = await companyService.getCompaniesByUserId(userId);
+                const companyIds = companies.map(company => company.ID);
+
+                employee = await Empleado.findOne({
+                    where: { DNI, ID_Empresa: companyIds },
+                    include: {
+                        model: Company,
+                        attributes: ['CIF', 'Nombre'],
+                    }
+                });
+            } else {
+                employee = await Empleado.findOne({
+                    where: { DNI },
+                    include: {
+                        model: Company,
+                        attributes: ['CIF', 'Nombre'],
+                    }
+                });
             }
-            employee = await Employee.create({
-                DNI: DNI,
-                name: name,
-                surname: surname,
-                telephone: telephone,
-                age: age,
-                company: company,
-                work_center: work_center,
-                position: position,
-                birth_date: birth_date
+            return employee;
+        } catch (error) {
+            console.error('Error al obtener empleado por DNI:', error);
+            return null;
+        }
+    },
+
+    createEmployee: async (userId, DNI, Nombre, Apellidos, Telefono, Correo, Edad, Sexo, PuestoTrabajo, FechaNacimiento, ID_Empresa) => {
+        try {
+            const esTecnico = await userService.checkIfTechnician(userId);
+    
+            // Comprobar que la empresa existe
+            const company = await companyService.getCompanyById(ID_Empresa);
+            if (!company) {
+                console.log('Empresa no encontrada:', ID_Empresa);
+                return { status: 'error', code: 404, message: 'Empresa no encontrada' };
+            }
+    
+            if (esTecnico) {
+                const companies = await companyService.getCompaniesByUserId(userId);
+                if (!companies.some(c => c.ID === company.ID)) {
+                    console.log('La empresa no pertenece al usuario:', company);
+                    return { status: 'error', code: 403, message: 'La empresa no pertenece al usuario' };
+                }
+            }
+    
+            const employee = await Empleado.create({
+                DNI,
+                Nombre,
+                Apellidos,
+                Telefono,
+                Correo,
+                Edad,
+                Sexo,
+                PuestoTrabajo,
+                FechaNacimiento,
+                ID_Empresa
             });
-            console.log('Employee created:', employee);
-            return employee;
+    
+            console.log('Empleado creado:', employee);
+            return { status: 'success', data: employee };
+    
         } catch (error) {
-            console.error('Error creating employee:', error);
+            console.error('Error al crear empleado:', error);
             throw error;
         }
     },
-    updateEmployee: async (DNI, name, surname, telephone, age, company, work_center, position, birth_date) => {
+
+    updateEmployee: async (userId, employeeId, DNI, Nombre, Apellidos, Telefono, Correo, Edad, Sexo, PuestoTrabajo, FechaNacimiento, ID_Empresa) => {
         try {
-            let employee = await employeeService.findEmployee(DNI);
+            const esTecnico = await userService.checkIfTechnician(userId);
+
+            //Comprobar que el empleado existe
+            const employee = await Empleado.findByPk(employeeId);
             if (!employee) {
-                console.log('Employee does not exist:', employee);
+                console.log('Empleado no encontrado:', employeeId);
                 return null;
             }
-            employee = await Employee.updateOne({ DNI: DNI }, {
-                name: name,
-                surname: surname,
-                telephone: telephone,
-                age: age,
-                company: company,
-                work_center: work_center,
-                position: position,
-                birth_date: birth_date
+
+            //Comprobar que la empresa existe
+            const company = await companyService.getCompanyById(ID_Empresa);
+            if (!company) {
+                console.log('Empresa no encontrada:', ID_Empresa);
+                return null;
+            }
+
+            if (esTecnico) {
+                const companies = await companyService.getCompaniesByUserId(userId);
+                if (!companies.some(c => c.ID === company.ID)) {
+                    console.log('La empresa no pertenece al usuario:', company);
+                    return null;
+                }
+            }
+
+            await Empleado.update({
+                DNI,
+                Nombre,
+                Apellidos,
+                Telefono,
+                Correo,
+                Edad,
+                Sexo,
+                PuestoTrabajo,
+                FechaNacimiento,
+                ID_Empresa
+            }, {
+                where: { ID: employeeId }
             });
-            console.log('Employee updated:', employee);
-            return employee;
+
+            console.log('Empleado actualizado:', employee);
+            return await Empleado.findByPk(employeeId);
+
         } catch (error) {
-            console.error('Error updating employee:', error);
+            console.error('Error al actualizar empleado:', error);
             throw error;
         }
     },
 
-
-    /**
-     * Elimina un empleado por su DNI.
-     * @param {string} DNI - DNI del empleado a eliminar.
-     * @returns {Promise<Employee|null>} El empleado eliminado o null si no se encuentra.
-     */
-    deleteEmployee: async (DNI) => {
+    deleteEmployee: async (userId, employeeId) => {
         try {
-            const employee = await employeeService.findEmployee(DNI);
+            const esTecnico = await userService.checkIfTechnician(userId);
+
+            //Comprobar que el empleado existe
+            const employee = await Empleado.findByPk(employeeId);
             if (!employee) {
-                console.log('Employee does not exist:', employee);
+                console.log('Empleado no encontrado:', employeeId);
                 return null;
             }
-            await Employee.deleteOne({ DNI: DNI }).exec();
-            console.log('Employee deleted:', employee);
+
+            if (esTecnico) {
+                const companies = await companyService.getCompaniesByUserId(userId);
+                const companyIds = companies.map(company => company.ID);
+
+                if (!companyIds.includes(employee.ID_Empresa)) {
+                    console.log('La empresa no pertenece al usuario:', employee.ID_Empresa);
+                    return null;
+                }
+            }
+
+            await Empleado.destroy({ where: { ID: employeeId } });
+            console.log('Empleado eliminado:', employee);
             return employee;
+
         } catch (error) {
-            console.error('Error deleting employee:', error);
+            console.error('Error al eliminar empleado:', error);
             throw error;
         }
-    }
+    },
 };
 
 export default employeeService;

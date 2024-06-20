@@ -5,6 +5,18 @@ export const getReports = async () => {
     return response.data;
 }
 
+export const getReportByReferencia = async (Referencia) => {
+    const response = await apiClient.get(`/report/referencia/${Referencia}`);
+    return response.data;
+}
+
+export const createReport = async (formData) => {
+    const response = await apiClient.post('/report/create', formData );
+    return response.data;
+
+}
+
+
 export const createReportGINSHT = async (data) => {
     const formData = new FormData();
 
@@ -26,7 +38,7 @@ export const createReportGINSHT = async (data) => {
     }
 
     try {
-        const response = await apiClient.post('/report/createGINSHT', formData, {
+        const response = await apiClient.post('/report/create', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
@@ -106,13 +118,15 @@ export const createReportREBA = async (data) => {
     }
 }
 
-export const deleteReport = async (_id) => {
-    const response = await apiClient.delete(`/report/${_id}`);
+export const deleteReport = async (Referencia) => {
+    const response = await apiClient.delete(`/report/${Referencia}`);
     return response.data;
 }
 
 export const reportService = {
     getReports,
+    getReportByReferencia,
+    createReport,
     createReportGINSHT,
     createReportPVD,
     createReportREBA,

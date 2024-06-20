@@ -1,4 +1,3 @@
-// ModifyEmployee.js
 import { useState } from 'react';
 import AppBarHome from '../components/utils/AppBarHome';
 import { TranslucentBox } from '../components/utils/TranslucentBox';
@@ -23,8 +22,8 @@ export function ModifyEmployee() {
     setSelectedEmployee(employee);
   };
 
-  const handleFormSubmit = async (DNI, formData) => {
-    await employeeService.updateEmployee(DNI, formData);
+  const handleFormSubmit = async (employeeDNI, formData) => {
+    await employeeService.updateEmployee(employeeDNI, formData);
     // Aquí puedes manejar la lógica después de enviar el formulario, como cerrarlo
     setSelectedEmployee(null);
   };

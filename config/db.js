@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 
-export const connectDB = async () => {
+export const connectMONGODB = async () => {
   try {
     await mongoose.connect(process.env.DB_CODE_URI)
     .then(()=>{

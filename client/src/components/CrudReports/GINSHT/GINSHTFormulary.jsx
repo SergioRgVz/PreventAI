@@ -1,141 +1,564 @@
-import React, { useState } from 'react';
-import { Grid, Paper, Button, Stepper, Step, StepLabel, Typography } from '@mui/material';
-import ImageUploadStep from '../ImageUploadStep';
-import DatosIdentificativosForm from './DatosIdentificativosForm';
-import EvaluationGINSHTForm from './EvaluationGINSHTForm';
-import DescripcionGINSHTForm from './DescripcionGINSHTForm';
-import ResultGINSHTForm from './ResultGINSHTForm';
-import SendGINSHTForm from './SendGINSHTForm';
-import GINSHTForm from './GINSHTForm';
-import { CircularProgress } from '@mui/material';
-import { Formik, Form } from "formik";
-import formInitialValues from "./GINSHTFormInitialValues";
-import ReportSuccess from '../ReportSuccess';
-import { reportService } from '../../../hooks/useReports';
-import { ImageUploadProvider } from '../../utils/ImageUploadContext';
+import { useState, useEffect } from "react";
+import Identificacion from "./Identificacion";
+import SubirImagenes from "./SubirImagenes";
+import EvaluacionGINSHT from "./EvaluacionGINSHT";
+import ResultadosGINSHT from "./ResultadosGINSHT";
+import {
+  Grid,
+  Stepper,
+  Step,
+  StepLabel,
+  Button,
+  Typography,
+  Paper,
+  TextField,
+} from "@mui/material";
+import { useParams } from "react-router-dom";
+import { companyService } from "../../../hooks/useCompanies";
+import jsPDF from "jspdf"; 
+import apiClient from "../../../hooks/useAxiosAuth";
+import { reportService } from "../../../hooks/useReports";
 
+const steps = [
+  "Datos Identificativos",
+  "Imágenes",
+  "Descripción del trabajo de manipulación manual de cargas",
+  "Evaluación",
+  "Resultados",
+  "Enviar",
+];
 
-const steps = ['Datos identificativos', 'Imágenes', 'Descripción del trabajo de manipulación manual de cargas', 'Evaluación', 'Resultados', 'Enviar'];
-const { formId, formField } = GINSHTForm;
-
-function _renderStepContent(step) {
-  switch (step) {
-    case 0:
-      return <DatosIdentificativosForm formField={formField} />;
-    case 1:
-      return <ImageUploadStep formField={formField} />;
-    case 2:
-      return <DescripcionGINSHTForm formField={formField} />;
-    case 3:
-      return <EvaluationGINSHTForm formField={formField} />;
-    case 4:
-      return <ResultGINSHTForm formField={formField} />;
-    case 5:
-      return <SendGINSHTForm formField={formField} />;
-    default:
-      return <div>No encontrado</div>;
+const fetchFactors = async (tipo) => {
+  try {
+    const response = await apiClient.get(`/factor/type/${tipo}`);
+    return response.data.factors;
+  } catch (error) {
+    console.error("Error fetching factors:", error);
+    return [];
   }
-}
+};
 
-function create_GINSHT_report(values) {
-  const report = {
-    empleado: values.DNI,
-    fecha: values.fecha,
-    empresa: values.CIF,
-    centroDeTrabajo: values.centroDeTrabajo,
-    puestoDeTrabajo: values.puestoDeTrabajo,
-    referencia: values.referencia,
-    descripcionDelTrabajo: {
-      datosDeElevacion: values.datosDeElevacion,
-      datosDeTransporte: values.datosDeTransporte
-    },
-    indicacionesYMedidasPreventivas: {
-      indicaciones: values.indicaciones
-    },
-    evaluacionDeLaElevacion: {
-      pesoRealManejado: values.pesoRealManejado,
-      pesoTeoricoRecomendado: values.pesoTeoricoRecomendado,
-      factoresCorrectores: {
-        tipoDeAgarre: values.tipoDeAgarre,
-        giroDelTronco: values.giroDelTronco,
-        desplazamientoVertical: values.desplazamientoVertical,
-        frecuenciaDeManipulacion: values.frecuenciaDeManipulacion,
-        frecuenciaDeManipulacionRadio: values.frecuenciaDeManipulacionRadio,
-        valorFinalFrecuencia: values.valorFinalFrecuencia
-      },
-      pesoAceptable: values.pesoAceptable,
-      indiceDeRiesgoElevacion: values.indiceRiesgoElevacion,
-      posturaLevantamiento: values.posturaLevantamiento,
-      alturaLevantamiento: values.alturaLevantamiento,
-      separacionLevantamiento: values.separacionLevantamiento,
-      duracionTarea: values.duracionTarea,
-      duracionManipulacion: values.duracionManipulacion
-    },
-    evaluacionDelTransporte: {
-      numeroDeDesplazamientos: values.numeroDeDesplazamientos,
-      distanciaDeDesplazamientos: values.distanciaDeDesplazamientos,
-      indiceRiesgoTransporte: values.indiceRiesgoTransporte
-    },
-    factoresErgonomicosEIndividuales: {
-      listaDeFactoresPuesto: values.listaDeFactoresPuesto,
-      listaDeFactoresTrabajador: values.listaDeFactoresTrabajador
-    },
-    images: values.images
-  };
-  return report;
-}
-
-
-
-
-export function GINSHTFormulary() {
+export const GINSHTFormulary = () => {
+  const { reportId } = useParams();
   const [activeStep, setActiveStep] = useState(0);
-  // const currentValidationSchema = validationSchema[activeStep]; //TODO: Implement validation schema
-  const isLastStep = activeStep === steps.length - 1;
+  const [formData, setFormData] = useState({
+    CIF_Empresa: "",
+    ID_Empresa: "",
+    DNI_Empleado: "",
+    ID_Empleado: "",
+    Sexo: "",
+    PuestoTrabajo: "",
+    Fecha: null,
+    Referencia: "",
+    DescripcionElevacion: "",
+    DescripcionTransporte: "",
+    pesoRealManejado: 0,
+    DuracionTarea: 0,
+    NumeroDesplazamientos: 0,
+    PosicionLevantamiento: 0,
+    DistanciaDesplazamientos: 0,
+    alturaLevantamiento: 0,
+    separacionLevantamiento: 0,
+    desplazamientoVertical: 0,
+    giroDelTronco: 0,
+    tipoDeAgarre: 0,
+    duracionManipulacion: 0,
+    frecuenciaDeManipulacion: 0,
+    frecuenciaDeManipulacionRadio: 0,
+    pesoTeoricoRecomendado: 0,
+    valorFinalFrecuencia: 0,
+    factoresPuesto: [],
+    factoresTrabajador: [],
+    indiceRiesgoElevacion: 0,
+    indiceRiesgoTransporte: 0,
+    pesoAceptable: 0,
+    indicaciones: "",
+  });
+  const [images, setImages] = useState([]);
+  const [employeesList, setEmployeesList] = useState([]);
+  const [puestosFactors, setPuestosFactors] = useState([]);
+  const [trabajadorFactors, setTrabajadorFactors] = useState([]);
 
-  function _sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
+  useEffect(() => {
+    const fetchPuestosFactors = async () => {
+      const factors = await fetchFactors("puestoGINSHT");
+      setPuestosFactors(Array.isArray(factors) ? factors : []);
+    };
 
-  async function _submitForm(values, actions) {
-    await _sleep(1000);
-    let report = create_GINSHT_report(values);
-    alert(JSON.stringify(report));
-    reportService.createReportGINSHT(report);
-    console.log("VALUES GINSHT", report);
+    const fetchTrabajadorFactors = async () => {
+      const factors = await fetchFactors("trabajadorGINSHT");
+      setTrabajadorFactors(Array.isArray(factors) ? factors : []);
+    };
+    console.log("fetching factors: ", puestosFactors, trabajadorFactors);
+    fetchPuestosFactors();
+    fetchTrabajadorFactors();
+  }, []);
 
-    actions.setSubmitting(false);
+  useEffect(() => {
+    const fetchReportData = async () => {
+      if (reportId) {
+        // const reportData = await reportService.getReportById(reportId);
+        // setFormData(reportData);
+      }
+    };
 
-    setActiveStep(activeStep + 1);
-  }
+    fetchReportData();
+  }, [reportId]);
 
-  function _handleSubmit(values, actions) {
-    if (isLastStep) {
-      _submitForm(values, actions);
-    } else {
-      setActiveStep(activeStep + 1);
-      actions.setTouched({});
-      actions.setSubmitting(false);
+  const handleNext = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  };
+
+  const handleBack = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
+  };
+
+  const handleCompanyChange = async (event) => {
+    const selectedCompanyId = event.target.value;
+    const companiesList = await companyService.getCompanies();
+    const selectedCompany = companiesList.find(
+      (company) => company.ID === selectedCompanyId
+    );
+
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      ID_Empresa: selectedCompany.ID,
+      CIF_Empresa: selectedCompany.CIF,
+    }));
+
+    const employeesResponse = await companyService.getEmployees(
+      selectedCompany.ID
+    );
+    setEmployeesList(employeesResponse);
+  };
+
+  const handleEmployeeChange = (event) => {
+    const selectedEmployeeDNI = event.target.value;
+    const selectedEmployee = employeesList.find(
+      (employee) => employee.DNI === selectedEmployeeDNI
+    );
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      DNI_Empleado: selectedEmployee.DNI,
+      ID_Empleado: selectedEmployee.ID,
+    }));
+  };
+
+  const handleReset = () => {
+    setActiveStep(0);
+    setFormData({
+      CIF_Empresa: "",
+      ID_Empresa: "",
+      DNI_Empleado: "",
+      ID_Empleado: "",
+      Sexo: "",
+      PuestoTrabajo: "",
+      Fecha: null,
+      Referencia: "",
+      DescripcionElevacion: "",
+      DescripcionTransporte: "",
+      pesoRealManejado: 0,
+      DuracionTarea: 0,
+      NumeroDesplazamientos: 0,
+      PosicionLevantamiento: 0,
+      DistanciaDesplazamientos: 0,
+      alturaLevantamiento: 0,
+      separacionLevantamiento: 0,
+      desplazamientoVertical: 0,
+      giroDelTronco: 0,
+      tipoDeAgarre: 0,
+      duracionManipulacion: 0,
+      frecuenciaDeManipulacion: 0,
+      frecuenciaDeManipulacionRadio: 0,
+      pesoTeoricoRecomendado: 0,
+      valorFinalFrecuencia: 0,
+      factoresPuesto: [],
+      factoresTrabajador: [],
+      indiceRiesgoElevacion: 0,
+      indiceRiesgoTransporte: 0,
+      pesoAceptable: 0,
+      indicaciones: "",
+    });
+    setEmployeesList([]);
+    setImages([]);
+  };
+
+  const handleSavePDF = async () => {
+    const doc = new jsPDF();
+
+    // // Título del documento
+    doc.setFontSize(18);
+    doc.text("Informe GINSHT", 20, 20);
+
+    // Datos identificativos
+    doc.setFontSize(16);
+    doc.text("Datos identificativos", 20, 30);
+
+    doc.setFontSize(12);
+    doc.text(`CIF Empresa: ${formData.CIF_Empresa}`, 20, 40);
+    doc.text(`ID Empresa: ${formData.ID_Empresa}`, 20, 50);
+    doc.text(`DNI Empleado: ${formData.DNI_Empleado}`, 20, 60);
+    doc.text(`ID Empleado: ${formData.ID_Empleado}`, 20, 70);
+    doc.text(`Sexo: ${formData.Sexo}`, 20, 80);
+    doc.text(`Puesto de Trabajo: ${formData.PuestoTrabajo}`, 20, 90);
+    doc.text(`Fecha: ${formData.Fecha}`, 20, 100);
+    doc.text(`Referencia: ${formData.Referencia}`, 20, 110);
+
+    // Datos del informe
+    doc.text("Descripción de Elevación:", 20, 120);
+    doc.text(formData.DescripcionElevacion, 20, 130);
+    doc.text("Descripción de Transporte:", 20, 140);
+    doc.text(formData.DescripcionTransporte, 20, 150);
+
+    // Datos de la evaluación
+    doc.setFontSize(16);
+    doc.text("Datos de la evaluación", 20, 160);
+
+    doc.setFontSize(12);
+    doc.text(`Peso Real Manejado: ${formData.pesoRealManejado} kg`, 20, 170);
+    doc.text(`Duración de la Tarea: ${formData.DuracionTarea} horas`, 20, 180);
+    doc.text(
+      `Número de Desplazamientos: ${formData.NumeroDesplazamientos}`,
+      20,
+      190
+    );
+    doc.text(
+      `Posición de Levantamiento: ${
+        formData.PosicionLevantamiento === 0 ? "De pie" : "Sentado"
+      }`,
+      20,
+      200
+    );
+    doc.text(
+      `Distancia de Desplazamientos: ${
+        formData.DistanciaDesplazamientos === 0
+          ? "Hasta 10 metros"
+          : "Más de 10 metros"
+      }`,
+      20,
+      210
+    );
+    doc.text(
+      `Altura de Levantamiento: ${
+        [
+          "Altura de la vista",
+          "Encima del codo",
+          "Debajo del codo",
+          "Altura del muslo",
+          "Altura de la pantorrilla",
+        ][formData.alturaLevantamiento]
+      }`,
+      20,
+      220
+    );
+    doc.text(
+      `Separación de Levantamiento: ${
+        formData.separacionLevantamiento === 0
+          ? "Carga cerca del cuerpo"
+          : "Carga lejos del cuerpo"
+      }`,
+      20,
+      230
+    );
+    doc.text(
+      `Peso Teórico Recomendado: ${formData.pesoTeoricoRecomendado} kg`,
+      20,
+      240
+    );
+    doc.text(
+      `Desplazamiento Vertical: ${formData.desplazamientoVertical}`,
+      20,
+      250
+    );
+    doc.text(`Giro del Tronco: ${formData.giroDelTronco}`, 20, 260);
+    doc.text(`Tipo de Agarre: ${formData.tipoDeAgarre}`, 20, 270);
+    doc.text(
+      `Duración de la Manipulación: ${
+        [
+          "Menos de 1 hora al día",
+          "Entre 1 y 2 horas al día",
+          "Entre 2 y 8 horas al día",
+        ][formData.duracionManipulacion]
+      }`,
+      20,
+      280
+    );
+    doc.text(
+      `Frecuencia de la Manipulación: ${
+        [
+          "1 vez cada 5 minutos",
+          "1 vez/minuto",
+          "4 veces/minuto",
+          "9 veces/minuto",
+          "12 veces/minuto",
+          "Más de 15 veces/minuto",
+        ][formData.frecuenciaDeManipulacion]
+      }`,
+      20,
+      290
+    );
+    doc.text(
+      `Valor Final de Frecuencia: ${formData.valorFinalFrecuencia}`,
+      20,
+      300
+    );
+    // Añadir Factores de Puesto
+    doc.text("Factores de Puesto:", 20, 310);
+    let yPosition = 320;
+    formData.factoresPuesto.forEach((factorID) => {
+      const factor = puestosFactors.find((f) => f.ID === factorID);
+      if (factor) {
+        doc.text(`Factor seleccionado: ${factor.Nombre}`, 20, yPosition);
+        yPosition += 10;
+      }
+    });
+
+    // Añadir Factores de Trabajador
+    doc.text("Factores de Trabajador:", 20, yPosition + 10);
+    yPosition += 20;
+    formData.factoresTrabajador.forEach((factorID) => {
+      const factor = trabajadorFactors.find((f) => f.ID === factorID);
+      if (factor) {
+        doc.text(`Factor seleccionado: ${factor.Nombre}`, 20, yPosition);
+        yPosition += 10;
+      }
+    });
+
+    // Añadir las imágenes al PDF
+    for (const image of images) {
+      const imgData = await toBase64(image.file);
+      if (yPosition > 270) {
+        // Crear una nueva página si la posición Y es demasiado grande
+        doc.addPage();
+        yPosition = 20;
+      }
+      doc.addImage(imgData, "JPEG", 20, yPosition, 160, 90);
+      yPosition += 100; // Espacio entre imágenes
     }
-  }
 
-  function _handleBack() {
-    setActiveStep(activeStep - 1);
-  }
-  function _handleHome() {
-    window.location.href = '/home';
-  }
+    // Guardar el documento
+    doc.save("informe_ginsht.pdf");
+  };
+
+  // Función para convertir imagen a base64
+  const toBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
+  const convertirDatosInforme = (formData) => {
+    return {
+      ID_Empresa: formData.ID_Empresa,
+      ID_Empleado: formData.ID_Empleado,
+      Referencia: formData.Referencia,
+      Fecha: formData.Fecha,
+      Indicaciones: formData.indicaciones, // Agrega aquí cualquier indicación adicional si es necesario
+      tipo: "GINSHT", // Define el tipo si es necesario
+      detalles: {
+        Desc_Elevacion: formData.DescripcionElevacion,
+        Desc_Transporte: formData.DescripcionTransporte,
+        PesoReal: formData.pesoRealManejado,
+        PesoTeorico: formData.pesoTeoricoRecomendado,
+        TipoAgarre: formData.tipoDeAgarre,
+        GiroTronco: formData.giroDelTronco,
+        DesplVertical: formData.desplazamientoVertical,
+        FrecManipulacion: formData.frecuenciaDeManipulacion,
+        PesoAceptable: formData.pesoAceptable,
+        IRElevacion: formData.indiceRiesgoElevacion,
+        PosturaLevantamiento: formData.PosicionLevantamiento,
+        AlturaLevantamiento: formData.alturaLevantamiento,
+        SeparacionLevantamiento: formData.separacionLevantamiento,
+        DuracionTarea: formData.DuracionTarea,
+        DuracionManipulacion: formData.duracionManipulacion,
+        NDesplazamientos: formData.NumeroDesplazamientos,
+        DistanciaDesplazamientos: formData.DistanciaDesplazamientos,
+        IRTransporte: formData.indiceRiesgoTransporte,
+      },
+      imagenes: formData.imagenes, // Suponiendo que las imágenes se han añadido aquí
+        factores: {
+        factoresPuesto: formData.factoresPuesto,
+        factoresTrabajador: formData.factoresTrabajador,
+      },
+    };
+  };
+
+  const subirImagen = async (image) => {
+    const formData = new FormData();
+    formData.append("image", image.file);
+
+    try {
+      const response = await apiClient.post("/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      return response.data.filename;
+    } catch (error) {
+      console.error("Error subiendo la imagen:", error);
+      throw error;
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      // Subir imágenes y obtener las rutas
+      const imagenesRutas = await Promise.all(
+        images.map(async (image) => {
+          const ruta = await subirImagen(image);
+          return ruta;
+        })
+      );
+
+      // Convertir datos del formulario
+      const datosInforme = convertirDatosInforme(formData);
+
+      // Incluir las rutas de las imágenes en los datos del informe
+      datosInforme.imagenes = imagenesRutas;
+
+      console.log(datosInforme);
+
+      if (reportId) {
+        // await reportService.updateReport(reportId, datosInforme);
+      } else {
+        await reportService.createReport(datosInforme);
+      }
+
+      console.log("Informe creado exitosamente");
+    } catch (error) {
+      console.error("Error creando el informe:", error);
+    }
+  };
+
+  const getStepContent = (step) => {
+    switch (step) {
+      case 0:
+        return (
+          <Identificacion
+            formData={formData}
+            handleChange={handleChange}
+            handleCompanyChange={handleCompanyChange}
+            employeesList={employeesList}
+            handleEmployeeChange={handleEmployeeChange}
+          />
+        );
+      case 1:
+        return <SubirImagenes images={images} setImages={setImages} showText="GINSHT" />;
+      case 2:
+        return (
+          <Grid container spacing={2}>
+            <Typography variant="h6" gutterBottom>
+              Descripción del trabajo de manipulación manual de cargas
+            </Typography>
+            <Grid item xs={12}>
+              <Typography variant="body1" gutterBottom>
+                Introduzca una breve descripción de los datos referentes a la
+                elevación de la carga.
+              </Typography>
+              <TextField
+                name="DescripcionElevacion"
+                label="Descripción de Elevación"
+                value={formData.DescripcionElevacion}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                multiline
+                rows={4}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="body1" gutterBottom>
+                Introduzca una breve descripción de los datos referentes al
+                transporte de la carga.
+              </Typography>
+              <TextField
+                name="DescripcionTransporte"
+                label="Descripción de Transporte"
+                value={formData.DescripcionTransporte}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                multiline
+                rows={4}
+              />
+            </Grid>
+          </Grid>
+        );
+      case 3:
+        return (
+          <EvaluacionGINSHT formData={formData} handleChange={handleChange} />
+        );
+      case 4:
+        return (
+          <ResultadosGINSHT formData={formData} handleChange={handleChange} />
+        );
+      case 5:
+        return (
+          <>
+            <Typography variant="h6" gutterBottom>
+              Enviar
+            </Typography>
+            <Grid
+              containter
+              display={"flex"}
+              justifyContent={"center"}
+              spacing={4}
+              paddingBottom={"30px"}
+            >
+              <Button
+                variant="contained"
+                color="buttons"
+                onClick={handleSavePDF}
+              >
+                Guardar PDF
+              </Button>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={handleSave}
+              >
+                Enviar
+              </Button>
+            </Grid>
+          </>
+        );
+      default:
+        return "Paso desconocido";
+    }
+  };
 
   return (
-    <React.Fragment>
-      <Typography component="h1" variant="h2" align="center" paddingTop={'10px'}>
+    <div>
+      <Typography
+        component="h1"
+        variant="h2"
+        align="center"
+        paddingTop={"10px"}
+      >
         Informe GINSHT
       </Typography>
-      <Grid container spacing={2} paddingTop={'10px'} paddingLeft={'20px'} paddingRight={'30px'}>
+      <Grid
+        container
+        spacing={2}
+        paddingTop={"10px"}
+        paddingLeft={"20px"}
+        paddingRight={"30px"}
+      >
         <Grid item xs={6} md={3} lg={3}>
-
-          <Stepper activeStep={activeStep} orientation='vertical'>
-            {steps.map((label, index) => (
+          <Stepper activeStep={activeStep} orientation="vertical">
+            {steps.map((label) => (
               <Step key={label}>
                 <StepLabel>{label}</StepLabel>
               </Step>
@@ -143,56 +566,44 @@ export function GINSHTFormulary() {
           </Stepper>
         </Grid>
         <Grid item xs={6} md={9} lg={9}>
-          <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-            {
-              activeStep === steps.length ? (
-                <React.Fragment>
-                  <ReportSuccess />
-                  <Button onClick={_handleHome}>
-                    Volver a la página principal
-                  </Button>
-                </React.Fragment>
+          <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
+            <div>
+              {activeStep === steps.length ? (
+                <div>
+                  <Typography variant="h6" gutterBottom>
+                    Todos los pasos completados
+                  </Typography>
+                  <Button onClick={handleReset}>Resetear</Button>
+                </div>
               ) : (
-                <ImageUploadProvider>
-                  <Formik
-                    initialValues={formInitialValues}
-                    // validationSchema={currentValidationSchema}
-                    onSubmit={_handleSubmit}
-                  >
-                    {({ isSubmitting }) => (
-                      <Form id={formId}>
-                        {_renderStepContent(activeStep)}
-
-                        <div>
-                          {activeStep !== 0 && (
-                            <Button onClick={_handleBack}>
-                              Atrás
-                            </Button>
-                          )}
-                          <div >
-                            <Button
-                              disabled={isSubmitting}
-                              type="submit"
-                              variant="contained"
-                              color="primary"
-                            >
-                              {isLastStep ? "Subir informe" : "Siguiente"}
-                            </Button>
-                            {isSubmitting && (
-                              <CircularProgress
-                                size={24}
-                              />
-                            )}
-                          </div>
-                        </div>
-                      </Form>
-                    )}
-                  </Formik>
-                </ImageUploadProvider>
+                <div>
+                  {getStepContent(activeStep)}
+                  <div>
+                    <Button
+                      disabled={activeStep === 0}
+                      onClick={handleBack}
+                      sx={{ mt: 2 }}
+                    >
+                      Atrás
+                    </Button>
+                    <Button
+                      variant="contained"
+                      onClick={handleNext}
+                      sx={{ mt: 2, ml: 2 }}
+                    >
+                      {activeStep === steps.length - 1
+                        ? "Finalizar"
+                        : "Siguiente"}
+                    </Button>
+                  </div>
+                </div>
               )}
+            </div>
           </Paper>
         </Grid>
       </Grid>
-    </React.Fragment>
+    </div>
   );
-}
+};
+
+export default GINSHTFormulary;

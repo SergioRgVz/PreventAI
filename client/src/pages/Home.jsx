@@ -18,7 +18,7 @@ export function HomePage() {
       <TranslucentBox maxWidth={'300px'}>
         <ButtonForm url='/create-report'>Nueva evaluación</ButtonForm>
         <ButtonForm url='/view-reports'>Abrir evaluación</ButtonForm>
-        <ButtonForm url='/management'>Empresas/Empleados</ButtonForm>
+        <ButtonForm url='/management'>Gestionar</ButtonForm>
       </TranslucentBox>
     </>
   );

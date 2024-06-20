@@ -1,7 +1,7 @@
 import { useFormikContext } from 'formik';
 import { Checkbox, FormControlLabel } from '@mui/material';
 
-export const FormikCheckbox = ({ name, label }) => {
+export const FormikCheckbox = ({ name, label, value }) => {
     const { values, setFieldValue } = useFormikContext();
 
     const handleChange = (event) => {
@@ -9,10 +9,10 @@ export const FormikCheckbox = ({ name, label }) => {
         const currentList = values[name] || [];
 
         if (isChecked) {
-            const newList = [...currentList, label];
+            const newList = [...currentList, value];
             setFieldValue(name, newList);
         } else {
-            const newList = currentList.filter(item => item !== label);
+            const newList = currentList.filter(item => item.ID !== value.ID);
             setFieldValue(name, newList);
         }
     };
@@ -21,7 +21,7 @@ export const FormikCheckbox = ({ name, label }) => {
         <FormControlLabel
             control={
                 <Checkbox
-                    checked={values[name]?.includes(label) || false}
+                    checked={values[name]?.some(item => item.ID === value.ID) || false}
                     onChange={handleChange}
                 />
             }

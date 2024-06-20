@@ -3,8 +3,8 @@ import apiClient from './useAxiosAuth';
 
 export const getEmployees = async () => {
   const response = await apiClient.get('/employee');
-  console.log("getEmployees front: ", response.data.employees);
-  return response.data.employees;
+  console.log("getEmployees front: ", response.data);
+  return response.data;
 }
 
 export const createEmployee = async (formData) => {
@@ -12,11 +12,10 @@ export const createEmployee = async (formData) => {
   return response.data;
 }
 
-export const updateEmployee = async (DNI, formData) => {
-  const response = await apiClient.put(`/employee/update/${DNI}`, formData);
+export const updateEmployee = async (employeeDNI, formData) => {
+  const response = await apiClient.put(`/employee/update/${employeeDNI}`, formData);
   return response.data;
-}
-
+};
 export const deleteEmployee = async (DNI) => {
   const response = await apiClient.delete(`/employee/${DNI}`);
   return response.data;

@@ -4,8 +4,8 @@ import AppBarHome from '../components/utils/AppBarHome';
 import { TranslucentBox } from '../components/utils/TranslucentBox';
 import { GoBackButton } from '../components/utils/GoBackButton';
 import { CompaniesListButton } from '../components/CrudEmpresas/CompaniesListButton';
-import { FormularioCompany } from '../components/CrudEmpresas/FormularioCompany';
 import Typography from '@mui/material/Typography';
+import { useNavigate } from 'react-router-dom';
 
 const pageToRouteMapping = {
   'Inicio': '/home',
@@ -16,15 +16,20 @@ const pageToRouteMapping = {
 const settings = ['Perfil', 'Cerrar sesión'];
 
 export function ModifyCompany() {
+  const navigate = useNavigate();
   const [selectedCompany, setSelectedCompany] = useState(null);
 
   const handleCompanySelect = (company) => {
-    setSelectedCompany(company);
-  };
+    if (company.CIF) {
+      setSelectedCompany(company);
+      console.log("Company selected: ", selectedCompany);
+      navigate(`/management/modify-company/${company.CIF}`);
+    }
+  }
 
-  const handleFormSubmit = () => {
-    setSelectedCompany(null);
-  };
+  // const handleFormSubmit = () => {
+  //   setSelectedCompany(null);
+  // };
 
   return (
     <>
@@ -34,7 +39,6 @@ export function ModifyCompany() {
           Tus empresas
         </Typography>
         <CompaniesListButton onCompanySelect={handleCompanySelect} />
-        {selectedCompany && <FormularioCompany company={selectedCompany} onSubmit={handleFormSubmit} sx={{}} />}
         <GoBackButton />
       </TranslucentBox>
     </>

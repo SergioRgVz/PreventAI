@@ -23,11 +23,13 @@
     "axios": "^1.6.7",
     "date-fns": "^3.4.0",
     "dayjs": "^1.11.10",
-    "formik": "^2.4.5",
+    "formik": "^2.4.6",
+    "jspdf": "^2.5.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.21.0",
-    "vite": "^5.0.8"
+    "vite": "^5.0.8",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@svgr/rollup": "^8.1.0",

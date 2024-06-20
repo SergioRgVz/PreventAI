@@ -3,6 +3,10 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import AlertDialog from './AlertDialog';
 
+const getFieldValue = (field, item) => {
+    return field.split('.').reduce((obj, key) => (obj && obj[key] !== 'undefined' ? obj[key] : null), item);
+};
+
 export const DataCard = ({ item, config, onRemove }) => {
 
     const handleView = () => {
@@ -27,7 +31,7 @@ export const DataCard = ({ item, config, onRemove }) => {
             <CardContent sx={{ flex: '1 1 auto' }}>
                 {config.fields.map((field) => (
                     <Typography key={field.name} gutterBottom variant="body2" color="text.buttons">
-                        {field.label}: {item[field.name]}
+                        {field.label}: {getFieldValue(field.name, item)}
                     </Typography>
                 ))}
             </CardContent>

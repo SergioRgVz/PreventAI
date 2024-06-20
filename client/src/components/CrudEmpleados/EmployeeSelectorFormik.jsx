@@ -10,19 +10,22 @@ export const EmployeeSelector = ({ label, ...props }) => {
             <InputLabel id={`${props.id}-label`}>{label}</InputLabel>
             <Select
                 labelId={`${props.id}-label`}
-                {...field} 
+                {...field}
                 onChange={(event) => {
                     setValue(event.target.value);
+                    if (props.onChange) {
+                        props.onChange(event);
+                    }
                 }}
                 displayEmpty
                 variant='filled'
                 fullWidth
-                error={meta.touched && Boolean(meta.error)} 
-                helperText={meta.touched && meta.error} 
+                error={meta.touched && Boolean(meta.error)}
+                helperText={meta.touched && meta.error}
             >
                 {props.options.map((option) => (
-                    <MenuItem key={option.DNI} value={option.DNI}>
-                        {option.name}
+                    <MenuItem key={option.ID} value={option.ID}>
+                        {option.DNI}
                     </MenuItem>
                 ))}
             </Select>

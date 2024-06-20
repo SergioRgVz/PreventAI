@@ -13,9 +13,13 @@ export default function ImageUploadStep({ formField }) {
 
     return (
         <React.Fragment>
+            
             <Typography variant="h4" gutterBottom>
                 {imagesField.label}
             </Typography>
+            <Typography variant="h6" gutterBottom>
+                        Por favor, suba las imágenes necesarias para la evaluación.
+                    </Typography>
             <Grid container spacing={3} paddingBottom={'20px'}>
                 <Grid item xs={12}>
                     <ImageUploadField name={imagesField.name} />

@@ -1,6 +1,7 @@
 import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 
 export const CompanySelector = ({ id, name, label, value, onChange, options, sx }) => {
+    
     return (
         <FormControl fullWidth sx={sx}>
             <InputLabel id={`${id}-label`}>{label}</InputLabel>
@@ -16,8 +17,8 @@ export const CompanySelector = ({ id, name, label, value, onChange, options, sx 
                 fullWidth
             >
                 {options.map((option) => (
-                    <MenuItem key={option.CIF} value={option.CIF}>
-                        {option.name}
+                    <MenuItem key={option.code} value={option.code}>
+                        {option.label}
                     </MenuItem>
                 ))}
             </Select>

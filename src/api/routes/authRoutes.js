@@ -7,7 +7,7 @@
  */
 
 import express from 'express';
-import { login, register,  getUserByEmail, verifyToken, getAllCompanies, deleteUser } from '../controllers/authController.js';
+import { login, checkIfTechnician, register, getUserByEmail, getAllUsers, updateUser, deleteUser, verifyToken } from '../controllers/authController.js';
 
 const router = express.Router();
 
@@ -20,16 +20,22 @@ const router = express.Router();
  * @memberof module:routes/authRoutes
  */
 router.post('/login', login);
+
+router.get('/check-role', verifyToken, checkIfTechnician);
+
 /**
  * Ruta para obtener un usuario por su email.
  * Maneja solicitudes GET para buscar un usuario por su email.
  * Requiere el email del usuario como parte de la ruta.
- * @name get/:id
+ * @name get/:email
  * @function
  * @memberof module:routes/authRoutes
  * @inner
  */
-router.get('/:email', getUserByEmail);
+router.get('/email/:email', getUserByEmail);
+
+router.get('/users', getAllUsers);
+
 /**
  * Ruta para el registro de nuevos usuarios.
  * Maneja solicitudes POST para crear nuevos usuarios en el sistema.
@@ -39,32 +45,18 @@ router.get('/:email', getUserByEmail);
  * @memberof module:routes/authRoutes
  */
 router.post('/register', register);
+
+
+router.put('/users/:id', updateUser);
+
 /**
- * Ruta para verificar la validez de un token de autenticación.
- * Maneja solicitudes POST para verificar tokens JWT proporcionados por los usuarios.
- * Espera recibir el token de autenticación en el encabezado de la solicitud.
- * @name post/verifyToken
- * @function
- * @memberof module:routes/authRoutes
- */
-router.post('/verifyToken', verifyToken);
-/**
- * Ruta para obtener todas las empresas asociadas a un usuario por su ID.
- * Maneja solicitudes GET para listar empresas vinculadas al usuario autenticado.
- * Requiere el ID del usuario como parte de la ruta.
- * @name get/user/:id/companies
- * @function
- * @memberof module:routes/authRoutes
- */
-router.get('/user/:id/companies', getAllCompanies);
-/**
- * Ruta para eliminar un usuario por su ID.
+ * Ruta para eliminar un usuario por su email.
  * Maneja solicitudes DELETE para eliminar un usuario específico del sistema.
- * Requiere el ID del usuario como parte de la ruta.
- * @name delete/:id
+ * Requiere el email del usuario como parte de la ruta.
+ * @name delete/email/:email
  * @function
  * @memberof module:routes/authRoutes
  */
-router.delete('/:id', deleteUser);
+router.delete('/email/:email', deleteUser);
 
 export default router;

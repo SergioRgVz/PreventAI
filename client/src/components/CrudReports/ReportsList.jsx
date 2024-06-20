@@ -2,14 +2,16 @@ import { DataCard } from '../utils/DataCard'; // Asegúrate de actualizar el imp
 import Stack from '@mui/material/Stack';
 import { useState, useEffect } from 'react';
 import { reportService } from '../../hooks/useReports';
+import { useNavigate } from 'react-router-dom';
 
 export const ReportList = () => {
+    const navigate = useNavigate();
     const [reports, setReports] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const handleRemoveReport = (CIF) => {
-        setReports(reports.filter(report => report.CIF !== CIF));
+    const handleRemoveReport = (Referencia) => {
+        setReports(reports.filter(report => report.Referencia !== Referencia));
     };
 
     useEffect(() => {
@@ -29,22 +31,24 @@ export const ReportList = () => {
     }, []);
 
     const reportConfig = {
-        identifierKey: '_id',
+        identifierKey: 'Referencia',
         fields: [
-            { name: 'empleado', label: 'Empleado' },
-            { name: 'empresa', label: 'Empresa' },
-            { name: 'centroDeTrabajo', label: 'Centro de Trabajo' },
-            { name: 'puestoDeTrabajo', label: 'Puesto de Trabajo' },
-            { name: 'fecha', label: 'Fecha' },
+            { name: 'Empleado.DNI', label: 'Empleado.DNI' },
+            { name: 'Empleado.Empresa.CIF', label: 'Empresa' },
+            { name: 'Empleado.PuestoTrabajo', label: 'Puesto de Trabajo' },
+            { name: 'Fecha', label: 'Fecha' },
+            { name: 'Referencia', label: 'Referencia'},
+            { name: 'tipo', label: 'Tipo'}
         ],
         onView: (report) => {
             console.log("Viendo informe", report);
+            navigate(`/management/view-report/${report.Referencia}`);
         },
         onEdit: (report) => {
             console.log("Editando informe", report);
         },
-        deleteService: async (_id) => {
-            await reportService.deleteReport(_id);
+        deleteService: async (Referencia) => {
+            await reportService.deleteReport(Referencia);
         },
         viewEnabled: true,
         editEnabled: true,

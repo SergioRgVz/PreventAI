@@ -9,7 +9,7 @@ export const getReports = async (req, res) => {
     const userId = req.user.userId;
 
     try {
-        const reports = await reportService.getAllReports(userId);
+        const reports = await reportService.getReports(userId);
         res.status(200).json(reports);
     } catch (error) {
         if (error instanceof HttpError) {
@@ -38,6 +38,26 @@ export const getReportByEmployee = async (req, res) => {
     }
 }
 
+export const getReportByReferencia = async (req, res) => {
+    const referencia = req.params.referencia;
+    try {
+        const report = await reportService.getReportByReference(referencia);
+        if (report) {
+            res.status(200).json(report);
+        } else {
+            res.status(404).json({ message: 'Reporte no encontrado' });
+        }
+    }
+    catch (error) {
+        if (error instanceof HttpError) {
+            res.status(error.status).json({ message: error.message });
+        } else {
+            res.status(500).json({ message: 'Error interno del servidor' });
+        }
+    }
+}
+
+
 export const getReportByCompany = async (req, res) => {
     const userId = req.user.userId;
     const { companyCIF } = req.params;
@@ -56,8 +76,8 @@ export const getReportByCompany = async (req, res) => {
     }
 }
 
-export const createReportGINSHT = async (req, res) => {
-    const userId = req.user.userId;
+export const createReport = async (req, res) => {
+    const ID_Usuario = req.user.userId;
     const reportData = req.body;
 
     // const validationErrors = validateReportGINSHTData(reportData);
@@ -66,10 +86,8 @@ export const createReportGINSHT = async (req, res) => {
     // }
 
     try {
-        const imagePaths = files.map(file => file.path);
-
-        reportData.images = imagePaths;
-        const report = await reportService.createReportGINSHT(userId, reportData);
+        reportData.ID_Usuario = ID_Usuario;
+        const report = await reportService.createReport(reportData);
         res.status(201).json(report);
     } catch (error) {
         if (error instanceof HttpError) {
@@ -160,9 +178,9 @@ export const modifyPWD = async (req, res) => {
 }
 
 export const deleteReport = async (req, res) => {
-    const reportId = req.params.id;
+    const Referencia = req.params.id;
     try {
-        const report = await reportService.deleteReport(reportId);
+        const report = await reportService.deleteReportByReferencia(Referencia);
         res.status(200).json(report);
     } catch (error) {
         if (error instanceof HttpError) {

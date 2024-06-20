@@ -7,7 +7,7 @@
  */
 
 import express from 'express';
-import { getEmployeeByDNI, createEmployee, deleteEmployeeByDNI, getEmployees, updateEmployeeByDNI } from '../controllers/employeeController.js';
+import employeeController from '../controllers/employeeController.js';
 
 const router = express.Router();
 
@@ -18,16 +18,16 @@ const router = express.Router();
  * @memberof module:routes/employeeRoutes
  * @inner
  */
-router.get('/', getEmployees);
+router.get('/', employeeController.getEmployees);
 
 /**
- * Ruta para obtener un empleado por su ID.
- * @name get/:id
+ * Ruta para obtener un empleado por su DNI.
+ * @name get/dni/:DNI
  * @function
  * @memberof module:routes/employeeRoutes
  * @inner
  */
-router.get('/:DNI', getEmployeeByDNI);
+router.get('/dni/:DNI', employeeController.getEmployeeByDNI);
 
 /**
  * Ruta para crear un nuevo empleado.
@@ -36,25 +36,35 @@ router.get('/:DNI', getEmployeeByDNI);
  * @memberof module:routes/employeeRoutes
  * @inner
  */
-router.post('/create', createEmployee);
+router.post('/create', employeeController.createEmployee);
 
 /**
- * Ruta para actualizar un empleado por ID. Aunque es común usar el ID como parte del URL (e.g., PUT /:id),
- * este enfoque utiliza un cuerpo de solicitud para pasar el ID y los datos actualizados.
- * @name put/update
+ * Ruta para actualizar un empleado por ID.
+ * @name put/update/:employeeId
  * @function
  * @memberof module:routes/employeeRoutes
  * @inner
  */
-router.put('/update/:DNI', updateEmployeeByDNI);
+router.put('/update/:employeeDNI', employeeController.updateEmployee);
+
+
 
 /**
  * Ruta para eliminar un empleado por su ID.
- * @name delete/:id
+ * @name delete/:employeeId
  * @function
  * @memberof module:routes/employeeRoutes
  * @inner
  */
-router.delete('/:DNI', deleteEmployeeByDNI);
+router.delete('/delete/:employeeDNI', employeeController.deleteEmployee);
+
+/**
+ * Ruta para obtener todos los empleados de una empresa por el ID de la empresa.
+ * @name get/company/:companyId/employees
+ * @function
+ * @memberof module:routes/employeeRoutes
+ * @inner
+ */
+router.get('/company/:companyId/employees', employeeController.getEmployeesByCompanyId);
 
 export default router;

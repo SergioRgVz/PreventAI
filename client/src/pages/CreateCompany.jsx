@@ -20,6 +20,8 @@ export function CreateCompany() {
         <AddCompany />
         <GoBackButton />
       </TranslucentBox>
+
+      <div></div>
     </>
   );
 }

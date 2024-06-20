@@ -31,11 +31,9 @@ export const CompaniesList = () => {
   const companyConfig = {
     identifierKey: 'CIF',
     fields: [
-      { name: 'name', label: 'Nombre' },
+      { name: 'Nombre', label: 'Nombre' },
       { name: 'CIF', label: 'CIF' },
-      { name: 'ccaa', label: 'Comunidad Autónoma' },
-      { name: 'provincia', label: 'Provincia' },
-      { name: 'municipio', label: 'Municipio' },
+      { name: 'Municipio.Nombre', label: 'Municipio' }
     ],
     onView: (company) => {
       console.log("Viendo empresa", company);
@@ -59,7 +57,11 @@ export const CompaniesList = () => {
     return <div>Error: {error.message}</div>;
   }
 
-  if (Array.isArray(companies)) {
+  if (Array.isArray(companies) && companies.length === 0) {
+    return <div>No se encuentran empresas.</div>;
+  }
+
+  if (Array.isArray(companies) && companies.length !== 0) {
     return (
       <Stack spacing={2}>
         {companies.map((company) => (

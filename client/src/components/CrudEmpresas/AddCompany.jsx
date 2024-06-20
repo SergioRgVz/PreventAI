@@ -2,74 +2,50 @@ import { useState, useEffect } from 'react';
 import { Box, Typography, TextField, Button } from '@mui/material';
 import { companyService } from '../../hooks/useCompanies';
 import { LocationSelector } from '../CrudReports/LocationSelector';
-import { getAllCCAAs, getProvincias, getMunicipios } from '../../services/locationService';
-
+import { getProvincias, getAllMunicipiosInProvincia } from '../../services/locationService';
+import { useDebounce } from '../../hooks/debounce';
 
 export function AddCompany() {
   const [formData, setFormData] = useState({
     CIF: '',
-    name: '',
-    technician: '',
-    ccaa: '',
-    provincia: '',
+    Nombre: '',
     municipio: '',
   });
+  const [provincia, setProvincia] = useState('');
   const [errors, setErrors] = useState({});
-  const [ccaaList, setCcaaList] = useState([]);
   const [provinciasList, setProvinciasList] = useState([]);
   const [municipiosList, setMunicipiosList] = useState([]);
-  // const { createCompany, error, loading } = useCreateCompany();
-
-
+  const debouncedProvincia = useDebounce(provincia, 500);
 
   const validateForm = () => {
     const newErrors = {};
     if (!formData.CIF) newErrors.CIF = 'El CIF es obligatorio';
-    if (!formData.name) newErrors.name = 'El nombre es obligatorio';
-    if (!formData.ccaa) newErrors.ccaa = 'La comunidad autónoma es obligatoria';
-    if (!formData.technician) newErrors.technician = 'El técnico es obligatorio';
-    if (!formData.provincia) newErrors.provincia = 'La provincia es obligatoria';
+    if (!formData.Nombre) newErrors.Nombre = 'El nombre es obligatorio';
+    if (!provincia) newErrors.provincia = 'La provincia es obligatoria';
     if (!formData.municipio) newErrors.municipio = 'El municipio es obligatorio';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  //cargar CCAAs
-  useEffect(() => {
-    const fetchCCAAs = async () => {
-      try {
-        const response = await getAllCCAAs();
-        setCcaaList(response);
-      } catch (error) {
-        console.error('Error fetching CCAA:', error);
-      }
-    };
-
-    fetchCCAAs();
-  }, []);
-
-  //cargar provincias
   useEffect(() => {
     const fetchProvincias = async () => {
-      if (formData.ccaa) {
-        try {
-          const response = await getProvincias(formData.ccaa);
-          setProvinciasList(response);
-        } catch (error) {
-          console.error('Error fetching provincias:', error);
-        }
+      try {
+        const response = await getProvincias();
+        setProvinciasList(response);
+      } catch (error) {
+        console.error('Error fetching provincias:', error);
       }
     };
 
     fetchProvincias();
-  }, [formData.ccaa]);
+  }, []);
 
   useEffect(() => {
     const fetchMunicipios = async () => {
-      if (formData.provincia) {
+      if (debouncedProvincia) {
         try {
-          const response = await getMunicipios(formData.provincia);
+          const response = await getAllMunicipiosInProvincia(debouncedProvincia);
           setMunicipiosList(response);
         } catch (error) {
           console.error('Error fetching municipios:', error);
@@ -78,30 +54,26 @@ export function AddCompany() {
     };
 
     fetchMunicipios();
-  }, [formData.provincia]);
-
+  }, [debouncedProvincia]);
 
   const handleChangeSelect = (e) => {
     const { name, value } = e.target;
     let newFormData = { ...formData, [name]: value };
 
-    if (name === 'ccaa') {
-      newFormData = { ...newFormData, provincia: '', municipio: '' };
-      setProvinciasList([]);
-      setMunicipiosList([]);
-    } else if (name === 'provincia') {
+    if (name === 'provincia') {
+      setProvincia(value);
       newFormData = { ...newFormData, municipio: '' };
       setMunicipiosList([]);
+    } else {
+      setFormData(newFormData);
     }
-
-    setFormData(newFormData);
   };
 
   const onButtonClick = async (event) => {
     event.preventDefault();
     if (validateForm()) {
       try {
-        await companyService.createCompany(formData);
+        await companyService.createCompany({ ...formData });
       } catch (error) {
         console.error('Error al añadir la empresa:', error);
         setErrors({ apiError: error.response?.data?.message || 'Error al conectar con el servicio' });
@@ -116,7 +88,7 @@ export function AddCompany() {
       </Typography>
       <TextField
         key="CIF"
-        error={errors.CIF}
+        error={!!errors.CIF}
         helperText={errors.CIF}
         name="CIF"
         label="CIF"
@@ -127,47 +99,24 @@ export function AddCompany() {
         fullWidth
       />
       <TextField
-        key="name"
-        error={errors.name}
-        helperText={errors.name}
-        name="name"
+        key="Nombre"
+        error={!!errors.Nombre}
+        helperText={errors.Nombre}
+        name="Nombre"
         label="Nombre"
         onChange={handleChangeSelect}
-        value={formData.name}
+        value={formData.Nombre}
         sx={{ m: 1, mt: 3 }}
         variant='filled'
         fullWidth
-      />
-      <TextField
-        key="technician"
-        error={errors.technician}
-        helperText={errors.technician}
-        name="technician"
-        label="Técnico"
-        onChange={handleChangeSelect}
-        value={formData.technician}
-        sx={{ m: 1, mt: 3 }}
-        variant='filled'
-        fullWidth
-      />
-
-      {/* Selectores de Localización */}
-      <LocationSelector
-        id="ccaa"
-        name="ccaa"
-        label="Comunidad Autónoma"
-        value={formData.ccaa}
-        onChange={handleChangeSelect}
-        options={ccaaList.map((ccaa) => ({ code: ccaa.code, label: ccaa.label }))}
-        error={errors.ccaa}
       />
       <LocationSelector
         id="provincia"
         name="provincia"
         label="Provincia"
-        value={formData.provincia}
         onChange={handleChangeSelect}
-        options={provinciasList.map((provincia) => ({ code: provincia.code, label: provincia.label }))}
+        value={provincia}
+        options={provinciasList.map((provincia) => ({ code: provincia.ID, label: provincia.Nombre }))}
         error={errors.provincia}
       />
       <LocationSelector
@@ -176,7 +125,7 @@ export function AddCompany() {
         label="Municipio"
         value={formData.municipio}
         onChange={handleChangeSelect}
-        options={municipiosList.map((municipio) => ({ code: municipio.code, label: municipio.label }))}
+        options={municipiosList.map((municipio) => ({ code: municipio.ID, label: municipio.Nombre }))}
         error={errors.municipio}
       />
 
