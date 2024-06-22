@@ -1,4 +1,4 @@
-import Provincia from "../models/Provincia.js";
+import {Provincia} from "../models/associations.js";
 
 const provinciaService = {
     // Función para crear una nueva Provincia

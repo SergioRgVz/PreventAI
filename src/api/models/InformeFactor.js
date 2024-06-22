@@ -34,7 +34,5 @@ const InformeFactor = sequelize.define(
     }
 );
 
-Informe.belongsToMany(Factor, { through: InformeFactor, foreignKey: 'ID_Informe' });
-Factor.belongsToMany(Informe, { through: InformeFactor, foreignKey: 'ID_Factor' });
 
 export default InformeFactor;

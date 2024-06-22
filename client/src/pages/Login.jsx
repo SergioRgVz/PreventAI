@@ -94,7 +94,7 @@ export function LoginPage({ setLoggedIn }) {
           label="Recuérdame"
           sx={{ mb: 2 }}
         />
-        <Button color='info' variant="contained" type="submit" value={"Log in"} onClick={onButtonClick} onKeyDown={onButtonClick} sx={{ mb: 2, width: 'fit-content', ml: 'auto' }}>
+        <Button variant="contained" type="submit" color="buttons" value={"Log in"} onClick={onButtonClick} onKeyDown={onButtonClick} sx={{ mb: 2, width: 'fit-content', ml: 'auto' }}>
           Iniciar sesión
         </Button>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', my: 2 }}>

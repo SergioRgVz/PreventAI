@@ -1,4 +1,3 @@
-import React from "react";
 import { Typography, List, ListItem, ListItemText } from "@mui/material";
 
 const ResumenFactores = ({ title, selectedFactors, allFactors }) => {

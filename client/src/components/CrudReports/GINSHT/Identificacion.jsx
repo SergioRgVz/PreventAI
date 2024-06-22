@@ -90,7 +90,15 @@ const Identificacion = ({
         <Select
           labelId="sexo-label"
           name="Sexo"
-          value={formData.Sexo}
+          value={
+            formData.Sexo === "M"
+              ? "Masculino"
+              : formData.Sexo === "F"
+              ? "Femenino"
+              : formData.Sexo === "O"
+              ? "Otro"
+              : ""
+          }
           onChange={handleChange}
         >
           <MenuItem value="Masculino">Masculino</MenuItem>
@@ -98,6 +106,7 @@ const Identificacion = ({
           <MenuItem value="Otro">Otro</MenuItem>
         </Select>
       </FormControl>
+
       <Typography variant="body2" gutterBottom>
         Datos del puesto de trabajo
       </Typography>

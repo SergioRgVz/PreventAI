@@ -11,7 +11,7 @@ const pageToRouteMapping = {
   'Abrir evaluación': '/view-reports',
   'Gestionar': '/management',
 };
-const settings = ['Perfil', 'Cerrar sesión'];
+const settings = [ 'Cerrar sesión'];
 
 export function CompaniesPage() {
   // const [value, setValue] = React.useState(0);
@@ -23,7 +23,7 @@ export function CompaniesPage() {
   return (
     <>
       <AppBarHome pageToRouteMapping={pageToRouteMapping} settings={settings} logged />
-      <TranslucentBox maxWidth={'600px'}>
+      <TranslucentBox maxWidth={'1000px'}>
         <Divider />
         <Typography variant="h4" component="h4" gutterBottom sx={{ mt: 2, zIndex: 'tooltip' }}>
           Empresas

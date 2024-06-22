@@ -5,6 +5,7 @@ import { validateReportGINSHTData } from '../../utils/validateReports.js';
 import multer from 'multer';
 const upload = multer({ dest: 'uploads/' });  // Configura multer para guardar archivos en la carpeta 'uploads'
 
+
 export const getReports = async (req, res) => {
     const userId = req.user.userId;
 
@@ -57,6 +58,27 @@ export const getReportByReferencia = async (req, res) => {
     }
 }
 
+// export const getReportByID = async (req, res) => {
+//     const userId = req.user.userId;
+//     const { id } = req.params;
+//     try {
+//         const report = await reportService.getReportById(userId, id);
+//         if (report) {
+//             res.status(200).json(report);
+//         } else {
+//             res.status(404).json({ message: 'Reporte no encontrado' });
+//         }
+//     }
+//     catch (error) {
+//         if (error instanceof HttpError) {
+//             res.status(error.status).json({ message: error.message });
+//         } else {
+//             res.status(500).json({ message: 'Error interno del servidor' });
+//         }
+//     }
+// }
+
+
 
 export const getReportByCompany = async (req, res) => {
     const userId = req.user.userId;
@@ -97,7 +119,31 @@ export const createReport = async (req, res) => {
             res.status(500).json({ message: 'Error interno del servidor' });
         }
     }
-}
+};
+
+export const updateReport = async (req, res) => {
+    const ID_Usuario = req.user.userId;
+    const reportId = req.params.id;
+    const reportData = req.body;
+
+    // const validationErrors = validateReportGINSHTData(reportData);
+    // if (validationErrors.length > 0) {
+    //     return res.status(400).json({ errors: validationErrors });
+    // }
+
+    try {
+        reportData.ID_Usuario = ID_Usuario;
+        const report = await reportService.updateReport(reportId, reportData);
+        res.status(200).json(report);
+    } catch (error) {
+        if (error instanceof HttpError) {
+            res.status(error.status).json({ message: error.message });
+        } else {
+            res.status(500).json({ message: 'Error interno del servidor' });
+        }
+    }
+};
+
 
 export const createReportPWD = async (req, res) => {
     const userId = req.user.userId;

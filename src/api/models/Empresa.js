@@ -32,7 +32,5 @@ const Empresa = sequelize.define(
   }
 );
 
-Empresa.belongsTo(Municipio, { foreignKey: 'ID_Municipio' });
-Municipio.hasMany(Empresa, { foreignKey: 'ID_Municipio' });
 
 export default Empresa;

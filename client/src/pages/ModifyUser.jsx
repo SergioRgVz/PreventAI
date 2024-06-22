@@ -13,7 +13,7 @@ const pageToRouteMapping = {
   'Abrir evaluación': '/view-reports',
   'Gestionar': '/management',
 };
-const settings = ['Perfil', 'Cerrar sesión'];
+const settings = [ 'Cerrar sesión'];
 
 export function ModifyUser() {
   const [selectedUser, setSelectedUser] = useState(null);
@@ -30,7 +30,7 @@ export function ModifyUser() {
   return (
     <>
       <AppBarHome pageToRouteMapping={pageToRouteMapping} settings={settings} logged />
-      <TranslucentBox maxWidth={'600px'} sx={{ overflow: 'auto' }}>
+      <TranslucentBox maxWidth={'800px'} sx={{ overflow: 'auto' }}>
         <Typography variant="h4" component="h4" gutterBottom>
           Tus usuarios
         </Typography>

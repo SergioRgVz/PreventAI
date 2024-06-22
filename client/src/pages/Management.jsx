@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, Tabs, Tab } from '@mui/material';
 import AppBarHome from '../components/utils/AppBarHome';
 import { TranslucentBox } from '../components/utils/TranslucentBox';
@@ -12,7 +12,7 @@ const pageToRouteMapping = {
   'Abrir evaluación': '/view-reports',
   'Gestionar': '/management',
 };
-const settings = ['Perfil', 'Cerrar sesión'];
+const settings = ['Cerrar sesión'];
 
 export function ManagementPage() {
   const [value, setValue] = useState(0);
@@ -65,7 +65,7 @@ export function ManagementPage() {
         {value === 2 && (
           <Box sx={{ mt: 2 }}>
             <ButtonForm url='/management/view-reports'>Ver Informes</ButtonForm>
-            <ButtonForm url='/management/create-report'>Crear Informe</ButtonForm>
+            <ButtonForm url='/create-report'>Crear Informe</ButtonForm>
             <ButtonForm url='/management/modify-report'>Modificar Informe</ButtonForm>
             <ButtonForm url='/management/delete-report'>Eliminar Informe</ButtonForm>
           </Box>

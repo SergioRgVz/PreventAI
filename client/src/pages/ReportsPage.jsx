@@ -12,7 +12,7 @@ const pageToRouteMapping = {
     'Abrir evaluación': '/view-reports',
     'Gestionar': '/management',
 };
-const settings = ['Perfil', 'Cerrar sesión'];
+const settings = [ 'Cerrar sesión'];
 
 export function ReportsPage() {
     // const [value, setValue] = React.useState(0);

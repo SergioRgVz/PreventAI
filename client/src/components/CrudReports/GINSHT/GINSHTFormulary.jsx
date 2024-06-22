@@ -18,6 +18,7 @@ import { companyService } from "../../../hooks/useCompanies";
 import jsPDF from "jspdf"; 
 import apiClient from "../../../hooks/useAxiosAuth";
 import { reportService } from "../../../hooks/useReports";
+import dayjs from 'dayjs';
 
 const steps = [
   "Datos Identificativos",
@@ -38,8 +39,9 @@ const fetchFactors = async (tipo) => {
   }
 };
 
-export const GINSHTFormulary = () => {
+export const GINSHTFormulary = (report) => {
   const { reportId } = useParams();
+
   const [activeStep, setActiveStep] = useState(0);
   const [formData, setFormData] = useState({
     CIF_Empresa: "",
@@ -74,6 +76,116 @@ export const GINSHTFormulary = () => {
     pesoAceptable: 0,
     indicaciones: "",
   });
+
+  
+  const handleCompanyChange = async (event) => {
+    const selectedCompanyId = event.target.value;
+    const companiesList = await companyService.getCompanies();
+    const selectedCompany = companiesList.find(
+      (company) => company.ID === selectedCompanyId
+    );
+
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      ID_Empresa: selectedCompany.ID,
+      CIF_Empresa: selectedCompany.CIF,
+    }));
+
+    const employeesResponse = await companyService.getEmployees(
+      selectedCompany.ID
+    );
+    setEmployeesList(employeesResponse);
+  };
+
+  const handleEmployeeChange = (event) => {
+    const selectedEmployeeDNI = event.target.value;
+    const selectedEmployee = employeesList.find(
+      (employee) => employee.DNI === selectedEmployeeDNI
+    );
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      DNI_Empleado: selectedEmployee.DNI,
+      ID_Empleado: selectedEmployee.ID,
+    }));
+  };
+
+
+
+  const populateFormData = (report) => {
+    const factorsPuesto = report.report.Factors ? report.report.Factors.map(factor => factor.ID) : [];
+    const factorsTrabajador = report.report.Factors ? report.report.Factors.map(factor => factor.ID) : [];
+
+
+     // Procesar imágenes
+    const processedImages = report.report.Imagens ? report.report.Imagens.map(image => {
+    return {
+      file: null,
+      preview: image.url || `${image.base64}`
+    };
+     }) : [];
+    setFormData({
+      CIF_Empresa: report.report.Empleado.Empresa.CIF || "",
+      ID_Empresa: report.report.Empleado.Empresa.ID || "",
+      DNI_Empleado: report.report.Empleado.DNI || "",
+      ID_Empleado: report.report.ID_Empleado || "",
+      Sexo: report.report.Empleado.Sexo  || "",
+      PuestoTrabajo: report.report.Empleado.PuestoTrabajo || "",
+      Fecha: report.report.Fecha ? dayjs(report.report.Fecha) : null,
+      Referencia: report.report.Referencia || "",
+      DescripcionElevacion: report.report.GINSHT?.Desc_Elevacion || "",
+      DescripcionTransporte: report.report.GINSHT?.Desc_Transporte || "",
+      pesoRealManejado: report.report.GINSHT?.PesoReal || 0,
+      DuracionTarea: report.report.GINSHT?.DuracionTarea || 0,
+      NumeroDesplazamientos: report.report.GINSHT?.NDesplazamientos || 0,
+      PosicionLevantamiento: report.report.GINSHT?.PosturaLevantamiento || 0,
+      DistanciaDesplazamientos: report.report.GINSHT?.DistanciaDesplazamientos || 0,
+      alturaLevantamiento: report.report.GINSHT?.AlturaLevantamiento || 0,
+      separacionLevantamiento: report.report.GINSHT?.SeparacionLevantamiento || 0,
+      desplazamientoVertical: report.report.GINSHT?.DesplVertical || 0,
+      giroDelTronco: report.report.GINSHT?.GiroTronco || 0,
+      tipoDeAgarre: report.report.GINSHT?.TipoAgarre || 0,
+      duracionManipulacion: report.report.GINSHT?.DuracionManipulacion || 0,
+      frecuenciaDeManipulacion: report.report.GINSHT?.FrecManipulacion || 0,
+      frecuenciaDeManipulacionRadio: report.report.GINSHT?.FrecManipulacionRadio || 0,
+      pesoTeoricoRecomendado: report.report.GINSHT?.PesoTeorico || 0,
+      valorFinalFrecuencia: report.report.GINSHT?.ValorFinalFrecuencia || 0,
+      factoresPuesto: factorsPuesto,
+      factoresTrabajador: factorsTrabajador, // Si hay una distinción específica entre los factores, ajústala aquí
+      indiceRiesgoElevacion: report.report.GINSHT?.IRElevacion || 0,
+      indiceRiesgoTransporte: report.report.GINSHT?.IRTransporte || 0,
+      pesoAceptable: report.report.GINSHT?.PesoAceptable || 0,
+      indicaciones: report.report.Indicaciones || "",
+    });
+    setImages(processedImages);
+
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (report.report) {
+        // Obtener factores de puesto y trabajador
+        const puestosFactors = await fetchFactors("puestoGINSHT");
+        const trabajadorFactors = await fetchFactors("trabajadorGINSHT");
+  
+        setPuestosFactors(puestosFactors);
+        setTrabajadorFactors(trabajadorFactors);
+        
+        // Una vez que los factores están cargados, establecer los datos del formulario
+        populateFormData(report);
+  
+        // Obtener empleados de la empresa seleccionada
+        if (report.report.Empleado.Empresa.ID) {
+          const employeesResponse = await companyService.getEmployees(
+            report.report.Empleado.Empresa.ID
+          );
+          setEmployeesList(employeesResponse);
+        }
+      }
+    };
+  
+    fetchData();
+  }, [report]);
+
   const [images, setImages] = useState([]);
   const [employeesList, setEmployeesList] = useState([]);
   const [puestosFactors, setPuestosFactors] = useState([]);
@@ -121,36 +233,6 @@ export const GINSHTFormulary = () => {
     }));
   };
 
-  const handleCompanyChange = async (event) => {
-    const selectedCompanyId = event.target.value;
-    const companiesList = await companyService.getCompanies();
-    const selectedCompany = companiesList.find(
-      (company) => company.ID === selectedCompanyId
-    );
-
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      ID_Empresa: selectedCompany.ID,
-      CIF_Empresa: selectedCompany.CIF,
-    }));
-
-    const employeesResponse = await companyService.getEmployees(
-      selectedCompany.ID
-    );
-    setEmployeesList(employeesResponse);
-  };
-
-  const handleEmployeeChange = (event) => {
-    const selectedEmployeeDNI = event.target.value;
-    const selectedEmployee = employeesList.find(
-      (employee) => employee.DNI === selectedEmployeeDNI
-    );
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      DNI_Empleado: selectedEmployee.DNI,
-      ID_Empleado: selectedEmployee.ID,
-    }));
-  };
 
   const handleReset = () => {
     setActiveStep(0);
@@ -166,7 +248,7 @@ export const GINSHTFormulary = () => {
       DescripcionElevacion: "",
       DescripcionTransporte: "",
       pesoRealManejado: 0,
-      DuracionTarea: 0,
+      DuracionTarea: 1,
       NumeroDesplazamientos: 0,
       PosicionLevantamiento: 0,
       DistanciaDesplazamientos: 0,
@@ -413,14 +495,23 @@ export const GINSHTFormulary = () => {
   };
 
   const handleSave = async () => {
-    try {
+    try { 
       // Subir imágenes y obtener las rutas
-      const imagenesRutas = await Promise.all(
+      let ruta = null;
+      let imagenesRutas = await Promise.all(
         images.map(async (image) => {
-          const ruta = await subirImagen(image);
-          return ruta;
+          try{ 
+            ruta = await subirImagen(image);
+          } catch (error) {
+            console.error("Error subiendo la imagen:", error);
+            return null;
+          }
+            return ruta;
         })
       );
+      if (imagenesRutas.some((ruta) => ruta === null)) {
+        imagenesRutas = null;
+      }
 
       // Convertir datos del formulario
       const datosInforme = convertirDatosInforme(formData);
@@ -430,8 +521,8 @@ export const GINSHTFormulary = () => {
 
       console.log(datosInforme);
 
-      if (reportId) {
-        // await reportService.updateReport(reportId, datosInforme);
+      if (report.report.ID) {
+        await reportService.updateReport(report.report.ID, datosInforme);
       } else {
         await reportService.createReport(datosInforme);
       }
@@ -511,7 +602,7 @@ export const GINSHTFormulary = () => {
               Enviar
             </Typography>
             <Grid
-              containter
+              container
               display={"flex"}
               justifyContent={"center"}
               spacing={4}

@@ -5,6 +5,7 @@ import AppBarHome from "../components/utils/AppBarHome";
 import { TranslucentBox } from "../components/utils/TranslucentBox";
 import { Box, Typography, TextField, Button } from "@mui/material";
 import { companyService } from "../hooks/useCompanies";
+import { GoBackButton } from "../components/utils/GoBackButton";
 import { LocationSelector } from "../components/CrudReports/LocationSelector";
 import {
   getProvincias,
@@ -19,7 +20,7 @@ const pageToRouteMapping = {
   'Abrir evaluación': '/view-reports',
   'Gestionar': '/management',
 };
-const settings = ['Perfil', 'Cerrar sesión'];
+const settings = [ 'Cerrar sesión'];
 
 export const EditCompany = () => {
   const { CIF } = useParams();
@@ -207,6 +208,8 @@ export const EditCompany = () => {
             Enviar
           </Button>
         </Box>
+        <GoBackButton />
+
       </TranslucentBox>
     </>
   );

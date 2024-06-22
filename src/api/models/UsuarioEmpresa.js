@@ -29,7 +29,5 @@ const UsuarioEmpresa = sequelize.define(
     }
 );
 
-Usuario.belongsToMany(Company, { through: UsuarioEmpresa, foreignKey: 'ID_Usuario' });
-Company.belongsToMany(Usuario, { through: UsuarioEmpresa, foreignKey: 'ID_Empresa' });
 
 export default UsuarioEmpresa;

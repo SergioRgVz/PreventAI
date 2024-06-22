@@ -92,6 +92,5 @@ const GINSHT = sequelize.define(
     }
 );
 
-GINSHT.belongsTo(Informe, { foreignKey: 'ID' });
 
 export default GINSHT;

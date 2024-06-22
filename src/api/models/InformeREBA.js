@@ -96,7 +96,5 @@ const Informe_REBA = sequelize.define('Informe_REBA', {
     timestamps: false,
 });
 
-Informe_REBA.belongsTo(Informe, { foreignKey: 'ID' });
-Informe.hasOne(Informe_REBA, { foreignKey: 'ID' });
 
 export default Informe_REBA;

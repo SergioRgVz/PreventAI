@@ -16,8 +16,8 @@ import GINSHT from "./GINSHT.js";
 import REBA from "./REBA.js";
 import UsuarioEmpresa from "./UsuarioEmpresa.js";
 
-Empleado.belongsTo(Company, { foreignKey: 'ID_Empresa' });
-Company.hasMany(Empleado, { foreignKey: 'ID_Empresa' });
+Empleado.belongsTo(Empresa, { foreignKey: 'ID_Empresa' });
+Empresa.hasMany(Empleado, { foreignKey: 'ID_Empresa' });
 
 Empresa.belongsTo(Municipio, { foreignKey: 'ID_Municipio' });
 Municipio.hasMany(Empresa, { foreignKey: 'ID_Municipio' });
@@ -54,5 +54,25 @@ PVD.belongsTo(Informe, { foreignKey: 'ID' });
 
 REBA.belongsTo(Informe, { foreignKey: 'ID' });
 
-Usuario.belongsToMany(Company, { through: UsuarioEmpresa, foreignKey: 'ID_Usuario' });
-Company.belongsToMany(Usuario, { through: UsuarioEmpresa, foreignKey: 'ID_Empresa' });
+User.belongsToMany(Empresa, { through: UsuarioEmpresa, foreignKey: 'ID_Usuario' });
+Empresa.belongsToMany(User, { through: UsuarioEmpresa, foreignKey: 'ID_Empresa' });
+
+export {
+    CCAA,
+    Empleado,
+    Empresa,
+    Imagen,
+    Informe,
+    User,
+    Factor,
+    InformeFactor,
+    Informe_GINSHT,
+    Informe_PVD,
+    Informe_REBA,
+    Provincia,
+    Municipio,
+    PVD,
+    GINSHT,
+    REBA,
+    UsuarioEmpresa,
+};

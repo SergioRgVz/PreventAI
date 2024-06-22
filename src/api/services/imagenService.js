@@ -4,7 +4,7 @@
  * @module services/imagenService
  */
 
-import Imagen from '../models/Imagen.js';
+import {Imagen} from '../models/associations.js';
 
 const imagenService = {
     /**

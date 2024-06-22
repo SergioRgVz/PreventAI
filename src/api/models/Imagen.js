@@ -29,5 +29,4 @@ const Imagen = sequelize.define(
     }
 );
 
-Imagen.belongsTo(Informe, { foreignKey: 'ID_Informe' });
 export default Imagen;

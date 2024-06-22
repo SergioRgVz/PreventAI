@@ -135,7 +135,7 @@ export function RegisterPage({ setLoggedIn }) {
           sx={{ width: '500px', mb: 2 }}
         />
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', my: 2 }}>
-          <Button color='info' variant="contained" type="submit" onClick={onButtonClick} onKeyDown={onButtonClick}>
+          <Button color='buttons' variant="contained" type="submit" onClick={onButtonClick} onKeyDown={onButtonClick}>
             Registrarse
           </Button>
         </Box>

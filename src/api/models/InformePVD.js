@@ -16,7 +16,5 @@ const Informe_PVD = sequelize.define('Informe_PVD', {
     timestamps: false,
 });
 
-Informe_PVD.belongsTo(Informe, { foreignKey: 'ID' });
-Informe.hasOne(Informe_PVD, { foreignKey: 'ID' });
 
 export default Informe_PVD;

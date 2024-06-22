@@ -1,7 +1,7 @@
-import Empresa from '../models/Empresa.js';
-import Municipio from '../models/Municipio.js';
-import Usuario from '../models/Usuario.js';
-import UsuarioEmpresa from '../models/UsuarioEmpresa.js';
+import {Empresa} from '../models/associations.js';
+import {Municipio} from '../models/associations.js';
+import {User} from '../models/associations.js';
+import {UsuarioEmpresa} from '../models/associations.js';
 
 const companyService = {
     createCompany: async (data) => {
@@ -53,7 +53,7 @@ const companyService = {
             const companies = await Empresa.findAll({
                 include: [
                     {
-                        model: Usuario,
+                        model: User,
                         through: { attributes: [] }, // No necesitamos atributos de la tabla intermedia
                         where: { ID: userId },
                         attributes: [] // No necesitamos atributos del usuario

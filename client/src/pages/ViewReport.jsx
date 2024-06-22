@@ -2,7 +2,8 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { reportService } from "../hooks/useReports";
 import ViewGINSHT from "../components/CrudReports/GINSHT/ViewGINSHT";
-
+import ViewPVD from "../components/CrudReports/PVD/ViewPVD";
+import ViewREBA from "../components/CrudReports/REBA/ViewREBA";
 import AppBarHome from '../components/utils/AppBarHome';
 import { TranslucentBox } from '../components/utils/TranslucentBox';
 import { GoBackButton } from '../components/utils/GoBackButton';
@@ -13,7 +14,7 @@ const pageToRouteMapping = {
   'Abrir evaluación': '/view-reports',
   'Gestionar': '/management',
 };
-const settings = ['Perfil', 'Cerrar sesión'];
+const settings = [ 'Cerrar sesión'];
 
 
 export function ViewReport() {
@@ -54,9 +55,14 @@ export function ViewReport() {
   return (
     <>
       <AppBarHome pageToRouteMapping={pageToRouteMapping} settings={settings} logged />
-      <TranslucentBox maxWidth={'800px'}>
+      <TranslucentBox maxWidth={'1100px'}>
       <h1>Detalles del Informe</h1>
-      {report.GINSHT ? <ViewGINSHT informe={report} /> : <div>No hay detalles de GINSHT para mostrar.</div>}
+      {report.GINSHT && <ViewGINSHT informe={report} />}
+        {report.PVD && <ViewPVD informe={report} />}
+        {report.REBA && <ViewREBA informe={report} />}
+        {!report.GINSHT && !report.PVD && !report.REBA && (
+          <div>No hay detalles del informe para mostrar.</div>
+        )}
       <GoBackButton />
       </TranslucentBox>
     </>

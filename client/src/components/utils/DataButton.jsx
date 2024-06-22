@@ -1,20 +1,22 @@
-import { ButtonBase, Card, CardContent, Typography } from '@mui/material';
+import { Button, Card, CardContent, Typography } from '@mui/material';
 
-export const DataButton = ({ item, config, onClick }) => {
+const getFieldValue = (field, item) => {
+    return field.split('.').reduce((obj, key) => (obj && obj[key] !== 'undefined' ? obj[key] : null), item);
+};
+
+export const DataButton = ({ item, config, onClick, children }) => {
     return (
-        <ButtonBase
-            onClick={() => onClick && onClick(item)}
-            style={{ display: 'block', textAlign: 'initial', width: '100%' }}
-        >
-            <Card sx={{ maxWidth: 345 }}>
-                <CardContent>
-                    {config.fields.map((field) => (
-                        <Typography key={field.name} gutterBottom={field.gutterBottom} variant={field.variant} component="div">
-                            {field.label}: {item[field.name]}
-                        </Typography>
-                    ))}
-                </CardContent>
-            </Card>
-        </ButtonBase>
+        <Card onClick={onClick} sx={{ cursor: 'pointer', m: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+            <CardContent sx={{ flex: '1 1 auto' }}>
+                {config.fields.map((field) => (
+                    <Typography key={field.name} gutterBottom variant="body2" color="text.secondary">
+                        {field.label}: {getFieldValue(field.name, item)}
+                    </Typography>
+                ))}
+            </CardContent>
+            {children}
+        </Card>
     );
 };
+
+export default DataButton;

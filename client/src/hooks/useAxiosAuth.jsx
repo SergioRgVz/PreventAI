@@ -46,4 +46,9 @@ apiClient.interceptors.response.use(function (response) {
     return response;
 });
 
+export const handleLogout = () => {
+    localStorage.removeItem('token'); // Eliminar el token del almacenamiento local
+    window.location.href = '/login'; // Redirigir a la página de inicio de sesión
+};
+
 export default apiClient;

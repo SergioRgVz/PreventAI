@@ -2,24 +2,27 @@
 // import { ReportPWD } from "../models/reportModel.js";
 // import { ReportREBA } from "../models/reportModel.js";
 import employeeService from "./employeeService.js";
-import GINSHT from "../models/GINSHT.js";
-import PVD from "../models/PVD.js";
-import REBA from "../models/REBA.js";
+import { GINSHT } from "../models/associations.js";
+import { PVD } from "../models/associations.js";
+import { REBA } from "../models/associations.js";
 // import companyService from "./companyService.js";
 // import Company from "../models/companyModel.js";
-import Informe from "../models/Informe.js";
-import Usuario from "../models/User.js";
-import Empleado from "../models/Empleado.js";
-import Empresa from "../models/Empresa.js";
-import Imagen from "../models/Imagen.js";
-import InformeFactor from "../models/InformeFactor.js";
-import Factor from "../models/Factor.js";
+import { Informe } from "../models/associations.js";
+import { User } from "../models/associations.js";
+import { Empleado } from "../models/associations.js";
+import { Empresa } from "../models/associations.js";
+import { Imagen } from "../models/associations.js";
+import { InformeFactor } from "../models/associations.js";
+import { Factor } from "../models/associations.js";
 import userService from "./userService.js";
+import path from "path";
 // import HttpError from "../../utils/HttpError.js";
 import mongoose from "mongoose";
 import fs from "fs/promises";
+import { fileURLToPath } from "url";
 
-
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const convertImageToBase64 = async (filePath) => {
     try {
@@ -32,7 +35,7 @@ const convertImageToBase64 = async (filePath) => {
 };
 
 const verificarPermisos = async (userID, empleadoID = null, empresaID = null) => {
-    const user = await Usuario.findByPk(userID);
+    const user = await User.findByPk(userID);
 
     if (!user) {
         throw new Error('Usuario no encontrado');
@@ -90,7 +93,7 @@ const reportService = {
                     where: { ID_Usuario: userId },
                     include: [
                         {
-                            model: Usuario,
+                            model: User,
                             attributes: ['Nombre', 'Apellidos']
                         },
                         {
@@ -111,7 +114,7 @@ const reportService = {
 
                     include: [
                         {
-                            model: Usuario,
+                            model: User,
                             attributes: ['Nombre', 'Apellidos']
                         },
                         {
@@ -171,7 +174,7 @@ const reportService = {
                 where: { ID_Empleado: employeeId },
                 include: [
                     {
-                        model: Usuario,
+                        model: User,
                         attributes: ['Nombre', 'Apellidos']
                     },
                     {
@@ -236,7 +239,7 @@ const reportService = {
                 where: { ID_Empleado: employeeIds },
                 include: [
                     {
-                        model: Usuario,
+                        model: User,
                         attributes: ['Nombre', 'Apellidos']
                     },
                     {
@@ -284,16 +287,16 @@ const reportService = {
                 where: { Referencia: reference },
                 include: [
                     {
-                        model: Usuario,
+                        model: User,
                         attributes: ['Nombre', 'Apellidos']
                     },
                     {
                         model: Empleado,
-                        attributes: ['DNI', 'PuestoTrabajo', 'Nombre', 'Apellidos', 'Sexo'],
+                        attributes: ['DNI', 'PuestoTrabajo', 'Nombre', 'Apellidos', 'Sexo', 'ID'],
                         include: [
                             {
                                 model: Empresa,
-                                attributes: ['CIF', 'Nombre']
+                                attributes: ['CIF', 'Nombre', 'ID']
                             }
                         ]
                     },
@@ -301,6 +304,15 @@ const reportService = {
                         model: Imagen,
                         attributes: ['URL']
                     },
+                    {
+                        model: Factor,
+                        through: {
+                            model: InformeFactor,
+                            attributes: []
+                        },
+                        attributes: ['Nombre', 'ID']
+                    }
+
                 ]
             });
 
@@ -311,26 +323,30 @@ const reportService = {
             // Convertir las imágenes a base64
             const images = await Promise.all(
                 informe.Imagens.map(async (imagen) => {
-                    const imagePath = path.resolve(__dirname, '..', 'uploads', imagen.URL); // Asegúrate de que la ruta sea correcta
+                    const imagePath = path.resolve(process.cwd(), imagen.URL);
                     const base64Image = await convertImageToBase64(imagePath);
                     return { ...imagen.dataValues, base64: base64Image };
                 })
             );
-            informe.dataValues.Imagens = images;
-            
-            // Obtener los detalles específicos del tipo de informe
+            // Crear un objeto personalizado con los datos del informe
+            const informeData = {
+                ...informe.dataValues,
+                Imagens: images,
+            };
+
+            // Obtener los detalles específicos del tipo de informe y agregar al objeto personalizado
             if (informe.tipo === 'GINSHT') {
                 const ginsht = await GINSHT.findOne({ where: { ID: informe.ID } });
-                informe.dataValues.GINSHT = ginsht;
+                informeData.GINSHT = ginsht ? ginsht.dataValues : null;
             } else if (informe.tipo === 'PVD') {
                 const pvd = await PVD.findOne({ where: { ID: informe.ID } });
-                informe.dataValues.PVD = pvd;
+                informeData.PVD = pvd ? pvd.dataValues : null;
             } else if (informe.tipo === 'REBA') {
                 const reba = await REBA.findOne({ where: { ID: informe.ID } });
-                informe.dataValues.REBA = reba;
+                informeData.REBA = reba ? reba.dataValues : null;
             }
 
-            return informe;
+            return informeData;
         } catch (error) {
             console.error('Error al obtener informe por referencia:', error);
             throw error;
@@ -390,61 +406,64 @@ const reportService = {
             throw error;
         }
     },
-    updateReport: async (reportId, data) => {
+    updateReport: async (id, data) => {
         const { ID_Usuario, ID_Empleado, Referencia, Fecha, Indicaciones, tipo, detalles, imagenes, factores } = data;
-
+    
         const transaction = await Informe.sequelize.transaction();
         try {
             // Actualizar el informe principal
-            const informe = await Informe.findByPk(reportId);
-            if (!informe) {
-                throw new Error('Informe no encontrado');
-            }
-
-            await informe.update({
+            const informe = await Informe.update({
                 ID_Usuario,
                 ID_Empleado,
                 Referencia,
                 Fecha,
                 Indicaciones,
                 tipo
-            }, { transaction });
-
+            }, {
+                where: { ID: id },
+                transaction
+            });
+    
             // Actualizar el informe específico según el tipo
             if (tipo === 'GINSHT') {
-                await GINSHT.update(detalles, { where: { ID: reportId }, transaction });
+                await GINSHT.update({ ...detalles }, { where: { ID: id }, transaction });
             } else if (tipo === 'PVD') {
-                await PVD.update(detalles, { where: { ID: reportId }, transaction });
+                await PVD.update({ ...detalles }, { where: { ID: id }, transaction });
             } else if (tipo === 'REBA') {
-                await REBA.update(detalles, { where: { ID: reportId }, transaction });
+                await REBA.update({ ...detalles }, { where: { ID: id }, transaction });
             }
-
+    
             // Manejar las imágenes asociadas
             if (imagenes && imagenes.length > 0) {
-                // Eliminar las imágenes antiguas
-                await Imagen.destroy({ where: { ID_Informe: reportId }, transaction });
-                // Crear las nuevas imágenes
+                // Eliminar las imágenes existentes
+                await Imagen.destroy({ where: { ID_Informe: id }, transaction });
+    
+                // Crear nuevas imágenes
                 for (let imagen of imagenes) {
                     await Imagen.create({
-                        URL: imagen.URL,
-                        ID_Informe: reportId
+                        URL: imagen,
+                        ID_Informe: id
                     }, { transaction });
                 }
             }
-
+    
             // Manejar los factores asociados
-            if (factores && factores.length > 0) {
-                // Eliminar las asociaciones antiguas
-                await InformeFactor.destroy({ where: { ID_Informe: reportId }, transaction });
-                // Crear las nuevas asociaciones
-                for (let factorId of factores) {
-                    await InformeFactor.create({
-                        ID_Informe: reportId,
-                        ID_Factor: factorId
-                    }, { transaction });
+            if (factores) {
+                // Eliminar los factores existentes
+                await InformeFactor.destroy({ where: { ID_Informe: id }, transaction });
+    
+                // Crear nuevos factores
+                for (const Subfactor in factores) {
+                    for (const factor in factores[Subfactor]) {
+                        await InformeFactor.create({
+                            ID_Informe: id,
+                            ID_Factor: factores[Subfactor][factor],
+                            Tipo_Factor: tipo
+                        }, { transaction });
+                    }
                 }
             }
-
+    
             await transaction.commit();
             return informe;
         } catch (error) {
@@ -453,6 +472,70 @@ const reportService = {
             throw error;
         }
     },
+    
+    // updateReport: async (reportId, data) => {
+    //     const { ID_Usuario, ID_Empleado, Referencia, Fecha, Indicaciones, tipo, detalles, imagenes, factores } = data;
+
+    //     const transaction = await Informe.sequelize.transaction();
+    //     try {
+    //         // Actualizar el informe principal
+    //         const informe = await Informe.findByPk(reportId);
+    //         if (!informe) {
+    //             throw new Error('Informe no encontrado');
+    //         }
+
+    //         await informe.update({
+    //             ID_Usuario,
+    //             ID_Empleado,
+    //             Referencia,
+    //             Fecha,
+    //             Indicaciones,
+    //             tipo
+    //         }, { transaction });
+
+    //         // Actualizar el informe específico según el tipo
+    //         if (tipo === 'GINSHT') {
+    //             await GINSHT.update(detalles, { where: { ID: reportId }, transaction });
+    //         } else if (tipo === 'PVD') {
+    //             await PVD.update(detalles, { where: { ID: reportId }, transaction });
+    //         } else if (tipo === 'REBA') {
+    //             await REBA.update(detalles, { where: { ID: reportId }, transaction });
+    //         }
+
+    //         // Manejar las imágenes asociadas
+    //         if (imagenes && imagenes.length > 0) {
+    //             // Eliminar las imágenes antiguas
+    //             await Imagen.destroy({ where: { ID_Informe: reportId }, transaction });
+    //             // Crear las nuevas imágenes
+    //             for (let imagen of imagenes) {
+    //                 await Imagen.create({
+    //                     URL: imagen.URL,
+    //                     ID_Informe: reportId
+    //                 }, { transaction });
+    //             }
+    //         }
+
+    //         // Manejar los factores asociados
+    //         if (factores && factores.length > 0) {
+    //             // Eliminar las asociaciones antiguas
+    //             await InformeFactor.destroy({ where: { ID_Informe: reportId }, transaction });
+    //             // Crear las nuevas asociaciones
+    //             for (let factorId of factores) {
+    //                 await InformeFactor.create({
+    //                     ID_Informe: reportId,
+    //                     ID_Factor: factorId
+    //                 }, { transaction });
+    //             }
+    //         }
+
+    //         await transaction.commit();
+    //         return informe;
+    //     } catch (error) {
+    //         await transaction.rollback();
+    //         console.error('Error al actualizar el informe:', error);
+    //         throw error;
+    //     }
+    // },
 
     deleteReportByReferencia: async (reference) => {
         const transaction = await Informe.sequelize.transaction();

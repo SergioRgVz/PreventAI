@@ -1,9 +1,9 @@
-// ModifyCompany.js
+// ModifyReport.js
 import { useState } from 'react';
 import AppBarHome from '../components/utils/AppBarHome';
 import { TranslucentBox } from '../components/utils/TranslucentBox';
 import { GoBackButton } from '../components/utils/GoBackButton';
-import { CompaniesListButton } from '../components/CrudEmpresas/CompaniesListButton';
+import { ReportsListButton } from '../components/CrudReports/ReportsListButton';
 import Typography from '@mui/material/Typography';
 import { useNavigate } from 'react-router-dom';
 
@@ -15,30 +15,26 @@ const pageToRouteMapping = {
 };
 const settings = [ 'Cerrar sesión'];
 
-export function ModifyCompany() {
+export function ModifyReport() {
   const navigate = useNavigate();
-  const [selectedCompany, setSelectedCompany] = useState(null);
+  const [selectedReport, setSelectedReport] = useState(null);
 
-  const handleCompanySelect = (company) => {
-    if (company.CIF) {
-      setSelectedCompany(company);
-      console.log("Company selected: ", selectedCompany);
-      navigate(`/management/modify-company/${company.CIF}`);
+  const handleReportSelect = (report) => {
+    if (report.Referencia) {
+        setSelectedReport(report);
+      console.log("Report selected: ", selectedReport);
+      navigate(`/management/modify-report/${report.Referencia}`);
     }
   }
-
-  // const handleFormSubmit = () => {
-  //   setSelectedCompany(null);
-  // };
 
   return (
     <>
       <AppBarHome pageToRouteMapping={pageToRouteMapping} settings={settings} logged />
       <TranslucentBox maxWidth={'600px'} sx={{ overflow: 'auto' }}>
         <Typography variant="h4" component="h4" gutterBottom>
-          Tus empresas
+          Tus informes
         </Typography>
-        <CompaniesListButton onCompanySelect={handleCompanySelect} />
+        <ReportsListButton handleReportSelect={handleReportSelect} />
         <GoBackButton />
       </TranslucentBox>
     </>

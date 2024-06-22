@@ -44,8 +44,8 @@ export const CompaniesList = () => {
     deleteService: async (CIF) => {
       await companyService.deleteCompany(CIF);
     },
-    viewEnabled: true,
-    editEnabled: true,
+    viewEnabled: false,
+    editEnabled: false,
     deleteEnabled: true,
   };
 

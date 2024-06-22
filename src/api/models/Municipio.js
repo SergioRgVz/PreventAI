@@ -28,7 +28,5 @@ const Municipio = sequelize.define(
   }
 );
 
-Municipio.belongsTo(Provincia, { foreignKey: 'ID_Provincia' });
-Provincia.hasMany(Municipio, { foreignKey: 'ID_Provincia' });
 
 export default Municipio;

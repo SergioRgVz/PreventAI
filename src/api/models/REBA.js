@@ -104,6 +104,5 @@ const REBA = sequelize.define(
     }
 );
 
-REBA.belongsTo(Informe, { foreignKey: 'ID' });
 
 export default REBA;

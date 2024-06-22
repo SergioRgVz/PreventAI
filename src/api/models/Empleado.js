@@ -60,7 +60,5 @@ const Empleado = sequelize.define(
     }
 );
 
-Empleado.belongsTo(Company, { foreignKey: 'ID_Empresa' });
-Company.hasMany(Empleado, { foreignKey: 'ID_Empresa' });
 
 export default Empleado;

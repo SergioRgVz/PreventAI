@@ -61,8 +61,8 @@ export const EmployeesList = () => {
     deleteService: async (DNI) => {
       await employeeService.deleteEmployee(DNI);
     },
-    viewEnabled: true,
-    editEnabled: true,
+    viewEnabled: false,
+    editEnabled: false,
     deleteEnabled: true,
   };
 

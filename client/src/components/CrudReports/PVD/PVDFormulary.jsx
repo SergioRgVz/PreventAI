@@ -13,6 +13,7 @@ import {
   Paper,
   TextField,
 } from "@mui/material";
+import dayjs from "dayjs";
 
 import { useParams } from "react-router-dom";
 import { companyService } from "../../../hooks/useCompanies";
@@ -39,7 +40,7 @@ const fetchFactors = async (tipo) => {
   }
 };
 
-export const PVDFormulary = () => {
+export const PVDFormulary = (report) => {
   const { reportId } = useParams();
   const [activeStep, setActiveStep] = useState(0);
   const [formData, setFormData] = useState({
@@ -51,7 +52,7 @@ export const PVDFormulary = () => {
     PuestoTrabajo: "",
     Fecha: null,
     Referencia: "",
-    Desc_TrabajoPVD: "",
+    DescROL: "",
     factoresPantalla: [],
     factoresTeclado: [],
     factoresMesa: [],
@@ -64,18 +65,73 @@ export const PVDFormulary = () => {
     indicaciones: "",
   });
 
+  const populateFormData = (report) => {
+    const factors = report.report.Factors
+      ? report.report.Factors.map((factor) => factor.ID)
+      : [];
+
+    // Procesar imágenes
+    const processedImages = report.report.Imagens
+      ? report.report.Imagens.map((image) => {
+          return {
+            file: null,
+            preview: image.url || `${image.base64}`,
+          };
+        })
+      : [];
+    setFormData({
+      CIF_Empresa: report.report.Empleado.Empresa.CIF || "",
+      ID_Empresa: report.report.Empleado.Empresa.ID || "",
+      DNI_Empleado: report.report.Empleado.DNI || "",
+      ID_Empleado: report.report.ID_Empleado || "",
+      Sexo: report.report.Empleado.Sexo || "",
+      PuestoTrabajo: report.report.Empleado.PuestoTrabajo || "",
+      Fecha: report.report.Fecha ? dayjs(report.report.Fecha) : null,
+      Referencia: report.report.Referencia || "",
+      DescROL: report.report.GINSHT?.Desc_Elevacion || "",
+      factoresPantalla: factors,
+      factoresTeclado: factors,
+      factoresMesa: factors,
+      factoresSilla: factors,
+      factoresIluminacion: factors,
+      factoresRuido: factors,
+      factoresTemperatura: factors,
+      factoresProgramas: factors,
+      factoresOrganizacion: factors,
+      indicaciones: report.report.Indicaciones || "",
+    });
+    setImages(processedImages);
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (report.report) {
+        // Obtener factores de puesto y trabajador
+        const puestosFactors = await fetchFactors("puestoGINSHT");
+        const trabajadorFactors = await fetchFactors("trabajadorGINSHT");
+
+        // setPuestosFactors(puestosFactors);
+        // setTrabajadorFactors(trabajadorFactors);
+
+        // Una vez que los factores están cargados, establecer los datos del formulario
+        populateFormData(report);
+
+        // Obtener empleados de la empresa seleccionada
+        if (report.report.Empleado.Empresa.ID) {
+          const employeesResponse = await companyService.getEmployees(
+            report.report.Empleado.Empresa.ID
+          );
+          setEmployeesList(employeesResponse);
+        }
+      }
+    };
+
+    fetchData();
+  }, [report]);
+
   const [images, setImages] = useState([]);
   const [employeesList, setEmployeesList] = useState([]);
-  const [pantallaFactors, setPantallaFactors] = useState([]);
-  const [tecladoFactors, setTecladoFactors] = useState([]);
-  const [mesaFactors, setMesaFactors] = useState([]);
-  const [sillaFactors, setSillaFactors] = useState([]);
-  const [iluminacionFactors, setIluminacionFactors] = useState([]);
-  const [ruidoFactors, setRuidoFactors] = useState([]);
-  const [temperaturaFactors, setTemperaturaFactors] = useState([]);
-  const [programasFactors, setProgramasFactors] = useState([]);
-  const [organizacionFactors, setOrganizacionFactors] = useState([]);
-
+  
   useEffect(() => {
     const fetchReportData = async () => {
       if (reportId) {
@@ -145,7 +201,7 @@ export const PVDFormulary = () => {
       PuestoTrabajo: "",
       Fecha: null,
       Referencia: "",
-      Desc_TrabajoPVD: "",
+      DescROL: "",
       factoresPantalla: [],
       factoresTeclado: [],
       factoresMesa: [],
@@ -159,13 +215,12 @@ export const PVDFormulary = () => {
     });
     setEmployeesList([]);
     setImages([]);
-}
+  };
 
-// TODO: Implementar la función para guardar el PDF
-const handleSavePDF = () => {
-};
+  // TODO: Implementar la función para guardar el PDF
+  const handleSavePDF = () => {};
 
-      // Función para convertir imagen a base64
+  // Función para convertir imagen a base64
   const toBase64 = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -177,16 +232,16 @@ const handleSavePDF = () => {
 
   const convertirDatosInforme = (formData) => {
     return {
-    ID_Empresa: formData.ID_Empresa,
-    ID_Empleado: formData.ID_Empleado,
-    Referencia: formData.Referencia,
-    Fecha: formData.Fecha,
-    Indicaciones: formData.indicaciones, // Agrega aquí cualquier indicación adicional si es necesario
-    tipo: "PVD", // Define el tipo si es necesario
-    detalles: {
-      DescROL: formData.Desc_TrabajoPVD,
-    },
-      imagenes: formData.imagenes,  
+      ID_Empresa: formData.ID_Empresa,
+      ID_Empleado: formData.ID_Empleado,
+      Referencia: formData.Referencia,
+      Fecha: formData.Fecha,
+      Indicaciones: formData.indicaciones, // Agrega aquí cualquier indicación adicional si es necesario
+      tipo: "PVD", // Define el tipo si es necesario
+      detalles: {
+        DescROL: formData.DescROL,
+      },
+      imagenes: formData.imagenes,
       factores: {
         pantalla: formData.factoresPantalla,
         teclado: formData.factoresTeclado,
@@ -196,7 +251,7 @@ const handleSavePDF = () => {
         ruido: formData.factoresRuido,
         temperatura: formData.factoresTemperatura,
         programas: formData.factoresProgramas,
-        organizacion: formData.factoresOrganizacion
+        organizacion: formData.factoresOrganizacion,
       },
     };
   };
@@ -221,24 +276,31 @@ const handleSavePDF = () => {
 
   const handleSave = async () => {
     try {
-      // Subir imágenes y obtener las rutas
-      const imagenesRutas = await Promise.all(
+      let ruta = null;
+      let imagenesRutas = await Promise.all(
         images.map(async (image) => {
-          const ruta = await subirImagen(image);
+          try {
+            ruta = await subirImagen(image);
+          } catch (error) {
+            console.error("Error subiendo la imagen:", error);
+            return null;
+          }
           return ruta;
         })
       );
-
+      if (imagenesRutas.some((ruta) => ruta === null)) {
+        imagenesRutas = null;
+      }
       // Convertir datos del formulario
-      const datosInforme = convertirDatosInforme(formData);
 
+      const datosInforme = convertirDatosInforme(formData);
       // Incluir las rutas de las imágenes en los datos del informe
       datosInforme.imagenes = imagenesRutas;
 
       console.log(datosInforme);
 
-      if (reportId) {
-        // await reportService.updateReport(reportId, datosInforme);
+      if (report.report.ID) {
+        await reportService.updateReport(report.report.ID, datosInforme);
       } else {
         await reportService.createReport(datosInforme);
       }
@@ -263,74 +325,75 @@ const handleSavePDF = () => {
         );
       case 1:
         return <SubirImagenes images={images} setImages={setImages} />;
-    case 2: 
-    return (
-        <Grid container spacing={2}>
-          <Typography variant="h6" gutterBottom>
-            Descripción del trabajo de pantallas
-          </Typography>
-          <Grid item xs={12}>
-            <Typography variant="body1" gutterBottom>
-            Introduzca una breve descripción de los datos referentes al trabajo con pantallas.
+      case 2:
+        return (
+          <Grid container spacing={2}>
+            <Typography variant="h6" gutterBottom>
+              Descripción del trabajo de pantallas
             </Typography>
-            <TextField
-              name="DescripcionTrabajoPVD"
-              label="Descripción de trabajo con Pantallas"
-              value={formData.Desc_TrabajoPVD}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-              multiline
-              rows={4}
-            />
-          </Grid>
-        </Grid>
-      );
-    case 3:
-        return (
-            <EvaluacionPVD formData={formData} handleChange={handleChange} />
-        );
-
-    case 4:
-        return (
-            <ResultadosPVD formData={formData} handleChange={handleChange} />
-        );
-    case 5:
-        return (
-            <>
-              <Typography variant="h6" gutterBottom>
-                Enviar
+            <Grid item xs={12}>
+              <Typography variant="body1" gutterBottom>
+                Introduzca una breve descripción de los datos referentes al
+                trabajo con pantallas.
               </Typography>
-              <Grid
-                containter
-                display={"flex"}
-                justifyContent={"center"}
-                spacing={4}
-                paddingBottom={"30px"}
-              >
-                <Button
-                  variant="contained"
-                  color="buttons"
-                  onClick={handleSavePDF}
-                >
-                  Guardar PDF
-                </Button>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={handleSave}
-                >
-                  Enviar
-                </Button>
-              </Grid>
-            </>
-          );
-        default:
-            return "Paso no encontrado";
-    }
-};
+              <TextField
+                name="DescROL"
+                label="Descripción de trabajo con Pantallas"
+                value={formData.DescROL}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                multiline
+                rows={4}
+              />
+            </Grid>
+          </Grid>
+        );
+      case 3:
+        return (
+          <EvaluacionPVD formData={formData} handleChange={handleChange} />
+        );
 
-return (
+      case 4:
+        return (
+          <ResultadosPVD formData={formData} handleChange={handleChange} />
+        );
+      case 5:
+        return (
+          <>
+            <Typography variant="h6" gutterBottom>
+              Enviar
+            </Typography>
+            <Grid
+              container
+              display={"flex"}
+              justifyContent={"center"}
+              spacing={4}
+              paddingBottom={"30px"}
+            >
+              <Button
+                variant="contained"
+                color="buttons"
+                onClick={handleSavePDF}
+              >
+                Guardar PDF
+              </Button>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={handleSave}
+              >
+                Enviar
+              </Button>
+            </Grid>
+          </>
+        );
+      default:
+        return "Paso no encontrado";
+    }
+  };
+
+  return (
     <div>
       <Typography
         component="h1"
@@ -338,7 +401,7 @@ return (
         align="center"
         paddingTop={"10px"}
       >
-        Informe GINSHT
+        Informe PVD
       </Typography>
       <Grid
         container

@@ -4,7 +4,7 @@
  * @module services/factorService
  */
 
-import Factor from '../models/Factor.js';
+import {Factor} from '../models/associations.js';
 
 const factorService = {
     /**

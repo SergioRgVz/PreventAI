@@ -1,4 +1,4 @@
-import Municipio from "../models/Municipio.js";
+import {Municipio} from "../models/associations.js";
 
 const municipioService = {
     // Función para crear un nuevo Municipio

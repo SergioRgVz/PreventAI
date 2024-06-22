@@ -1,6 +1,7 @@
 import { Card, CardContent, CardActions, Typography, IconButton } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import AlertDialog from './AlertDialog';
 
 const getFieldValue = (field, item) => {
@@ -36,13 +37,23 @@ export const DataCard = ({ item, config, onRemove }) => {
                 ))}
             </CardContent>
             <CardActions sx={{ flexDirection: 'column' }}>
-                {config.viewEnabled && <IconButton onClick={handleView} color="secondary" aria-label="ver detalle">
-                    <VisibilityIcon />
-                </IconButton>}
-                {config.editEnabled && <IconButton onClick={handleEdit} color="secondary" aria-label="editar">
-                    <EditIcon />
-                </IconButton>}
-                {config.deleteEnabled && <AlertDialog handleDelete={handleDelete} color="error" aria_label="eliminar" />}
+                {config.viewEnabled && (
+                    <IconButton onClick={handleView} color="secondary" aria-label="ver detalle">
+                        <VisibilityIcon />
+                    </IconButton>
+                )}
+                {config.editEnabled && (
+                    <IconButton onClick={handleEdit} color="secondary" aria-label="editar">
+                        <EditIcon />
+                    </IconButton>
+                )}
+                {config.deleteEnabled && (
+                    <AlertDialog handleDelete={handleDelete} color="error" aria_label="eliminar">
+                        <IconButton color="error" aria-label="eliminar">
+                            <DeleteIcon />
+                        </IconButton>
+                    </AlertDialog>
+                )}
             </CardActions>
         </Card>
     );

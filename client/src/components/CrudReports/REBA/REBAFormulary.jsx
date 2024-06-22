@@ -21,6 +21,7 @@ import { companyService } from "../../../hooks/useCompanies";
 import jsPDF from "jspdf";
 import apiClient from "../../../hooks/useAxiosAuth";
 import { reportService } from "../../../hooks/useReports";
+import dayjs from "dayjs";
 
 const steps = [
   "Datos identificativos",
@@ -33,7 +34,7 @@ const steps = [
   "Enviar",
 ];
 
-export const REBAFormulary = () => {
+export const REBAFormulary = (report) => {
   const { reportId } = useParams();
   const [activeStep, setActiveStep] = useState(0);
   const [formData, setFormData] = useState({
@@ -68,46 +69,6 @@ export const REBAFormulary = () => {
     CambiosRapidos: 0,
   });
 
-  const [images, setImages] = useState([]);
-  const [employeesList, setEmployeesList] = useState([]);
-
-  useEffect(() => {
-    const fetchReportData = async () => {
-      if (reportId) {
-        // const reportData = await reportService.getReportById(reportId);
-        // setFormData(reportData);
-      }
-    };
-
-    fetchReportData();
-  }, [reportId]);
-
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  };
-
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
-
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
-    let a = 1;
-  };
-
-  const handleChangeInt = (event) => {
-    const { name, value } = event.target;
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: isNaN(value) ? value : parseInt(value, 10),
-    }));
-    let a = 1; // Esta línea es innecesaria, pero la dejo porque la mencionaste.
-  };
-
   const handleCompanyChange = async (event) => {
     const selectedCompanyId = event.target.value;
     const companiesList = await companyService.getCompanies();
@@ -136,6 +97,108 @@ export const REBAFormulary = () => {
       ...prevFormData,
       DNI_Empleado: selectedEmployee.DNI,
       ID_Empleado: selectedEmployee.ID,
+    }));
+  };
+
+  const populateFormData = (report) => {
+    // Procesar imágenes
+    const processedImages = report.report.Imagens
+      ? report.report.Imagens.map((image) => {
+          return {
+            file: null,
+            preview: image.url || `${image.base64}`,
+          };
+        })
+      : [];
+    setFormData({
+      CIF_Empresa: report.report.Empleado.Empresa.CIF || "",
+      ID_Empresa: report.report.Empleado.Empresa.ID || "",
+      DNI_Empleado: report.report.Empleado.DNI || "",
+      ID_Empleado: report.report.ID_Empleado || "",
+      Sexo: report.report.Empleado.Sexo || "",
+      PuestoTrabajo: report.report.Empleado.PuestoTrabajo || "",
+      Fecha: report.report.Fecha ? dayjs(report.report.Fecha) : null,
+      Referencia: report.report.Referencia || "",
+      Desc_REBA: report.report.REBA.Desc_REBA || "",
+      PCuello: report.report.REBA.Desc_REBA || 1,
+      CCuello: report.report.REBA.CCuello || 0,
+      PTronco: report.report.REBA.PTronco || 1,
+      CTronco: report.report.REBA.CTronco || 0,
+      PPiernas: report.report.REBA.PPiernas || 1,
+      CPiernas1: report.report.REBA.CPiernas1 || 0,
+      CPiernas2: report.report.REBA.CPiernas2 || 0,
+      PBrazos: report.report.REBA.PBrazos || 1,
+      CAbducidos: report.report.REBA.CAbducidos || 0,
+      CHombrosLevantados: report.report.REBA.CHombrosLevantados || 0,
+      CBrazosApoyados: report.report.REBA.CBrazosApoyados || 0,
+      PAntebrazos: report.report.REBA.PAntebrazos || 1,
+      PMunnecas: report.report.REBA.PMunnecas || 1,
+      CMunnecas: report.report.REBA.CMunnecas || 0,
+      PCarga: report.report.REBA.PCarga || 1,
+      CCarga: report.report.REBA.CCarga || 0,
+      Agarre: report.report.REBA.Agarre || 0,
+      Estatismo: report.report.REBA.Estatismo || 0,
+      AccionesRepetidas: report.report.REBA.AccionesRepetidas || 0,
+      CambiosRapidos: report.report.REBA.CambiosRapidos || 0,
+      indicaciones: report.report.Indicaciones || "",
+    });
+    setImages(processedImages);
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (report.report) {
+        // Una vez que los factores están cargados, establecer los datos del formulario
+        populateFormData(report);
+
+        // Obtener empleados de la empresa seleccionada
+        if (report.report.Empleado.Empresa.ID) {
+          const employeesResponse = await companyService.getEmployees(
+            report.report.Empleado.Empresa.ID
+          );
+          setEmployeesList(employeesResponse);
+        }
+      }
+    };
+
+    fetchData();
+  }, [report]);
+
+  const [images, setImages] = useState([]);
+  const [employeesList, setEmployeesList] = useState([]);
+
+  useEffect(() => {
+    const fetchReportData = async () => {
+      if (reportId) {
+        // const reportData = await reportService.getReportById(reportId);
+        // setFormData(reportData);
+      }
+    };
+
+    fetchReportData();
+  }, [reportId]);
+
+  const handleNext = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  };
+
+  const handleBack = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
+  };
+
+  const handleChangeInt = (event) => {
+    const { name, value } = event.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: isNaN(value) ? value : parseInt(value, 10),
     }));
   };
 
@@ -178,15 +241,15 @@ export const REBAFormulary = () => {
 
   const handleSavePDF = async () => {
     const doc = new jsPDF();
-  
+
     // Título del documento
     doc.setFontSize(18);
     doc.text("Informe REBA", 20, 20);
-  
+
     // Datos identificativos
     doc.setFontSize(16);
     doc.text("Datos identificativos", 20, 30);
-  
+
     doc.setFontSize(12);
     doc.text(`CIF Empresa: ${formData.CIF_Empresa}`, 20, 40);
     doc.text(`ID Empresa: ${formData.ID_Empresa}`, 20, 50);
@@ -196,16 +259,16 @@ export const REBAFormulary = () => {
     doc.text(`Puesto de Trabajo: ${formData.PuestoTrabajo}`, 20, 90);
     doc.text(`Fecha: ${formData.Fecha}`, 20, 100);
     doc.text(`Referencia: ${formData.Referencia}`, 20, 110);
-  
+
     // Descripción del trabajo con peso
     doc.text("Descripción del trabajo con peso:", 20, 120);
     doc.text(formData.Desc_REBA, 20, 130);
-  
+
     // Datos de la evaluación del grupo A
     doc.setFontSize(16);
     doc.text("Datos de la evaluación del grupo A:", 20, 140);
     doc.setFontSize(12);
-  
+
     let yPosition = 150;
     doc.text(
       `Puntuación del cuello: ${
@@ -217,7 +280,7 @@ export const REBAFormulary = () => {
       yPosition
     );
     yPosition += 10;
-  
+
     if (formData.CCuello !== 0) {
       doc.text(
         `Se indica que existe torsión o inclinación lateral del cuello`,
@@ -226,7 +289,7 @@ export const REBAFormulary = () => {
       );
       yPosition += 10;
     }
-  
+
     doc.text(
       `Puntuación de tronco: ${
         [
@@ -240,7 +303,7 @@ export const REBAFormulary = () => {
       yPosition
     );
     yPosition += 10;
-  
+
     if (formData.CTronco !== 0) {
       doc.text(
         `Se indica que existe torsión o inclinación lateral del tronco`,
@@ -249,7 +312,7 @@ export const REBAFormulary = () => {
       );
       yPosition += 10;
     }
-  
+
     doc.text(
       `Puntuación de piernas: ${
         [
@@ -261,7 +324,7 @@ export const REBAFormulary = () => {
       yPosition
     );
     yPosition += 10;
-  
+
     if (formData.CPiernas1 !== 0) {
       doc.text(
         `Se indica que existe soporte bilateral, andando o sentado`,
@@ -270,7 +333,7 @@ export const REBAFormulary = () => {
       );
       yPosition += 10;
     }
-  
+
     if (formData.CPiernas2 !== 0) {
       doc.text(
         `Se indica que existe soporte unilateral, soporte ligero o postura inestable.`,
@@ -279,14 +342,14 @@ export const REBAFormulary = () => {
       );
       yPosition += 10;
     }
-  
+
     // Datos de la evaluación del grupo B
     doc.setFontSize(16);
     yPosition += 10;
     doc.text("Datos de la evaluación del grupo B:", 20, yPosition);
     doc.setFontSize(12);
     yPosition += 10;
-  
+
     doc.text(
       `Puntuación de brazos: ${
         [
@@ -300,17 +363,21 @@ export const REBAFormulary = () => {
       yPosition
     );
     yPosition += 10;
-  
+
     if (formData.CAbducidos !== 0) {
       doc.text(`Se indica que el brazo está abducido o rotado`, 20, yPosition);
       yPosition += 10;
     }
-  
+
     if (formData.CHombrosLevantados !== 0) {
-      doc.text(`Se indica que los hombros están elevados o encogidos`, 20, yPosition);
+      doc.text(
+        `Se indica que los hombros están elevados o encogidos`,
+        20,
+        yPosition
+      );
       yPosition += 10;
     }
-  
+
     if (formData.CBrazosApoyados !== 0) {
       doc.text(
         `Se indica que los brazos están apoyados o en una postura a favor de la gravedad`,
@@ -319,7 +386,7 @@ export const REBAFormulary = () => {
       );
       yPosition += 10;
     }
-  
+
     doc.text(
       `Puntuación de antebrazos: ${
         formData.PAntebrazos === 1
@@ -330,7 +397,7 @@ export const REBAFormulary = () => {
       yPosition
     );
     yPosition += 10;
-  
+
     doc.text(
       `Puntuación de muñecas: ${
         formData.PMunnecas === 1
@@ -341,7 +408,7 @@ export const REBAFormulary = () => {
       yPosition
     );
     yPosition += 10;
-  
+
     if (formData.CMunnecas !== 0) {
       doc.text(
         `Se indica que la muñeca está en una postura de desviación radial o cubital.`,
@@ -350,14 +417,14 @@ export const REBAFormulary = () => {
       );
       yPosition += 10;
     }
-  
+
     // Datos de la evaluación del grupo C
     doc.setFontSize(16);
     yPosition += 10;
     doc.text("Datos de la evaluación del grupo C:", 20, yPosition);
     doc.setFontSize(12);
     yPosition += 10;
-  
+
     doc.text(
       `Puntuación de carga: ${
         [
@@ -370,7 +437,7 @@ export const REBAFormulary = () => {
       yPosition
     );
     yPosition += 10;
-  
+
     doc.text(
       `Puntuación de agarre: ${
         [
@@ -384,7 +451,7 @@ export const REBAFormulary = () => {
       yPosition
     );
     yPosition += 10;
-  
+
     if (formData.Estatismo !== 0) {
       doc.text(
         `Se indica que una o más partes del cuerpo permanecen estáticas, por ejemplo soportadas durante más de 1 minuto.`,
@@ -393,7 +460,7 @@ export const REBAFormulary = () => {
       );
       yPosition += 10;
     }
-  
+
     if (formData.AccionesRepetidas !== 0) {
       doc.text(
         `Se indica que se realizan acciones repetidas, por ejemplo más de 4 veces por minuto.`,
@@ -402,7 +469,7 @@ export const REBAFormulary = () => {
       );
       yPosition += 10;
     }
-  
+
     if (formData.CambiosRapidos !== 0) {
       doc.text(
         `Se indica que se realizan cambios rápidos de postura.`,
@@ -411,10 +478,9 @@ export const REBAFormulary = () => {
       );
       yPosition += 10;
     }
-  
+
     doc.save("informe_reba.pdf");
   };
-  
 
   // Guardar el documento
   const convertirDatosInforme = (formData) => {
@@ -471,13 +537,21 @@ export const REBAFormulary = () => {
 
   const handleSave = async () => {
     try {
-      // Subir imágenes y obtener las rutas
-      const imagenesRutas = await Promise.all(
+      let ruta = null;
+      let imagenesRutas = await Promise.all(
         images.map(async (image) => {
-          const ruta = await subirImagen(image);
+          try {
+            ruta = await subirImagen(image);
+          } catch (error) {
+            console.error("Error subiendo la imagen:", error);
+            return null;
+          }
           return ruta;
         })
       );
+      if (imagenesRutas.some((ruta) => ruta === null)) {
+        imagenesRutas = null;
+      }
 
       // Convertir datos del formulario
       const datosInforme = convertirDatosInforme(formData);
@@ -487,8 +561,8 @@ export const REBAFormulary = () => {
 
       console.log(datosInforme);
 
-      if (reportId) {
-        // await reportService.updateReport(reportId, datosInforme);
+      if (report.report.ID) {
+        await reportService.updateReport(report.report.ID, datosInforme);
       } else {
         await reportService.createReport(datosInforme);
       }
@@ -525,7 +599,7 @@ export const REBAFormulary = () => {
                 trabajo con peso.
               </Typography>
               <TextField
-                name="DescripcionTrabajoREBA"
+                name="Desc_REBA"
                 label="Descripción de trabajo con peso"
                 value={formData.Desc_REBA}
                 onChange={handleChange}
@@ -569,7 +643,7 @@ export const REBAFormulary = () => {
               Enviar
             </Typography>
             <Grid
-              containter
+              container
               display={"flex"}
               justifyContent={"center"}
               spacing={4}

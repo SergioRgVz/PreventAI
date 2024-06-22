@@ -51,7 +51,7 @@ export const ReportList = () => {
             await reportService.deleteReport(Referencia);
         },
         viewEnabled: true,
-        editEnabled: true,
+        editEnabled: false,
         deleteEnabled: true,
     };
 

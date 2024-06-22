@@ -1,4 +1,4 @@
-import CCAA from "../models/CCAA.js";
+import {CCAA} from "../models/associations.js";
 
 const ccaaService = {
   // Función para crear una nueva CCAA

@@ -20,6 +20,8 @@ import { CreateEmployee } from './pages/CreateEmployee';
 import { ModifyEmployee } from './pages/ModifyEmployee';
 import { DeleteEmployee } from './pages/DeleteEmployee';
 import { ViewReport } from './pages/ViewReport.jsx';
+import { ModifyReport } from './pages/ModifyReport.jsx';
+import { EditReport } from './pages/EditReport.jsx';
 import { CreateGINSHT } from './pages/CreateGINSHT';
 import { CreatePVD } from './pages/CreatePVD';
 import { CreateREBA } from './pages/CreateREBA';
@@ -40,7 +42,7 @@ const theme = createTheme({
       main: '#115293',
     },
     buttons: {
-      main: '#f0f4c3',
+      main: '#8fc5e9',
     },
     info: {
       main: '#f3f6cf'
@@ -79,8 +81,9 @@ export function App() {
             <Route path="/management/delete-employee" element={<DeleteEmployee setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
             <Route path="/management/view-reports" element={<ReportsPage setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
             <Route path="/management/view-report/:Referencia" element={<ViewReport setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
-            {/* <Route path="/management/create-report" element={<CreateReport setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
             <Route path="/management/modify-report" element={<ModifyReport setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
+            <Route path="/management/modify-report/:Referencia" element={<EditReport setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
+          {/* <Route path="/management/modify-report/:Referencia" element={<EditReport setLoggedIn={setLoggedIn} setEmail={setEmail} />} /> 
             <Route path="/management/delete-report" element={<DeleteReport setLoggedIn={setLoggedIn} setEmail={setEmail} />} /> */}
             <Route path="/management/view-user" element={<UsersPage setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
             <Route path="/management/create-user" element={<CreateUser setLoggedIn={setLoggedIn} setEmail={setEmail} />} />

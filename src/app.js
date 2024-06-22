@@ -55,9 +55,10 @@ app.use(express.json());
 // Ruta para subir imágenes
 app.post('/upload', upload.single('image'), (req, res) => {
   if (req.file) {
+    const relativePath = path.join('uploads', req.file.filename); // Ruta relativa correcta
     res.status(200).send({
       message: 'Imagen subida',
-      filename: req.file.path
+      filename: relativePath
     });
   } else {
     res.status(500).send('Error al subir la imagen');

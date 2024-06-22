@@ -25,6 +25,5 @@ const PVD = sequelize.define(
     }
 );
 
-PVD.belongsTo(Informe, { foreignKey: 'ID' });
 
 export default PVD;

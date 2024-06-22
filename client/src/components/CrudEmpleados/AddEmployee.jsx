@@ -1,19 +1,6 @@
-import AppBarHome from '../utils/AppBarHome';
-import { TranslucentBox } from '../utils/TranslucentBox';
-import { GoBackButton } from '../utils/GoBackButton';
 import { FormularioEmployee } from '../CrudEmpleados/FormularioEmployee';
 import { employeeService } from '../../hooks/useEmployees';
 import Typography from '@mui/material/Typography';
-
-
-const pageToRouteMapping = {
-  'Inicio': '/home',
-  'Nueva evaluación': '/create-report',
-  'Abrir evaluación': '/view-reports',
-  'Gestionar': '/management',
-};
-
-const settings = ['Perfil', 'Cerrar sesión'];
 
 export function AddEmployee() {
   const handleFormSubmit = async (DNI, formData) => {

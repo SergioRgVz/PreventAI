@@ -4,8 +4,8 @@
  * @module services/employeeService
  */
 
-import Empleado from '../models/Empleado.js';
-import Company from '../models/Empresa.js';
+import {Empleado} from '../models/associations.js';
+import {Empresa} from '../models/associations.js';
 import userService from './userService.js';
 import companyService from './companyService.js';
 const employeeService = {
@@ -24,7 +24,7 @@ const employeeService = {
                 empleados = await Empleado.findAll({
                     where: { ID_Empresa: companyIds },
                     include: {
-                        model: Company,
+                        model: Empresa,
                         attributes: ['CIF', 'Nombre'],
                     }
                 });
@@ -32,7 +32,7 @@ const employeeService = {
             } else {
                 empleados = await Empleado.findAll({
                     include: {
-                        model: Company,
+                        model: Empresa,
                         attributes: ['CIF', 'Nombre'],
                     }
                 });
@@ -60,7 +60,7 @@ const employeeService = {
             employees = await Empleado.findAll({
                 where: { ID_Empresa: companyId },
                 include: {
-                    model: Company,
+                    model: Empresa,
                     attributes: ['CIF', 'Nombre'],
                 }
             });
@@ -85,7 +85,7 @@ const employeeService = {
                 employee = await Empleado.findOne({
                     where: { ID: employeeId, ID_Empresa: companyIds },
                     include: {
-                        model: Company,
+                        model: Empresa,
                         attributes: ['CIF', 'Nombre'],
                     }
                 });
@@ -93,7 +93,7 @@ const employeeService = {
             } else {
                 employee = await Empleado.findByPk(employeeId, {
                     include: {
-                        model: Company,
+                        model: Empresa,
                         attributes: ['CIF', 'Nombre'],
                     }
                 });
@@ -118,7 +118,7 @@ const employeeService = {
                 employee = await Empleado.findOne({
                     where: { DNI, ID_Empresa: companyIds },
                     include: {
-                        model: Company,
+                        model: Empresa,
                         attributes: ['CIF', 'Nombre'],
                     }
                 });
@@ -126,7 +126,7 @@ const employeeService = {
                 employee = await Empleado.findOne({
                     where: { DNI },
                     include: {
-                        model: Company,
+                        model: Empresa,
                         attributes: ['CIF', 'Nombre'],
                     }
                 });

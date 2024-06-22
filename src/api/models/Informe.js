@@ -47,14 +47,5 @@ const Informe = sequelize.define('Informe', {
     timestamps: false,
 });
 
-Informe.belongsTo(User, { foreignKey: 'ID_Usuario' });
-User.hasMany(Informe, { foreignKey: 'ID_Usuario' });
-
-Informe.belongsTo(Empleado, { foreignKey: 'ID_Empleado' });
-Empleado.hasMany(Informe, { foreignKey: 'ID_Empleado' });
-
-
-// Informe.hasMany(Imagen, { foreignKey: 'ID_Informe' });
-// Imagen.belongsTo(Informe, { foreignKey: 'ID_Informe' });
 
 export default Informe;

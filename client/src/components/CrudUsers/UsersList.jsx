@@ -51,8 +51,8 @@ export const UsersList = () => {
     deleteService: async (DNI) => {
       await userService.deleteUser(DNI);
     },
-    viewEnabled: true,
-    editEnabled: true,
+    viewEnabled: false,
+    editEnabled: false,
     deleteEnabled: true,
   };
 

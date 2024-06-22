@@ -5,7 +5,7 @@
  */
 
 import bcrypt from "bcrypt";
-import User from "../models/User.js";
+import {User} from "../models/associations.js";
 // import Company from "../models/Company.js";  // Asegúrate de exportar Company correctamente desde companyModel.js
 
 const userService = {

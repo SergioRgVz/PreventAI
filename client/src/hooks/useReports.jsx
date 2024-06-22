@@ -16,6 +16,10 @@ export const createReport = async (formData) => {
 
 }
 
+export const updateReport = async (reportId, formData) => {
+    const response = await apiClient.put(`/report/update/${reportId}`, formData);
+    return response.data;
+}
 
 export const createReportGINSHT = async (data) => {
     const formData = new FormData();
@@ -127,6 +131,7 @@ export const reportService = {
     getReports,
     getReportByReferencia,
     createReport,
+    updateReport,
     createReportGINSHT,
     createReportPVD,
     createReportREBA,
