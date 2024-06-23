@@ -110,9 +110,7 @@ export const PVDFormulary = (report) => {
         const puestosFactors = await fetchFactors("puestoGINSHT");
         const trabajadorFactors = await fetchFactors("trabajadorGINSHT");
 
-        // setPuestosFactors(puestosFactors);
-        // setTrabajadorFactors(trabajadorFactors);
-
+      
         // Una vez que los factores están cargados, establecer los datos del formulario
         populateFormData(report);
 

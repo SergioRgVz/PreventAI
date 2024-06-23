@@ -9,6 +9,7 @@ import {
   Typography,
   Box,
   Checkbox,
+  Alert,
 } from "@mui/material";
 import Divider from "@mui/material/Divider";
 
@@ -57,6 +58,13 @@ export default function EvaluacionGrupoB({ formData, handleChangeInt }) {
       setValueWristsImage("/REBA/GrupoB/muneca_mas_15.png");
     }
   }, [formData.PMunnecas]);
+
+  let brazosRellenadoModelo = false;
+  let antebrazosRellenadoModelo = false;
+  let munecasRellenadoModelo = false;
+  if (formData.deteccionBrazos) brazosRellenadoModelo = true;
+  if (formData.deteccionAntebrazos) antebrazosRellenadoModelo = true;
+  if (formData.deteccionMunnecas) munecasRellenadoModelo = true;
 
   return (
     <React.Fragment>
@@ -117,6 +125,7 @@ export default function EvaluacionGrupoB({ formData, handleChangeInt }) {
               />
             </RadioGroup>
           </FormControl>
+          
           <Box
             component="img"
             src={valuearmsImage}
@@ -124,6 +133,12 @@ export default function EvaluacionGrupoB({ formData, handleChangeInt }) {
             sx={{ height: "22vh", width: "auto" }}
           />
         </Grid>
+        {brazosRellenadoModelo && (
+            <Alert severity="warning" variant="outlined">
+              Rellenado automáticamente desde la detección, revise si es
+              correcto.
+            </Alert>
+          )}
         <Typography variant="body1" gutterBottom>
           <b>Indique las siguiente casillas si:</b>
         </Typography>
@@ -242,6 +257,7 @@ export default function EvaluacionGrupoB({ formData, handleChangeInt }) {
               />
             </RadioGroup>
           </FormControl>
+          
           <Box
             component="img"
             src={valueforearmsImage}
@@ -249,6 +265,12 @@ export default function EvaluacionGrupoB({ formData, handleChangeInt }) {
             sx={{ height: "22vh", width: "auto" }}
           />
         </Grid>
+        {antebrazosRellenadoModelo && (
+            <Alert severity="warning" variant="outlined">
+              Rellenado automáticamente desde la detección, revise si es
+              correcto.
+            </Alert>
+          )}
         <Typography variant="body1" gutterBottom>
           <b>Postura de las muñecas:</b> Se evaluará la postura de las muñecas
           en función de la flexión o extensión de las mismas.
@@ -288,6 +310,7 @@ export default function EvaluacionGrupoB({ formData, handleChangeInt }) {
               />
             </RadioGroup>
           </FormControl>
+          
           <Box
             component="img"
             src={valuewristsImage}
@@ -295,6 +318,12 @@ export default function EvaluacionGrupoB({ formData, handleChangeInt }) {
             sx={{ height: "22vh", width: "auto" }}
           />
         </Grid>
+        {munecasRellenadoModelo && (
+            <Alert severity="warning" variant="outlined">
+              Rellenado automáticamente desde la detección, revise si es
+              correcto.
+            </Alert>
+          )}
         <Typography variant="body1" gutterBottom>
           <b>Indique la siguiente casilla si:</b>
         </Typography>
@@ -317,11 +346,11 @@ export default function EvaluacionGrupoB({ formData, handleChangeInt }) {
           </FormControl>
 
           <Box
-                        component="img"
-                        src={'/REBA/GrupoB/muneca_torsion.png'}
-                        alt="Torsión cuello"
-                        sx={{ height: '22vh', width: 'auto' }}
-                    />
+            component="img"
+            src={"/REBA/GrupoB/muneca_torsion.png"}
+            alt="Torsión cuello"
+            sx={{ height: "22vh", width: "auto" }}
+          />
         </Grid>
       </Stack>
     </React.Fragment>

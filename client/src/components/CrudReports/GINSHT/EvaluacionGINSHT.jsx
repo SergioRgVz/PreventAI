@@ -13,6 +13,7 @@ import {
   Typography,
   Box,
   Stack,
+  Alert,
 } from "@mui/material";
 import FactoresCheckList from "./FactoresChecklist";
 import apiClient from "../../../hooks/useAxiosAuth";
@@ -26,7 +27,6 @@ const fetchFactors = async (tipo) => {
     return [];
   }
 };
-
 
 const EvaluacionGINSHT = ({ formData, handleChange }) => {
   const [valueImage, setValueImage] = useState("/GINSHT/2.png");
@@ -71,7 +71,6 @@ const EvaluacionGINSHT = ({ formData, handleChange }) => {
     }
   }, [formData.alturaLevantamiento, formData.separacionLevantamiento]);
 
-  
   const handleChangeFrecuencia = (event) => {
     handleChange(event);
     const selectedRadioValue = event.target.value;
@@ -103,20 +102,19 @@ const EvaluacionGINSHT = ({ formData, handleChange }) => {
     ) {
       const valorSeleccionado =
         valores[selectedValueIndex][duracionDeManipulacionIndex];
-        handleChange({
-          target: {
-            name: "valorFinalFrecuencia",
-            value: valorSeleccionado,
-          },
-        });
+      handleChange({
+        target: {
+          name: "valorFinalFrecuencia",
+          value: valorSeleccionado,
+        },
+      });
     }
   };
 
   const handleSeparacionRadioChange = (event) => {
-    handleChange(event); 
-    handleChangeSeparacion(event); 
+    handleChange(event);
+    handleChangeSeparacion(event);
   };
-  
 
   const handleChangeSeparacion = (event) => {
     let valores = [
@@ -167,7 +165,11 @@ const EvaluacionGINSHT = ({ formData, handleChange }) => {
     });
   };
 
-  
+  let alturaRellenadoModelo = false;
+  let separacionRellenadoModelo = false;
+
+  if (formData.deteccionAltura !== false) alturaRellenadoModelo = true;
+  if (formData.deteccionSeparacion !== false) separacionRellenadoModelo = true;
 
   return (
     <React.Fragment>
@@ -287,6 +289,16 @@ const EvaluacionGINSHT = ({ formData, handleChange }) => {
             sx={{ maxWidth: "100%", height: "auto", width: "20vw" }}
           />
         </Grid>
+        {formData.imagenDeteccion && (
+          <Grid item xs={12} sm={14}>
+            <Box
+              component="img"
+              src={`data:image/jpeg;base64,${formData.imagenDeteccion}`}
+              alt="Imagen de Detección"
+              sx={{ maxWidth: "auto", height: "25vw"}}
+            />
+          </Grid>
+        )}
         <Stack justifyContent="space-evenly" alignItems="center" spacing={3}>
           <Typography variant="body1" gutterBottom>
             Seleccione la altura de levantamiento.
@@ -324,6 +336,13 @@ const EvaluacionGINSHT = ({ formData, handleChange }) => {
               />
             </RadioGroup>
           </FormControl>
+          {alturaRellenadoModelo && (
+            <Alert severity="warning" variant="outlined">
+              Rellenado automáticamente desde la detección, revise si es
+              correcto.
+            </Alert>
+          )}
+
           <Typography variant="body1" gutterBottom>
             Seleccione la separación de levantamiento.
           </Typography>
@@ -345,6 +364,12 @@ const EvaluacionGINSHT = ({ formData, handleChange }) => {
               />
             </RadioGroup>
           </FormControl>
+          {separacionRellenadoModelo && (
+            <Alert severity="warning" variant="outlined">
+              Rellenado automáticamente desde la detección, revise si es
+              correcto.
+            </Alert>
+          )}
         </Stack>
       </Grid>
       <Typography variant="h5" gutterBottom>
@@ -357,60 +382,165 @@ const EvaluacionGINSHT = ({ formData, handleChange }) => {
         <Typography variant="body1" gutterBottom>
           Seleccione el desplazamiento vertical.
         </Typography>
-        <FormControl  component="fieldset" margin="normal">
-          <RadioGroup name="desplazamientoVertical" row={true} value={formData.desplazamientoVertical} onChange={handleChange}>
-            <FormControlLabel value={1} control={<Radio />} label="Hasta 25 cm" />
-            <FormControlLabel value={0.91} control={<Radio />} label="Hasta 50 cm" />
-            <FormControlLabel value={0.87} control={<Radio />} label="Hasta 100 cm" />
-            <FormControlLabel value={0.84} control={<Radio />} label="Hasta 175 cm" />
-            <FormControlLabel value={0} control={<Radio />} label="Más de 175 cm" />
+        <FormControl component="fieldset" margin="normal">
+          <RadioGroup
+            name="desplazamientoVertical"
+            row={true}
+            value={formData.desplazamientoVertical}
+            onChange={handleChange}
+          >
+            <FormControlLabel
+              value={1}
+              control={<Radio />}
+              label="Hasta 25 cm"
+            />
+            <FormControlLabel
+              value={0.91}
+              control={<Radio />}
+              label="Hasta 50 cm"
+            />
+            <FormControlLabel
+              value={0.87}
+              control={<Radio />}
+              label="Hasta 100 cm"
+            />
+            <FormControlLabel
+              value={0.84}
+              control={<Radio />}
+              label="Hasta 175 cm"
+            />
+            <FormControlLabel
+              value={0}
+              control={<Radio />}
+              label="Más de 175 cm"
+            />
           </RadioGroup>
-          </FormControl>
+        </FormControl>
 
-          <Typography variant="body1" gutterBottom>
+        <Typography variant="body1" gutterBottom>
           Seleccione el giro del tronco.
         </Typography>
-          <FormControl component="fieldset" margin="normal">
-          <RadioGroup name="giroDelTronco" row={true} value={formData.giroDelTronco} onChange={handleChange}>
+        <FormControl component="fieldset" margin="normal">
+          <RadioGroup
+            name="giroDelTronco"
+            row={true}
+            value={formData.giroDelTronco}
+            onChange={handleChange}
+          >
             <FormControlLabel value={1} control={<Radio />} label="Sin giro" />
-            <FormControlLabel value={0.9} control={<Radio />} label="Poco girado (hasta 30º)" />
-            <FormControlLabel value={0.8} control={<Radio />} label="Girado (hasta 60º)" />
-            <FormControlLabel value={0.7} control={<Radio />} label="Muy girado (90º)" />
+            <FormControlLabel
+              value={0.9}
+              control={<Radio />}
+              label="Poco girado (hasta 30º)"
+            />
+            <FormControlLabel
+              value={0.8}
+              control={<Radio />}
+              label="Girado (hasta 60º)"
+            />
+            <FormControlLabel
+              value={0.7}
+              control={<Radio />}
+              label="Muy girado (90º)"
+            />
           </RadioGroup>
-          </FormControl>
-          <Typography variant="body1" gutterBottom>
+        </FormControl>
+        <Typography variant="body1" gutterBottom>
           Seleccione el tipo de agarre.
         </Typography>
-          <FormControl component="fieldset" margin="normal">
-          <RadioGroup name="tipoDeAgarre" row={true} value={formData.tipoDeAgarre} onChange={handleChange}>
-            <FormControlLabel value={1} control={<Radio />} label="Agarre bueno" />
-            <FormControlLabel value={0.95} control={<Radio />} label="Agarre Regular" />
-            <FormControlLabel value={0.9} control={<Radio />} label="Agarre malo" />
+        <FormControl component="fieldset" margin="normal">
+          <RadioGroup
+            name="tipoDeAgarre"
+            row={true}
+            value={formData.tipoDeAgarre}
+            onChange={handleChange}
+          >
+            <FormControlLabel
+              value={1}
+              control={<Radio />}
+              label="Agarre bueno"
+            />
+            <FormControlLabel
+              value={0.95}
+              control={<Radio />}
+              label="Agarre Regular"
+            />
+            <FormControlLabel
+              value={0.9}
+              control={<Radio />}
+              label="Agarre malo"
+            />
           </RadioGroup>
-          </FormControl>
-          <Typography variant="body1" gutterBottom>
+        </FormControl>
+        <Typography variant="body1" gutterBottom>
           Seleccione la duración de la manipulación.
         </Typography>
-          <FormControl component="fieldset" margin="normal">
-          <RadioGroup name="duracionManipulacion" row={true} value={formData.duracionManipulacion} onChange={handleChange}>
-            <FormControlLabel value={0} control={<Radio />} label="Menos de 1 hora al día" />
-            <FormControlLabel value={1} control={<Radio />} label="Entre 1 y 2 horas al día" />
-            <FormControlLabel value={2} control={<Radio />} label="Entre 2 y 8 horas al día" />
+        <FormControl component="fieldset" margin="normal">
+          <RadioGroup
+            name="duracionManipulacion"
+            row={true}
+            value={formData.duracionManipulacion}
+            onChange={handleChange}
+          >
+            <FormControlLabel
+              value={0}
+              control={<Radio />}
+              label="Menos de 1 hora al día"
+            />
+            <FormControlLabel
+              value={1}
+              control={<Radio />}
+              label="Entre 1 y 2 horas al día"
+            />
+            <FormControlLabel
+              value={2}
+              control={<Radio />}
+              label="Entre 2 y 8 horas al día"
+            />
           </RadioGroup>
-          </FormControl>
-          <Typography variant="body1" gutterBottom>
+        </FormControl>
+        <Typography variant="body1" gutterBottom>
           Seleccione la frecuencia de la manipulación.
-        </Typography> 
-          <FormControl component="fieldset" margin="normal">
-          <RadioGroup name="frecuenciaDeManipulacion" row={true} value={formData.frecuenciaDeManipulacion} onChange={handleChangeFrecuencia}>
-            <FormControlLabel value={0} control={<Radio />} label="1 vez cada 5 minutos" />
-            <FormControlLabel value={1} control={<Radio />} label="1 vez/minuto" />
-            <FormControlLabel value={2} control={<Radio />} label="4 veces/minuto" />
-            <FormControlLabel value={3} control={<Radio />} label="9 veces/minuto" />
-            <FormControlLabel value={4} control={<Radio />} label="12 veces/minuto" />
-            <FormControlLabel value={5} control={<Radio />} label="Más de 15 veces/minuto" />
+        </Typography>
+        <FormControl component="fieldset" margin="normal">
+          <RadioGroup
+            name="frecuenciaDeManipulacion"
+            row={true}
+            value={formData.frecuenciaDeManipulacion}
+            onChange={handleChangeFrecuencia}
+          >
+            <FormControlLabel
+              value={0}
+              control={<Radio />}
+              label="1 vez cada 5 minutos"
+            />
+            <FormControlLabel
+              value={1}
+              control={<Radio />}
+              label="1 vez/minuto"
+            />
+            <FormControlLabel
+              value={2}
+              control={<Radio />}
+              label="4 veces/minuto"
+            />
+            <FormControlLabel
+              value={3}
+              control={<Radio />}
+              label="9 veces/minuto"
+            />
+            <FormControlLabel
+              value={4}
+              control={<Radio />}
+              label="12 veces/minuto"
+            />
+            <FormControlLabel
+              value={5}
+              control={<Radio />}
+              label="Más de 15 veces/minuto"
+            />
           </RadioGroup>
-          </FormControl>
+        </FormControl>
       </Stack>
       <Typography variant="h5" gutterBottom>
         Factores de Puesto
@@ -428,9 +558,10 @@ const EvaluacionGINSHT = ({ formData, handleChange }) => {
         title="Factores de Trabajador"
         factors={trabajadorFactors}
         selectedFactors={formData.factoresTrabajador}
-        handleFactorChange={(id) => handleFactorChange("factoresTrabajador", id)}
+        handleFactorChange={(id) =>
+          handleFactorChange("factoresTrabajador", id)
+        }
       />
-
     </React.Fragment>
   );
 };

@@ -9,13 +9,11 @@ import {
   Typography,
   Box,
   Checkbox,
+  Alert,
 } from "@mui/material";
 import Divider from "@mui/material/Divider";
 
-export default function EvaluacionGrupoA({
-  formData,
-  handleChangeInt,
-}) {
+export default function EvaluacionGrupoA({ formData, handleChangeInt }) {
   const [valueneckImage, setValueNeckImage] = useState(
     "/REBA/GrupoA/Cuello_0_20.png"
   );
@@ -62,6 +60,14 @@ export default function EvaluacionGrupoA({
       setValueLegsImage("/REBA/GrupoA/flexion_rodilla_mas_60.png");
     }
   }, [formData.PPiernas]);
+
+  let cuelloRellenadoModelo = false;
+  let troncoRellenadoModelo = false;
+  let piernasRellenadoModelo = false;
+
+  if (formData.deteccionCuello !== false) cuelloRellenadoModelo = true;
+  if (formData.deteccionTronco !== false) troncoRellenadoModelo = true;
+  if (formData.deteccionPiernas !== false) piernasRellenadoModelo = true;
 
   return (
     <React.Fragment>
@@ -112,6 +118,7 @@ export default function EvaluacionGrupoA({
               />
             </RadioGroup>
           </FormControl>
+
           <Box
             component="img"
             src={valueneckImage}
@@ -119,6 +126,11 @@ export default function EvaluacionGrupoA({
             sx={{ height: "22vh", width: "auto" }}
           />
         </Grid>
+        {cuelloRellenadoModelo && (
+          <Alert severity="warning" variant="outlined">
+            Rellenado automáticamente desde la detección, revise si es correcto.
+          </Alert>
+        )}
         <Typography variant="body1" gutterBottom>
           <b>Indique la siguiente casilla si:</b>
         </Typography>
@@ -197,6 +209,7 @@ export default function EvaluacionGrupoA({
               />
             </RadioGroup>
           </FormControl>
+
           <Box
             component="img"
             src={valuetrunkImage}
@@ -204,6 +217,11 @@ export default function EvaluacionGrupoA({
             sx={{ height: "22vh", width: "auto" }}
           />
         </Grid>
+        {troncoRellenadoModelo && (
+          <Alert severity="warning" variant="outlined">
+            Rellenado automáticamente desde la detección, revise si es correcto.
+          </Alert>
+        )}
         <Typography variant="body1" gutterBottom>
           <b>Indique la siguiente casilla si:</b>
         </Typography>
@@ -233,10 +251,10 @@ export default function EvaluacionGrupoA({
           />
           <Divider />
         </Grid>
-          <Typography variant="body1" gutterBottom>
-            <b>Postura de las piernas:</b> Se evaluará la postura de las piernas
-            en función de la flexión o extensión de las rodillas.
-          </Typography>
+        <Typography variant="body1" gutterBottom>
+          <b>Postura de las piernas:</b> Se evaluará la postura de las piernas
+          en función de la flexión o extensión de las rodillas.
+        </Typography>
         <Grid
           container
           item
@@ -272,6 +290,7 @@ export default function EvaluacionGrupoA({
               />
             </RadioGroup>
           </FormControl>
+
           <Box
             component="img"
             src={valuelegsImage}
@@ -279,6 +298,11 @@ export default function EvaluacionGrupoA({
             sx={{ height: "22vh", width: "auto" }}
           />
         </Grid>
+        {piernasRellenadoModelo && (
+          <Alert severity="warning" variant="outlined">
+            Rellenado automáticamente desde la detección, revise si es correcto.
+          </Alert>
+        )}
         <Typography variant="body1" gutterBottom>
           <b>Indique las siguientes casillas si:</b>
         </Typography>

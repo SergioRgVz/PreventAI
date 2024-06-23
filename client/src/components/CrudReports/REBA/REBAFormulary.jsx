@@ -48,18 +48,24 @@ export const REBAFormulary = (report) => {
     Referencia: "",
     Desc_REBA: "",
     PCuello: 1,
+    deteccionCuello: false,
     CCuello: 0,
     PTronco: 1,
+    deteccionTronco: false,
     CTronco: 0,
     PPiernas: 1,
+    deteccionPiernas: false,
     CPiernas1: 0,
     CPiernas2: 0,
     PBrazos: 1,
+    deteccionBrazos: false,
     CAbducidos: 0,
     CHombrosLevantados: 0,
     CBrazosApoyados: 0,
     PAntebrazos: 1,
+    deteccionAntebrazos: false,
     PMunnecas: 1,
+    deteccionMunnecas: false,
     CMunnecas: 0,
     PCarga: 1,
     CCarga: 0,
@@ -215,18 +221,24 @@ export const REBAFormulary = (report) => {
       Referencia: "",
       Desc_REBA: "",
       PCuello: 1,
+      deteccionCuello: false,
       CCuello: 0,
       PTronco: 0,
+      deteccionTronco: false,
       CTronco: 0,
       PPiernas: 0,
+      deteccionPiernas: false,
       CPiernas1: 0,
       CPiernas2: 0,
       PBrazos: 0,
+      deteccionBrazos: false,
       CAbducidos: 0,
       CHombrosLevantados: 0,
       CBrazosApoyados: 0,
       PAntebrazos: 0,
+      deteccionAntebrazos: false,
       PMunnecas: 0,
+      deteccionMunnecas: false,
       CMunnecas: 0,
       PCarga: 0,
       CCarga: 0,
@@ -586,7 +598,7 @@ export const REBAFormulary = (report) => {
           />
         );
       case 1:
-        return <SubirImagenes images={images} setImages={setImages} />;
+        return <SubirImagenes images={images} setImages={setImages} handleChange={handleChange} REBA />;
       case 2:
         return (
           <Grid container spacing={2}>

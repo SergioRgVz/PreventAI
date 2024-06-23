@@ -75,6 +75,9 @@ export const GINSHTFormulary = (report) => {
     indiceRiesgoTransporte: 0,
     pesoAceptable: 0,
     indicaciones: "",
+    deteccionAltura: false,
+    deteccionSeparacion: false,
+    imagenDeteccion: false,
   });
 
   
@@ -268,6 +271,8 @@ export const GINSHTFormulary = (report) => {
       indiceRiesgoTransporte: 0,
       pesoAceptable: 0,
       indicaciones: "",
+      deteccionAltura: false,
+      deteccionSeparacion: false,
     });
     setEmployeesList([]);
     setImages([]);
@@ -546,7 +551,7 @@ export const GINSHTFormulary = (report) => {
           />
         );
       case 1:
-        return <SubirImagenes images={images} setImages={setImages} showText="GINSHT" />;
+        return <SubirImagenes images={images} setImages={setImages} handleChange={handleChange} showText="GINSHT" GINSHT/>;
       case 2:
         return (
           <Grid container spacing={2}>
