@@ -74,6 +74,23 @@ export default function EvaluacionGrupoA({ formData, handleChangeInt }) {
       <Typography variant="h4" gutterBottom>
         Datos de evaluación del grupo A
       </Typography>
+      {formData.imagenDeteccion && (
+        <>
+          <Typography variant="body1" gutterBottom>
+            Se han rellenado automáticamente los campos de la detección de
+            posturas en base a esta detección.
+          </Typography>
+
+          <Grid item xs={12} sm={14} display="flex" justifyContent="center" alignItems="center">
+            <Box
+              component="img"
+              src={`data:image/jpeg;base64,${formData.imagenDeteccion}`}
+              alt="Imagen de Detección"
+              sx={{ maxWidth: "100%", height: "25vw" }}
+            />
+          </Grid>
+        </>
+      )}
       <Stack spacing={3}>
         <Typography variant="h6" gutterBottom>
           Se evaluará la postura del cuello, tronco y piernas.

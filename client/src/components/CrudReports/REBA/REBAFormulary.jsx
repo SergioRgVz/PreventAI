@@ -73,6 +73,7 @@ export const REBAFormulary = (report) => {
     Estatismo: 0,
     AccionesRepetidas: 0,
     CambiosRapidos: 0,
+    imagenDeteccion: false,
   });
 
   const handleCompanyChange = async (event) => {
@@ -246,6 +247,7 @@ export const REBAFormulary = (report) => {
       Estatismo: 0,
       AccionesRepetidas: 0,
       CambiosRapidos: 0,
+      imagenDeteccion: false,
     });
     setEmployeesList([]);
     setImages([]);

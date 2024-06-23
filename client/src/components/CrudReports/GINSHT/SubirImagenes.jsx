@@ -126,6 +126,11 @@ const SubirImagenes = ({
           handleChange({ target: { name: "deteccionMunnecas", value: pmuñecas } });
         }
 
+        if (response.data.image)
+          handleChange({
+            target: { name: "imagenDeteccion", value: response.data.image },
+          });
+
       } catch (error) {
         console.error("Error al realizar la detección automática:", error);
       }
