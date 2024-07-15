@@ -124,7 +124,7 @@ const employeeService = {
                 });
             } else {
                 employee = await Empleado.findOne({
-                    where: { DNI },
+                    where: { DNI: DNI },
                     include: {
                         model: Empresa,
                         attributes: ['CIF', 'Nombre'],
@@ -229,14 +229,18 @@ const employeeService = {
         }
     },
 
-    deleteEmployee: async (userId, employeeId) => {
+    deleteEmployee: async (userId, employeeDNI) => {
         try {
             const esTecnico = await userService.checkIfTechnician(userId);
 
             //Comprobar que el empleado existe
-            const employee = await Empleado.findByPk(employeeId);
+            // const employee = await Empleado.findByPk(employeeId);
+            const employee = await Empleado.findOne({
+                where: {DNI: employeeDNI}
+            });
+            
             if (!employee) {
-                console.log('Empleado no encontrado:', employeeId);
+                console.log('Empleado no encontrado:', employeeDNI);
                 return null;
             }
 
@@ -250,7 +254,7 @@ const employeeService = {
                 }
             }
 
-            await Empleado.destroy({ where: { ID: employeeId } });
+            await Empleado.destroy({ where: { ID: employee.ID } });
             console.log('Empleado eliminado:', employee);
             return employee;
 

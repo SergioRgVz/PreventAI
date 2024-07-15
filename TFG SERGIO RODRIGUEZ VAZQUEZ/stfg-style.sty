@@ -1,0 +1,65 @@
+% Package: 'stf-style.sty'
+% Copyright: Pablo de la Torre Moreno, 2016
+% Description: LaTeX styles definitions.
+% Version: 1.0
+% Date: 2016-08-05
+% Todo:
+% Requirements:
+%    \usepackage[usenames,dvipsnames]{color}
+%    \usepackage[usenames,dvipsnames]{xcolor}
+%    \usepackage[usenames,divpsnames]{colortbl}
+
+\@ifpackageloaded{color}{}{\usepackage[usenames,dvipsnames]{color}}
+\@ifpackageloaded{xcolor}{}{\usepackage[usenames,dvipsnames]{xcolor}}
+\@ifpackageloaded{colortbl}{}{\usepackage[usenames,dvipsnames]{colortbl}}
+
+\definecolor{link}{rgb}{0,0.2,0.4}
+\definecolor{alert}{named}{red}
+\definecolor{darkgreen}{rgb}{0.0,0.5,0.25}
+\definecolor{todo}{named}{darkgreen}
+\definecolor{header}{gray}{0.95}
+\definecolor{metainfo}{cmyk}{0,0,0,0.15}
+\definecolor{shadecolor}{cmyk}{0,0,0,0.15}
+
+%\usepackage[colorlinks=true,linkcolor=link]{hyperref}
+\usepackage[colorlinks=true,allcolors=link]{hyperref}
+
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\program}[1]{\textit{#1}}
+\newcommand{\command}[1]{\texttt{#1}}
+\newcommand{\header}[1]{\rowcolor{header}#1}
+\newcommand{\titlecell}[1]{\cellcolor{header}#1}
+\newcommand{\metainfo}[1]{\colorbox{metainfo}{#1}}
+\newcommand{\note}[1]{\marginpar{\sffamily\small#1}}
+\newcommand{\alert}[1]{{\color{alert} #1}}
+\newcommand{\todo}[1]{{\color{todo} TODO: #1}}
+\newcommand{\codeInTitle}[1]{\textbf{#1}}
+\renewcommand{\underline}[1]{\uline{#1}}
+
+\lstset{
+    %language=bash, %% Troque para PHP, C, Java, etc... bash é o padrão
+    basicstyle=\ttfamily\footnotesize,%\scriptsize,
+    upquote=true,
+    numberstyle=\footnotesize,
+    numbers=left,
+    backgroundcolor=\color{gray!05},
+    frame=single,
+    tabsize=2,
+    %title=\lstname,
+    escapeinside={\%*}{*)},
+    breaklines=true,
+    breakatwhitespace=true,
+    framextopmargin=2pt,
+    framexbottommargin=2pt,
+    inputencoding=latin1,
+    keywordstyle=\itshape\color{blue},
+    identifierstyle=\ttfamily,
+    stringstyle=\color{red},
+    commentstyle=\color{darkgreen},
+    rulecolor=\color{black},
+    showstringspaces=false,
+    morekeywords={if}
+}
+
+\lstdefinelanguage{MySQL}{language=SQL,morekeywords=
+    {if,USE,DELIMITER,signal,BEFORE,FOR,EACH,ROW,COLLATE,ENGINE,BEGIN,END,CHARSET,elseif,text,AUTO\_INCREMENT,REFERENCES,signal,tinyint}}

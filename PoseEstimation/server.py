@@ -27,10 +27,8 @@ async def procesar_imagen(tipo: str, file: UploadFile = File(...)):
     image = np.array(image)
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
     
-    # Procesa la imagen usando el módulo pose_analysis
     posiciones, image_received = pose_analysis.procesar_imagen(image, tipo)
     
-    # Codificar la imagen en base64
     _, buffer = cv2.imencode('.jpg', image_received)
     image_base64 = base64.b64encode(buffer).decode('utf-8')
     

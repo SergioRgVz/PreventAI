@@ -29,7 +29,6 @@ def calcular_angulo_cuello(pose_landmarks):
                                     (punto_cadera_izquierda.y + punto_cadera_derecha.y) / 2])
 
     vector_cuello = punto_medio_ojos - punto_medio_hombros
-    vector_vertical = np.array([0, -1])
     vector_tronco = punto_medio_hombros - punto_medio_caderas
 
     angulo = np.degrees(np.arctan2(

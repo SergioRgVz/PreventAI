@@ -1,0 +1,114 @@
+% Main file of the memory. Use only needed packages.
+
+% Configuring folders.
+\def \contentFolder {content}   % Content folder. If empty (not recommended), root level will be used.
+\def \imgFolder     {img}       % Folder for images, inside of \contentFolder.
+
+\documentclass[a4paper,11pt,twoside]{book}
+% Adding packages.
+\usepackage[left=2.5cm, top=3.5cm, right=2.5cm, bottom=3.5cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish, es-tabla]{babel}
+\usepackage[usenames,dvipsnames]{color,xcolor,colortbl}
+\usepackage[titletoc]{appendix}
+\usepackage{flushend}
+\usepackage{graphicx}       % For figures and \graphicspath{}
+\usepackage{caption}
+\usepackage{sectsty}
+\usepackage{framed}
+\usepackage{chngcntr}
+\usepackage[normalem]{ulem}
+\usepackage{cite}
+\usepackage{etoolbox}
+\usepackage{caption}        % For empty captions and singlelinetext in tables.
+\usepackage[]{listings}     % For source code
+\usepackage{rotating}       % Vertical table (\begin{sidewaystable}) and figures (\begin{sidewaysfigure})
+\usepackage{lscape}         % For vertigal figures (\begin{landscape})
+\usepackage{etoolbox}
+\usepackage{array,multirow}
+\usepackage{eurosym}        % \euro
+\usepackage[nomessages]{fp} % Aritmethic operations: \FPeval. http://ctan.org/pkg/fp
+\usepackage{enumitem}       % Enumeration margins (see \createUseCasesTable) http://ctan.org/pkg/enumitem and \begin{enumerate}[a]
+\usepackage{float}          % Fix a table position through \begin{table}[H]
+\usepackage{emptypage}      % It automatically removes page numbers from empty pages.
+\usepackage{amssymb}        % For \checkmark
+\usepackage{textcomp}       % For correct presentation when using \lstlisting
+\usepackage{acronym}        % For \acrodef and \ac
+
+% You must include this three packages.
+\usepackage{stfg-uml-es}    % For UML tables.
+\usepackage{stfg-style}     % For styles.
+\usepackage{stfg-commands-es}  % For commands
+
+\inputContent{p_vars.tex}      % Edit this file for basic project data.
+
+\title{\myProjectTitle}
+\author{\myTutorName}      % Include \myCotutor if more than one director is required.
+\date{\myProjectDate}
+
+\pagestyle{headings}
+
+\inputContent{acronyms.tex}
+
+\begin{document}
+
+\input{coverExternal.tex} \cleardoublepage
+\input{coverInternal.tex} \cleardoublepage
+\input{authorship.tex} \cleardoublepage
+
+%\inputContent{versions.tex}            % Edit this file.
+%\cleardoublepage
+\inputContent{abstract.tex}            % Edit this file.
+\cleardoublepage
+\inputContent{acknowledgements.tex}    % Edit this file.
+\cleardoublepage
+\input{license.tex}             % Edit this file.
+\cleardoublepage
+\inputContent{notation.tex}            % Edit this file. 
+\cleardoublepage
+
+\tableofcontents    \cleardoublepage
+\listoffigures      \cleardoublepage
+\listoftables       \cleardoublepage
+\lstlistoflistings  \cleardoublepage
+
+\counterwithin{table}{chapter}
+\counterwithin{figure}{chapter}
+\counterwithin{equation}{chapter}
+
+\part{Prolegómeno}
+\label{sec:preface}
+\cleardoublepage
+\inputContent{introduction.tex}        % Edit this file and its references.
+\cleardoublepage
+\inputContent{planning.tex}            % Edit this file and its references.
+\cleardoublepage
+
+\part{Desarrollo}
+\label{sec:developing}
+\cleardoublepage
+\inputContent{analysis.tex}            % Edit this file and its references.
+\cleardoublepage
+\inputContent{design.tex}              % Edit this file and its references.
+\cleardoublepage
+\inputContent{implementation.tex}      % Edit this file and its references.
+\cleardoublepage
+\inputContent{tests.tex}               % Edit this file and its references.
+
+\part{Epílogo}
+\label{sec:epilogue}
+\cleardoublepage
+\inputContent{conclusions.tex}         % Edit this file and its references.
+
+\backmatter
+
+\cleardoublepage
+\addcontentsline{toc}{part}{\appendixpagename}
+\inputContent{appendices.tex}
+
+\clearpage
+\addcontentsline{toc}{part}{\bibname}
+\bibliographystyle{plain}
+\bibliographyContent{references}       % Edit references.bib.
+
+\end{document}

@@ -15,10 +15,10 @@ import {
 } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { companyService } from "../../../hooks/useCompanies";
-import jsPDF from "jspdf"; 
+import jsPDF from "jspdf";
 import apiClient from "../../../hooks/useAxiosAuth";
 import { reportService } from "../../../hooks/useReports";
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 
 const steps = [
   "Datos Identificativos",
@@ -80,7 +80,6 @@ export const GINSHTFormulary = (report) => {
     imagenDeteccion: false,
   });
 
-  
   const handleCompanyChange = async (event) => {
     const selectedCompanyId = event.target.value;
     const companiesList = await companyService.getCompanies();
@@ -112,26 +111,29 @@ export const GINSHTFormulary = (report) => {
     }));
   };
 
-
-
   const populateFormData = (report) => {
-    const factorsPuesto = report.report.Factors ? report.report.Factors.map(factor => factor.ID) : [];
-    const factorsTrabajador = report.report.Factors ? report.report.Factors.map(factor => factor.ID) : [];
+    const factorsPuesto = report.report.Factors
+      ? report.report.Factors.map((factor) => factor.ID)
+      : [];
+    const factorsTrabajador = report.report.Factors
+      ? report.report.Factors.map((factor) => factor.ID)
+      : [];
 
-
-     // Procesar imágenes
-    const processedImages = report.report.Imagens ? report.report.Imagens.map(image => {
-    return {
-      file: null,
-      preview: image.url || `${image.base64}`
-    };
-     }) : [];
+    // Procesar imágenes
+    const processedImages = report.report.Imagens
+      ? report.report.Imagens.map((image) => {
+          return {
+            file: null,
+            preview: image.url || `${image.base64}`,
+          };
+        })
+      : [];
     setFormData({
       CIF_Empresa: report.report.Empleado.Empresa.CIF || "",
       ID_Empresa: report.report.Empleado.Empresa.ID || "",
       DNI_Empleado: report.report.Empleado.DNI || "",
       ID_Empleado: report.report.ID_Empleado || "",
-      Sexo: report.report.Empleado.Sexo  || "",
+      Sexo: report.report.Empleado.Sexo || "",
       PuestoTrabajo: report.report.Empleado.PuestoTrabajo || "",
       Fecha: report.report.Fecha ? dayjs(report.report.Fecha) : null,
       Referencia: report.report.Referencia || "",
@@ -141,15 +143,18 @@ export const GINSHTFormulary = (report) => {
       DuracionTarea: report.report.GINSHT?.DuracionTarea || 0,
       NumeroDesplazamientos: report.report.GINSHT?.NDesplazamientos || 0,
       PosicionLevantamiento: report.report.GINSHT?.PosturaLevantamiento || 0,
-      DistanciaDesplazamientos: report.report.GINSHT?.DistanciaDesplazamientos || 0,
+      DistanciaDesplazamientos:
+        report.report.GINSHT?.DistanciaDesplazamientos || 0,
       alturaLevantamiento: report.report.GINSHT?.AlturaLevantamiento || 0,
-      separacionLevantamiento: report.report.GINSHT?.SeparacionLevantamiento || 0,
+      separacionLevantamiento:
+        report.report.GINSHT?.SeparacionLevantamiento || 0,
       desplazamientoVertical: report.report.GINSHT?.DesplVertical || 0,
       giroDelTronco: report.report.GINSHT?.GiroTronco || 0,
       tipoDeAgarre: report.report.GINSHT?.TipoAgarre || 0,
       duracionManipulacion: report.report.GINSHT?.DuracionManipulacion || 0,
       frecuenciaDeManipulacion: report.report.GINSHT?.FrecManipulacion || 0,
-      frecuenciaDeManipulacionRadio: report.report.GINSHT?.FrecManipulacionRadio || 0,
+      frecuenciaDeManipulacionRadio:
+        report.report.GINSHT?.FrecManipulacionRadio || 0,
       pesoTeoricoRecomendado: report.report.GINSHT?.PesoTeorico || 0,
       valorFinalFrecuencia: report.report.GINSHT?.ValorFinalFrecuencia || 0,
       factoresPuesto: factorsPuesto,
@@ -160,7 +165,6 @@ export const GINSHTFormulary = (report) => {
       indicaciones: report.report.Indicaciones || "",
     });
     setImages(processedImages);
-
   };
 
   useEffect(() => {
@@ -169,13 +173,13 @@ export const GINSHTFormulary = (report) => {
         // Obtener factores de puesto y trabajador
         const puestosFactors = await fetchFactors("puestoGINSHT");
         const trabajadorFactors = await fetchFactors("trabajadorGINSHT");
-  
+
         setPuestosFactors(puestosFactors);
         setTrabajadorFactors(trabajadorFactors);
-        
+
         // Una vez que los factores están cargados, establecer los datos del formulario
         populateFormData(report);
-  
+
         // Obtener empleados de la empresa seleccionada
         if (report.report.Empleado.Empresa.ID) {
           const employeesResponse = await companyService.getEmployees(
@@ -185,7 +189,7 @@ export const GINSHTFormulary = (report) => {
         }
       }
     };
-  
+
     fetchData();
   }, [report]);
 
@@ -236,7 +240,6 @@ export const GINSHTFormulary = (report) => {
     }));
   };
 
-
   const handleReset = () => {
     setActiveStep(0);
     setFormData({
@@ -280,158 +283,182 @@ export const GINSHTFormulary = (report) => {
 
   const handleSavePDF = async () => {
     const doc = new jsPDF();
-
-    // // Título del documento
-    doc.setFontSize(18);
-    doc.text("Informe GINSHT", 20, 20);
-
-    // Datos identificativos
-    doc.setFontSize(16);
-    doc.text("Datos identificativos", 20, 30);
-
-    doc.setFontSize(12);
-    doc.text(`CIF Empresa: ${formData.CIF_Empresa}`, 20, 40);
-    doc.text(`ID Empresa: ${formData.ID_Empresa}`, 20, 50);
-    doc.text(`DNI Empleado: ${formData.DNI_Empleado}`, 20, 60);
-    doc.text(`ID Empleado: ${formData.ID_Empleado}`, 20, 70);
-    doc.text(`Sexo: ${formData.Sexo}`, 20, 80);
-    doc.text(`Puesto de Trabajo: ${formData.PuestoTrabajo}`, 20, 90);
-    doc.text(`Fecha: ${formData.Fecha}`, 20, 100);
-    doc.text(`Referencia: ${formData.Referencia}`, 20, 110);
-
-    // Datos del informe
-    doc.text("Descripción de Elevación:", 20, 120);
-    doc.text(formData.DescripcionElevacion, 20, 130);
-    doc.text("Descripción de Transporte:", 20, 140);
-    doc.text(formData.DescripcionTransporte, 20, 150);
-
-    // Datos de la evaluación
-    doc.setFontSize(16);
-    doc.text("Datos de la evaluación", 20, 160);
-
-    doc.setFontSize(12);
-    doc.text(`Peso Real Manejado: ${formData.pesoRealManejado} kg`, 20, 170);
-    doc.text(`Duración de la Tarea: ${formData.DuracionTarea} horas`, 20, 180);
-    doc.text(
-      `Número de Desplazamientos: ${formData.NumeroDesplazamientos}`,
-      20,
-      190
-    );
-    doc.text(
-      `Posición de Levantamiento: ${
-        formData.PosicionLevantamiento === 0 ? "De pie" : "Sentado"
-      }`,
-      20,
-      200
-    );
-    doc.text(
-      `Distancia de Desplazamientos: ${
-        formData.DistanciaDesplazamientos === 0
-          ? "Hasta 10 metros"
-          : "Más de 10 metros"
-      }`,
-      20,
-      210
-    );
-    doc.text(
-      `Altura de Levantamiento: ${
-        [
-          "Altura de la vista",
-          "Encima del codo",
-          "Debajo del codo",
-          "Altura del muslo",
-          "Altura de la pantorrilla",
-        ][formData.alturaLevantamiento]
-      }`,
-      20,
-      220
-    );
-    doc.text(
-      `Separación de Levantamiento: ${
-        formData.separacionLevantamiento === 0
-          ? "Carga cerca del cuerpo"
-          : "Carga lejos del cuerpo"
-      }`,
-      20,
-      230
-    );
-    doc.text(
-      `Peso Teórico Recomendado: ${formData.pesoTeoricoRecomendado} kg`,
-      20,
-      240
-    );
-    doc.text(
-      `Desplazamiento Vertical: ${formData.desplazamientoVertical}`,
-      20,
-      250
-    );
-    doc.text(`Giro del Tronco: ${formData.giroDelTronco}`, 20, 260);
-    doc.text(`Tipo de Agarre: ${formData.tipoDeAgarre}`, 20, 270);
-    doc.text(
-      `Duración de la Manipulación: ${
-        [
-          "Menos de 1 hora al día",
-          "Entre 1 y 2 horas al día",
-          "Entre 2 y 8 horas al día",
-        ][formData.duracionManipulacion]
-      }`,
-      20,
-      280
-    );
-    doc.text(
-      `Frecuencia de la Manipulación: ${
-        [
-          "1 vez cada 5 minutos",
-          "1 vez/minuto",
-          "4 veces/minuto",
-          "9 veces/minuto",
-          "12 veces/minuto",
-          "Más de 15 veces/minuto",
-        ][formData.frecuenciaDeManipulacion]
-      }`,
-      20,
-      290
-    );
-    doc.text(
-      `Valor Final de Frecuencia: ${formData.valorFinalFrecuencia}`,
-      20,
-      300
-    );
-    // Añadir Factores de Puesto
-    doc.text("Factores de Puesto:", 20, 310);
-    let yPosition = 320;
-    formData.factoresPuesto.forEach((factorID) => {
-      const factor = puestosFactors.find((f) => f.ID === factorID);
-      if (factor) {
-        doc.text(`Factor seleccionado: ${factor.Nombre}`, 20, yPosition);
-        yPosition += 10;
-      }
-    });
-
-    // Añadir Factores de Trabajador
-    doc.text("Factores de Trabajador:", 20, yPosition + 10);
-    yPosition += 20;
-    formData.factoresTrabajador.forEach((factorID) => {
-      const factor = trabajadorFactors.find((f) => f.ID === factorID);
-      if (factor) {
-        doc.text(`Factor seleccionado: ${factor.Nombre}`, 20, yPosition);
-        yPosition += 10;
-      }
-    });
-
-    // Añadir las imágenes al PDF
-    for (const image of images) {
-      const imgData = await toBase64(image.file);
-      if (yPosition > 270) {
-        // Crear una nueva página si la posición Y es demasiado grande
+    const pageWidth = doc.internal.pageSize.width;
+    const pageHeight = doc.internal.pageSize.height;
+    let yPosition = 20;
+  
+    const addText = (text, fontSize = 12, isBold = false) => {
+      if (yPosition > pageHeight - 20) {
         doc.addPage();
         yPosition = 20;
       }
-      doc.addImage(imgData, "JPEG", 20, yPosition, 160, 90);
-      yPosition += 100; // Espacio entre imágenes
+      doc.setFontSize(fontSize);
+      doc.setFont(undefined, isBold ? 'bold' : 'normal');
+      doc.text(text, 20, yPosition);
+      yPosition += fontSize * 0.5 + 5;
+    };
+  
+    addText("Informe GINSHT", 24, true);
+    yPosition += 10;
+  
+    addText("1. Datos Identificativos", 16, true);
+    addText(`CIF Empresa: ${formData.CIF_Empresa}`);
+    addText(`ID Empresa: ${formData.ID_Empresa}`);
+    addText(`DNI Empleado: ${formData.DNI_Empleado}`);
+    addText(`ID Empleado: ${formData.ID_Empleado}`);
+    addText(`Sexo: ${formData.Sexo}`);
+    addText(`Puesto de Trabajo: ${formData.PuestoTrabajo}`);
+    addText(`Fecha: ${formData.Fecha ? formData.Fecha.format('DD/MM/YYYY') : 'No especificada'}`);
+    addText(`Referencia: ${formData.Referencia}`);
+    yPosition += 10;
+  
+    addText("2. Descripción del Trabajo", 16, true);
+    addText("Descripción de Elevación:");
+    const splitElevacion = doc.splitTextToSize(formData.DescripcionElevacion, pageWidth - 40);
+    doc.text(splitElevacion, 20, yPosition);
+    yPosition += splitElevacion.length * 5 + 10;
+    
+    addText("Descripción de Transporte:");
+    const splitTransporte = doc.splitTextToSize(formData.DescripcionTransporte, pageWidth - 40);
+    doc.text(splitTransporte, 20, yPosition);
+    yPosition += splitTransporte.length * 5 + 10;
+  
+    addText("3. Datos de la Evaluación", 16, true);
+    addText(`Peso Real Manejado: ${formData.pesoRealManejado} kg`);
+    addText(`Duración de la Tarea: ${formData.DuracionTarea} horas`);
+    addText(`Número de Desplazamientos: ${formData.NumeroDesplazamientos}`);
+    addText(`Posición de Levantamiento: ${formData.PosicionLevantamiento === 0 ? "De pie" : "Sentado"}`);
+    addText(`Distancia de Desplazamientos: ${formData.DistanciaDesplazamientos === 0 ? "Hasta 10 metros" : "Más de 10 metros"}`);
+    
+    const alturas = ["Altura de la vista", "Encima del codo", "Debajo del codo", "Altura del muslo", "Altura de la pantorrilla"];
+    addText(`Altura de Levantamiento: ${alturas[formData.alturaLevantamiento]}`);
+    
+    addText(`Separación de Levantamiento: ${formData.separacionLevantamiento === 0 ? "Carga cerca del cuerpo" : "Carga lejos del cuerpo"}`);
+    addText(`Peso Teórico Recomendado: ${formData.pesoTeoricoRecomendado} kg`);
+    
+    const desplazamientos = ["Hasta 25 cm", "Hasta 50 cm", "Hasta 100 cm", "Hasta 175 cm", "Más de 175 cm"];
+    addText(`Desplazamiento Vertical: ${desplazamientos[formData.desplazamientoVertical]}`);
+    
+    const giros = ["Sin giro", "Poco girado (hasta 30º)", "Girado (hasta 60º)", "Muy girado (90º)"];
+    addText(`Giro del Tronco: ${giros[formData.giroDelTronco]}`);
+    
+    const agarres = ["Bueno", "Regular", "Malo"];
+    addText(`Tipo de Agarre: ${agarres[formData.tipoDeAgarre]}`);
+    
+    const duraciones = ["Menos de 1 hora al día", "Entre 1 y 2 horas al día", "Entre 2 y 8 horas al día"];
+    addText(`Duración de la Manipulación: ${duraciones[formData.duracionManipulacion]}`);
+    
+    const frecuencias = ["1 vez cada 5 minutos", "1 vez/minuto", "4 veces/minuto", "9 veces/minuto", "12 veces/minuto", "Más de 15 veces/minuto"];
+    addText(`Frecuencia de la Manipulación: ${frecuencias[formData.frecuenciaDeManipulacion]}`);
+    
+    addText(`Valor Final de Frecuencia: ${formData.valorFinalFrecuencia}`);
+    yPosition += 10;
+  
+    addText("4. Factores", 16, true);
+    addText("Factores de Puesto:", 14, true);
+    formData.factoresPuesto.forEach((factorID) => {
+      const factor = puestosFactors.find((f) => f.ID === factorID);
+      if (factor) {
+        addText(`• ${factor.Nombre}`);
+      }
+    });
+    yPosition += 5;
+    addText("Factores de Trabajador:", 14, true);
+    formData.factoresTrabajador.forEach((factorID) => {
+      const factor = trabajadorFactors.find((f) => f.ID === factorID);
+      if (factor) {
+        addText(`• ${factor.Nombre}`);
+      }
+    });
+  
+    if (images.length > 0 || formData.imagenDeteccion) {
+      doc.addPage();
+      yPosition = 20;
+      addText("5. Imágenes", 16, true);
+      yPosition += 10;
+    
+      const maxImageWidth = 80;  // Maximum width of each image
+      const maxImageHeight = 60; // Maximum height of each image
+    
+      if (formData.imagenDeteccion && images.length > 0) {
+        addText("Imagen subida y detección realizada:", 14, true);
+        yPosition += 10;
+    
+        try {
+          const imgData = await toBase64(images[0].file);
+    
+          // Create a temporary image element to get the original dimensions
+          const img = new Image();
+          img.src = imgData;
+          await new Promise(resolve => img.onload = resolve);
+    
+          // Calculate the aspect ratio
+          const aspectRatio = img.width / img.height;
+    
+          // Determine the final dimensions
+          let finalWidth = img.width;
+          let finalHeight = img.height;
+    
+          if (finalWidth > maxImageWidth) {
+            finalWidth = maxImageWidth;
+            finalHeight = finalWidth / aspectRatio;
+          }
+    
+          if (finalHeight > maxImageHeight) {
+            finalHeight = maxImageHeight;
+            finalWidth = finalHeight * aspectRatio;
+          }
+    
+          // Add the uploaded image to the PDF
+          doc.addImage(imgData, "JPEG", 20, yPosition, finalWidth, finalHeight);
+          doc.text("Imagen subida", 20, yPosition + finalHeight + 5);
+    
+          let detectionImgData;
+    
+          if (typeof formData.imagenDeteccion === 'string') {
+            // If imagenDeteccion is a base64 string, use it directly
+            detectionImgData = formData.imagenDeteccion;
+          } else {
+            // If imagenDeteccion is a Blob or File, convert it to base64
+            detectionImgData = await toBase64(formData.imagenDeteccion);
+          }
+    
+          // Create a temporary image element to get the original dimensions
+          const detectionImg = new Image();
+          detectionImg.src = 'data:image/jpeg;base64,' + detectionImgData;
+          await new Promise(resolve => detectionImg.onload = resolve);
+    
+          // Calculate the aspect ratio
+          const detectionAspectRatio = detectionImg.width / detectionImg.height;
+    
+          // Determine the final dimensions
+          let detectionFinalWidth = detectionImg.width;
+          let detectionFinalHeight = detectionImg.height;
+    
+          if (detectionFinalWidth > maxImageWidth) {
+            detectionFinalWidth = maxImageWidth;
+            detectionFinalHeight = detectionFinalWidth / detectionAspectRatio;
+          }
+    
+          if (detectionFinalHeight > maxImageHeight) {
+            detectionFinalHeight = maxImageHeight;
+            detectionFinalWidth = detectionFinalHeight * detectionAspectRatio;
+          }
+    
+          // Add the detection image to the PDF
+          doc.addImage(detectionImgData, "JPEG", 110, yPosition, detectionFinalWidth, detectionFinalHeight);
+          doc.text("Detección realizada", 110, yPosition + detectionFinalHeight + 5);
+    
+          // Update yPosition for the next image or text
+          yPosition += Math.max(finalHeight, detectionFinalHeight) + 20;
+    
+        } catch (error) {
+          console.error("Error adding images to PDF:", error);
+          addText("Error al cargar las imágenes", 10);
+          yPosition += 10;
+        }
+      }
     }
-
-    // Guardar el documento
     doc.save("informe_ginsht.pdf");
   };
 
@@ -474,7 +501,7 @@ export const GINSHTFormulary = (report) => {
         IRTransporte: formData.indiceRiesgoTransporte,
       },
       imagenes: formData.imagenes, // Suponiendo que las imágenes se han añadido aquí
-        factores: {
+      factores: {
         factoresPuesto: formData.factoresPuesto,
         factoresTrabajador: formData.factoresTrabajador,
       },
@@ -500,18 +527,18 @@ export const GINSHTFormulary = (report) => {
   };
 
   const handleSave = async () => {
-    try { 
+    try {
       // Subir imágenes y obtener las rutas
       let ruta = null;
       let imagenesRutas = await Promise.all(
         images.map(async (image) => {
-          try{ 
+          try {
             ruta = await subirImagen(image);
           } catch (error) {
             console.error("Error subiendo la imagen:", error);
             return null;
           }
-            return ruta;
+          return ruta;
         })
       );
       if (imagenesRutas.some((ruta) => ruta === null)) {
@@ -551,7 +578,15 @@ export const GINSHTFormulary = (report) => {
           />
         );
       case 1:
-        return <SubirImagenes images={images} setImages={setImages} handleChange={handleChange} showText="GINSHT" GINSHT/>;
+        return (
+          <SubirImagenes
+            images={images}
+            setImages={setImages}
+            handleChange={handleChange}
+            showText="GINSHT"
+            GINSHT
+          />
+        );
       case 2:
         return (
           <Grid container spacing={2}>

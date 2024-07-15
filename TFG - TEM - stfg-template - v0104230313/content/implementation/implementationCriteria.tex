@@ -1,0 +1,33 @@
+\section{\forlnameref Criterios generales de implementación}
+\label{sec:implementationCriteria}
+
+\begin{shaded}
+Esto en el caso de que se emplee la notación húngara, lo cual debe indicarse en los requisitos no funcionales. De no ser así, deberán indicarse otros criterios, incluyendo la disyuntiva \textit{camel case}/Pascal.
+\end{shaded}
+
+Para ayudar al reconocimiento de la semántica y tipología de las variables en cualquier punto de la codificación se programado respetando un criterio de prefijos basado en notación húngara \cite{simonyi1999hungarian}, que se facilita en la Tabla \ref{tab:hungarianNotation}.
+
+\captionsetup[table]{singlelinecheck=true}
+\begin{table}[ht]
+\centering
+\begin{tabular}{|c|c|l|} 
+\hline
+\header{Prefijo     & Tipo              & Ejemplo}          \\ \hline
+\code{i}            & entero        & \code{int iAge;}       \\ \hline
+\code{f}            & decimal      & \code{float fMean;}      \\ \hline
+\code{d}            & doble precisión    & \code{double dSpeed;}     \\ \hline
+\code{b}            & booleano    & \code{boolean bIsValid;}   \\ \hline
+\code{s}            & cadena     & \code{String sName;}      \\ \hline
+\code{t}           & fecha/hora       & \code{Date tNow;}         \\ \hline
+\code{y}           & byte       & \code{byte yLow;}              \\ \hline
+                    & objeto específico           & \code{User user;}      \\ \hline
+\code{a}            & vector (cualquier implementación)    & \code{List<int>\ aiAge;}    \\ \hline
+\code{\_}            & variable privada  & \code{private int \_iId;}           \\ \hline
+\code{S}            & variable estática & \code{private static boolean \_SbTest;} \\ \hline
+\code{C}            & constante (sobrescribe \code{S})        & \code{private final static int \_CiMaxUsers = 16;} \\ \hline
+\end{tabular}
+\caption{Notación húngara utilizada}
+\label{tab:hungarianNotation}
+\end{table}
+
+En cuanto a los métodos de acceso, se sigue el criterio habitual de usar el prefijo \code{get} para lectura y \code{set} para escritura. Por ejemplo, \code{String getName()} y \code{void setName(String sValue)}, respectivamente para la variable \code{String \_sName}. A excepción de estos métodos y del prefijo en notación húngara, se empleará la notación Pascal para nombrar métodos y clases.

@@ -1,0 +1,49 @@
+\section{\forlnameref Base de datos}
+\label{sec:databaseImplementation}
+
+Se ilustra a continuación el código de implementación del modelo de datos en el gestor de bases de datos obtenido del archivo de creación de la base de datos \code{simplest-tfg.sql}. En concreto, se explican ejemplos de tablas de entidades, relaciones,  disparadores y, por último, tablas del sistema.
+
+Para la denominación de índices y disparadores, se ha seguido el criterio mostrado en la Tabla \ref{tab:dbNamesCriteria}. En el caso de los disparadores, \code{\textit{\{B/A\}}} representa \textit{begin} o \textit{after} (uno de los dos), y \code{\textit{\{I|U|D\}}} indica que el disparador es de inserción, actualización o eliminación.
+
+\captionsetup[table]{singlelinecheck=true}
+\begin{table}[ht]
+\centering
+\begin{tabular}{|l|p{0.35\linewidth}|p{0.35\linewidth}|}
+\hline
+\header{Elemento        & Formato                                       & Ejemplo}                      \\ \hline
+\textbf{Índice}                     & \code{IX\_\textit{Tabla}\_\_\textit{Campo}}   
+                                    & \code{IX\_Contact\_\_Id\_User} \\ \hline
+\textbf{Índice único}               & \code{UX\_\textit{Tabla}\_\_\textit{Campo}}   
+                                    & \code{UX\_User\_\_Login}      \\ \hline
+\textbf{Integridad}                 & \code{RS\_\textit{Tabla}\_\_\textit{Campo}}
+                                    & \code{RS\_Contact\_\_Id\_User} \\ \hline
+\textbf{Disparador}                 & \code{TR\_\textit{Tabla}\_\textit{\{B/A\}}\textit{\{I|U|D\}}}
+                                    & \code{TR\_User\_BU} \\ \hline
+\end{tabular}
+\caption{Criterio de nomenclatura para elementos de la base de datos}
+\label{tab:dbNamesCriteria}
+\end{table}
+
+
+\hiddensubsection{Tablas de entidades y relaciones}
+
+\begin{shaded}
+Mostrar código SQL y explicar ejemplo ilustrativo de un par de tablas referenciadas entre sí. La forma de mostrar código es:
+\code{\textbackslash lstinputlistingContent{language=MySQL,caption=MySQL - Tabla \textbackslash code{[Nombre de tabla]},firstline=[línea en la que empieza],lastline=[línea en la que termina],firstnumber=137}{[archivo SQL en la carpeta LaTeX correspondiente}}
+
+% Ejemplo:
+%\lstinputlistingContent{language=MySQL,caption=MySQL - Tabla \code{User},firstline=137,lastline=145,firstnumber=137}{implementation/simplest-tfg.sql}}
+
+\end{shaded}
+
+\hiddensubsection{Disparadores}
+
+\begin{shaded}
+Mostrar código SQL de algún disparador de inserción y otro de actualización, relativo a las entidades/reglas de negocio que representan.
+\end{shaded}
+
+\hiddensubsection{Tablas del sistema}
+
+\begin{shaded}
+Referir y mostrar código SQL de alguna tabla de sistema (por ejemplo, que contenga datos de configuración de la aplicación).
+\end{shaded}

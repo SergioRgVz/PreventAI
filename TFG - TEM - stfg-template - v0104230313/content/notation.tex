@@ -1,0 +1,43 @@
+\section*{Notación y formato}
+\label{sec:notation}
+
+% La convención es que las referencias a tablas, figuras, etcétera, se indiquen en mayúsculas. Así, es "Tabla 1", no "tabla 1".
+El presente documento utiliza un conjunto de convenios de notación de sintaxis, tal y como se describen en la Tabla \ref{tab:notation}.
+
+% Eliminar las que no se utilicen en el documento final.
+\begin{table}[ht]
+\centering
+\begin{tabular}{|c|l|}                                                                  \hline
+\header{Estilo              & Uso}                                                      \\ \hline
+\textbf{negrita}            & Título o texto destacado.\\ \hline
+\textit{itálica}            & Texto en otro idioma, destacado, citas o nombres de aplicaciones.   \\ \hline
+\textcolor{link}{color}     & Enlace interno o externo.                                 \\ \hline
+\code{monoespaciado}      & Código fuente.  \\ \hline
+\underline{subrayado}     & Advertencia para el lector.                                \\ \hline
+\metainfo{sombreado}  & Meta-información. Comentarios para el alumno. \\ \hline
+\end{tabular}
+\caption{Convenios de notación y formato}
+\label{tab:notation}
+\end{table}
+
+\begin{shaded}
+La meta-información se incluye por motivos aclaratorios, bien relativos al documento en sí o a las técnicas a utilizar. No deberá aparecer meta-información en la memoria final del \ac{TFG} a entregar, por lo que \underline{deberá suprimirse toda meta-información de este documento (lo que incluye este párrafo) y dicha entrada de la Tabla \ref{tab:notation}}.\\
+
+Por otro lado, la plantilla aporta al autor el uso de dos etiquetas más: \code{\textbackslash alert} y \code{\textbackslash todo}. Por ejemplo, \code{\textbackslash alert\{Esto es una alerta\}} aparece como \alert{Esto es una alerta}, y \code{\textbackslash todo\{No olvides esta parte\}} se muestra como \todo{No olvides esta parte}. Dichas etiquetas son para anotaciones personales de uso exclusivo durante la elaboración del documento, pero no deben aparecer en el entregable final.\\
+
+Precisamente como parte de esta meta-información, se facilita a continuación una serie de normas sintácticas que se han detectado como errores comunes en la notación y formato de diferentes memorias de \ac{TFG}. Las referencias relativas a ortografía y gramática pueden encontrarse publicada en libros y artículos de la Real Academia Española \cite{espanola2010ortografia,rae2016diccionario,real2005diccionario}:
+\begin{itemize}
+    \item En castellano, las siglas no llevan plural. No es ``los TFGs'', ni ``los TFG's'', sino ``los TFG''.
+    \item Los meses del año y días de la semana se escriben siempre en minúscula (enero, martes, noviembre, domingo) salvo festividades (por ejemplo, Viernes Santo).
+    \item Los años no llevan punto de separación. No es ``2.016'', sino ``2016''. De hecho, no se aconseja poner ningún separador a números de cuatro cifras, sean años o no.
+    \item Los números incluidos en párrafos no se escriben usando dígitos numéricos, salvo cuando describan resultados matemáticos, porcentajes o el texto sea grande. Así, no es correcto: ``hemos definido un total de 3 iteraciones'', sino ``hemos definido un total de tres iteraciones''.
+    \item Respecto a la tilde en monosílabos (diacrítica), los únicos que lo permiten son ``tú'', ``él'', ``mí'' (todos como pronombres), ``sí'' (ídem y adverbio de afirmación), ``té'' (bebida), ``dé'' (del verbo dar), ``sé'' (del verbo saber) y ``más'' (cuando NO equivale a ``pero''). Un error muy común es escribir ``tí'' (con tilde), cuando siempre se escribe sin tilde.
+    \item El punto y coma indica una pausa mayor que la coma, detrás se escribe en minúscula (salvo que la palabra sea nombre propio o similar) y se utiliza comúnmente para separar enumeraciones complejas, al menos alguna de las cuales suele contener una coma. Por ejemplo: ``Cada grupo irá por un lado diferente: el primero, por la izquierda; el segundo, por la derecha; y, el tercero, de frente''.
+    \item En cuanto a cuándo usar punto y cuándo usar coma, hay un sencillo truco: si puedes decir una oración de corrida sin hacer ninguna interrupción y la frase no pierde su sentido, seguro que no va un punto; como mucho, irá una coma, punto y coma, o dos puntos. Si pierde su sentido, es que va un punto allí donde deja de tenerlo.
+    \item Antes de un signo de puntuación nunca se deja espacios. Después de un signo de puntuación siempre se deja un espacio (salvo fin de párrafo).
+    \item Entre el sujeto y el predicado nunca se escribe coma, salvo la existencia de una subordinada. No es ``la actual aplicación, ha sido desarrollada en Java'', sino ``la actual aplicación ha sido desarrollada en Java''.
+    \item De igual manera, ``La motivación, el desarrollo y las conclusiones se incluyen en esta memoria'' no lleva coma de separación aunque haya un enumerado. La excepción a esta norma es que el enumerado acabe en ``etcétera'' o similar.
+    \item Los puntos suspensivos son siempre tres y sólo tres, y van unidos a la palabra que los precede. Pueden sustituirse por ``etcétera'' y por ``etc.'', pero no se escriben juntos; es decir, no es correcto ``Java, C, Prolog, etcétera...'', sino ``Java, C, Prolog...'', o bien ``Java, C, Prolog, etc.'', o incluso ``Java, C, Prolog, etcetera''. Detrás de los puntos suspensivos puede haber una coma, en su caso.
+    \item No obstante, hay que evitar los ``etcétera'' y similares en lo posible. Da la sensación de información incompleta.
+\end{itemize}
+\end{shaded}

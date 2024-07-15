@@ -1,0 +1,362 @@
+% Package: 'stfguml-es.sty'
+% Copyright: Pablo de la Torre Moreno, 2016
+% Description: LaTeX command definitions for UML structures.
+% Version: 1.0.0
+% Date: 2016-08-05
+% Version: 1.0.1
+% Date: 2016-08-25
+% Changes: - Including \resetSubobjectiveCounter at the beginning of \createObjectiveTable.
+% Version: 1.0.2
+% Date: 2016-08-26
+% Changes: - Including \ifpackageloaded from float. Including \titlecell in Requirements, just below.
+% Todo:
+%   Adapting to English language.
+% Requirements: 
+%   \codeInTitle command must be defined. For example: \newcommand{\codeInTitle}[1]{\textbf{#1}}
+%   \titlecell   command must be defined. For example: \newcommand{\titlecell}[1]{\textbf{#1}}
+
+\@ifpackageloaded{fmtcount}{}   {\usepackage{fmtcount}}  % For counters. http://ctan.org/pkg/fmtcount
+\@ifpackageloaded{pbox}{}       {\usepackage{pbox}}      % Paragraph in cell
+\@ifpackageloaded{float}{}      {\usepackage{float}}     % Fix a table position through \begin{table}[H]
+\@ifpackageloaded{caption}{}    {\usepackage{caption}}   % For empty captions and singlelinetext in tables.
+\@ifpackageloaded{fp}{}         {\usepackage[nomessages]{fp}} % Aritmethic operations: \FPeval. http://ctan.org/pkg/fp
+\@ifpackageloaded{enumitem}{}   {\usepackage{enumitem}}  % Enumeration margins (see \createUseCasesTable) http://ctan.org/pkg/enumitem and 
+
+% Generic commands
+\newcommand{\printCounter}[1]{\padzeroes[2]{\decimal{#1}}}
+
+% Counters
+\newcounter{objectiveCounter}
+\newcounter{subobjectiveCounter}
+\newcounter{actorCounter}
+\newcounter{informationReqCounter}
+\newcounter{bussinessRuleCounter}
+\newcounter{useCaseCounter}
+\newcounter{nonfunctionalReqCounter}
+\newcounter{testCaseCounter}
+
+% Abbreviations
+\def \objectiveAbbreviation         {OBJ}
+\def \subobjectiveAbbreviation      {OBJ}
+\def \actorAbbreviation             {ACT}
+\def \informationReqAbbreviation    {IRQ}
+\def \bussinessRuleAbbreviation     {BRU}
+\def \useCaseAbbreviation           {USC}
+\def \nonfunctionalReqAbbreviation  {NRQ}
+\def \testCaseAbbreviation          {TST}
+
+% Codes
+\newcommand{\newObjectiveCode}{\stepcounter{objectiveCounter}\objectiveAbbreviation{}-\printCounter{objectiveCounter}}
+\newcommand{\lastObjectiveCode}{\objectiveAbbreviation{}-\printCounter{objectiveCounter}}
+\newcommand{\resetSubobjectiveCounter}{\setcounter{subobjectiveCounter}{0}}
+\newcommand{\newsubobjectiveCode}
+    {\stepcounter{subobjectiveCounter}\subobjectiveAbbreviation{}-\printCounter{objectiveCounter}.\padzeroes[1]\decimal{subobjectiveCounter}}
+\newcommand{\lastSubobjectiveCode}
+    {\subobjectiveAbbreviation{}-\printCounter{objectiveCounter}.\padzeroes[1]\decimal{subobjectiveCounter}}
+\newcommand{\newActorCode}{\stepcounter{actorCounter}\actorAbbreviation{}-\printCounter{actorCounter}}
+\newcommand{\lastActorCode}{\actorAbbreviation{}-\printCounter{actorCounter}}
+\newcommand{\newInformationReqCode}{\stepcounter{informationReqCounter}\informationReqAbbreviation{}-\printCounter{informationReqCounter}}
+\newcommand{\lastInformationReqCode}{\informationReqAbbreviation{}-\printCounter{informationReqCounter}}
+\newcommand{\newBussinessRuleCode}{\stepcounter{bussinessRuleCounter}\bussinessRuleAbbreviation{}-\printCounter{bussinessRuleCounter}}
+\newcommand{\lastBussinessRuleCode}{\bussinessRuleAbbreviation{}-\printCounter{bussinessRuleCounter}}
+\newcommand{\newUseCaseCode}{\stepcounter{useCaseCounter}\useCaseAbbreviation{}-\printCounter{useCaseCounter}}
+\newcommand{\lastUseCaseCode}{\useCaseAbbreviation{}-\printCounter{useCaseCounter}}
+\newcommand{\newNonfunctionalCode}{\stepcounter{nonfunctionalCounter}\useCaseAbbreviation{}-\printCounter{nonfunctionalCounter}}
+\newcommand{\lastNonfunctionalCode}{\nonfunctionalAbbreviation{}-\printCounter{nonfunctionalCounter}}
+\newcommand{\newTestCaseCode}{\stepcounter{testCaseCounter}\testCaseAbbreviation{}-\printCounter{testCaseCounter}}
+\newcommand{\lastTestCaseCode}{\testCaseAbbreviation{}-\printCounter{testCaseCounter}}
+
+% Environments and examples
+
+%\def \interviewRs       {My interviewers' names}
+%\def \interviewDs       {My intervieweds' names}
+%\def \interviewDate     {date of interview}
+%\def \interviewTime     {time of interview}
+%\def \interviewDuration {interview duration}
+%\def \interviewSubject  {Subject of my interview.}
+%\createInterviewTable{myTableLabel}
+
+\newcommand{\createInterviewTable}[1]{
+    \captionsetup[table]{singlelinecheck=false}
+    \begin{table}[H]
+    \centering
+    \begin{tabular}{|r|p{0.75\linewidth}|} 
+    \hline 
+    \titlecell{Entrevistadores}     & \interviewRs                      \\ \hline
+    \titlecell{Entrevistados}       & \interviewDs                      \\ \hline
+    \titlecell{Fecha y hora}        & \interviewDate, \interviewTime    \\ \hline
+    \titlecell{Duraci\'on}          & \interviewDuration                \\ \hline
+    \titlecell{Motivo}              & \interviewSubject                 \\ \hline
+    \end{tabular}
+    \caption{Datos de entrevista a \interviewDate, \interviewTime}
+    \label{#1}
+    \end{table}
+    \captionsetup[table]{singlelinecheck=true}
+}
+
+%\def \objectiveTitle       {My objective title}
+%\def \objectiveDescription {Description of my objective.}
+%\createObjectiveTable{myTableLabel} 
+
+\newcommand{\createObjectiveTable}[1]{
+    \resetSubobjectiveCounter
+    \captionsetup[table]{singlelinecheck=false}
+    \begin{table}[H]
+    \centering
+    \begin{tabular}{|r|p{0.8\linewidth}|} 
+    \hline 
+    \titlecell{\codeInTitle{\newObjectiveCode}}     & \textbf{\objectiveTitle}  \\ \hline 
+    \titlecell{Descripci\'on}                       & \objectiveDescription     \\ \hline
+    \end{tabular}
+    \caption{\lastObjectiveCode\ - \objectiveTitle}
+    \label{#1}
+    \end{table}
+    \captionsetup[table]{singlelinecheck=true}
+}
+
+%\def \subobjectiveTitle {My subobjective title}
+%\def \subobjectiveDescription
+%    {Description of my subobjective.}
+%\createSubobjectiveTable{myTableLabel}
+
+\newcommand{\createSubobjectiveTable}[1]{
+    \captionsetup[table]{singlelinecheck=false}
+    \begin{table}[H]
+    \centering
+    \begin{tabular}{|r|p{0.8\linewidth}|}
+    \hline
+    \titlecell{\codeInTitle{\newsubobjectiveCode}}  & \textbf{\subobjectiveTitle}   \\ \hline
+    \titlecell{Descripci\'on}                       & \subobjectiveDescription      \\ \hline
+    \end{tabular}
+    \caption{\lastSubobjectiveCode\ - \subobjectiveTitle}
+    \label{#1}
+    \end{table}
+    \captionsetup[table]{singlelinecheck=true}
+}
+
+%\def \actorName        {My actor name}
+%\def \actorDescription {Description of my actor.}
+%\createActorTable{myTableLabel}
+
+\newcommand{\createActorTable}[1]{
+    \captionsetup[table]{singlelinecheck=false}
+    \begin{table}[H]
+    \centering
+    \begin{tabular}{|r|p{0.8\linewidth}|} 
+    \hline 
+    \titlecell{\codeInTitle{\newActorCode}} & \textbf{\actorName}   \\ \hline 
+    \titlecell{Descripci\'on}               & \actorDescription     \\ \hline
+    \end{tabular}
+    \caption{\lastActorCode\ - \actorName}
+    \label{#1}
+    \end{table}
+    \captionsetup[table]{singlelinecheck=true}
+}
+
+%\def \irqName {My entity name}
+%\def \irqDescription {Description of my entity.}
+%\def \irqNumAttrs {5} % Numbers of attributes (fields). Need for centering cell title.
+%\def \irqAttrs { 
+
+%    % Attributes from first to last but one (note: "yes" or "not" depends on the language; even you can use a check symbol):
+%    %   & Name & \code{Type} & isUnique (yes or no) & isMandatory (yes or no) \\ \cline{2-5}
+%    % Last attribute
+%    % \irqTitle & & Name & \code{Type} & isUnique (yes or not) & isMandatory (yes or not) \\ \hline
+
+%                & Attribute 1     & \code{type 1}   & no  & yes    \\ \cline{2-5}
+%                & Attribute 2     & \code{type 2}   & no  & no     \\ \cline{2-5}
+%\irqTitle       & Attribute 3     & \code{type 3}   & no  & no     \\ \hline
+%}
+%\createInformationReqTable{myTableLabel}
+
+\def \irqTitle {\multirow{-\irqRows}{*}{\titlecell{Atributos}}}
+\newcommand{\createInformationReqTable}[1]{
+    \FPeval{\irqRows}{clip(\irqNumAttrs+1)}
+    \captionsetup[table]{singlelinecheck=false}
+    \begin{table}[H]
+    \centering
+    \begin{tabular}{|>{\columncolor{header}}r|p{0.31\linewidth}|p{0.3\linewidth}|c|c|}
+    \hline
+    \titlecell{\codeInTitle{\newInformationReqCode}} & \multicolumn{4}{l|}{\textbf{\irqName}} \\ \hline
+    \titlecell{Descripci\'on} & \multicolumn{4}{l|}{ \pbox{0.8\linewidth}{\irqDescription}} \\ \hline
+            & \titlecell{Nombre} & \titlecell{Tipo} & \titlecell{\'Unico} & \titlecell{Obl.} \\ \cline{2-5}
+    \irqAttrs
+    \end{tabular}
+    \caption{\lastInformationReqCode\ - \irqName}
+    \label{#1}
+    \end{table}
+    \captionsetup[table]{singlelinecheck=true}
+}
+
+%\def \bussinessRuleName {My bussiness rule name}
+%\def \bussinessRuleDescription
+%    {Description of my bussiness rule.}
+%\createBussinessRuleTable{myTableLabel}
+
+\newcommand{\createBussinessRuleTable}[1]{
+    \captionsetup[table]{singlelinecheck=false}
+    \begin{table}[H]
+    \centering
+    \begin{tabular}{|r|p{0.8\linewidth}|} 
+    \hline 
+    \titlecell{\codeInTitle{\newBussinessRuleCode}} & \textbf{\bussinessRuleName} \\ \hline 
+    \titlecell{Descripci\'on}                       & \bussinessRuleDescription   \\ \hline
+    \end{tabular}
+    \caption{\lastBussinessRuleCode\ - \bussinessRuleName}
+    \label{#1}
+    \end{table}
+    \captionsetup[table]{singlelinecheck=true}
+}
+
+%\def \ucName {My use case name}
+%\def \ucDescription {Description of my use case.}
+%\def \ucActors {Actors involved}
+%\def \ucPreconditions { % Empty if no preconditions.
+%    \begin{ucconditions}
+%        \item First precondition.
+%        \item ...
+%        \item Last precondition.
+% \end{ucconditions}}
+%\def \ucMainScenery {
+%    \begin{ucscenery}
+%        \item[1.] First step.
+%        \item[...] ...
+%        \item[n.] Last step (n).
+%    \end{ucscenery}
+%}
+%\def \ucPostconditions { % Empty if no postconditions.
+%    \begin{ucconditions}
+%        \item First postcondition.
+%        \item ...
+%        \item Last postcondition.
+% \end{ucconditions}}
+%\def \ucAltSceneries {
+%    \begin{ucscenery}
+%        \item[1.a.] First alternative scenery.
+%        \begin{ucsubscenery}
+%            \item Action 1.
+%            \item ...
+%            \item Last action.
+%        \end{ucsubscenery}
+%        \item[...] ...
+%        \begin{ucsubscenery}
+%            \item Action 1.
+%            \item ...
+%            \item Last action.
+%        \end{ucsubscenery}
+%        \item[*.a.] Any step possible event 1
+%        \begin{ucsubscenery}
+%            \item Action 1.
+%            \item ...
+%            \item Last action.
+%        \end{ucsubscenery}
+%    \end{ucscenery}
+%}
+%\def \ucNotes {Notes of my use case, or empty.}
+%\createUseCaseTable{myTableLabel}
+
+\newenvironment{ucscenery}
+    {\begin{description}[topsep=0pt,noitemsep,before={\vspace*{-\baselineskip}},after={\vspace*{-\baselineskip}}]}
+    {\end{description}}
+\newenvironment{ucsubscenery}
+    {\begin{enumerate}[topsep=0pt,noitemsep]}
+    {\end{enumerate}}
+\newenvironment{ucconditions}
+    {\begin{itemize}[leftmargin=14pt,topsep=3pt,noitemsep,before={\vspace*{-\baselineskip}},after={\vspace*{-\baselineskip}}]}
+    {\end{itemize}}
+\newcommand{\createUseCaseTable}[1]{
+    \captionsetup[table]{singlelinecheck=false}
+    \begin{table}[H]
+    \centering
+    \begin{tabular}{|r|p{0.75\linewidth}|}
+    \hline
+    \titlecell{\codeInTitle{\newUseCaseCode}}   & \textbf{\ucName}  \\ \hline
+    \titlecell{Descripci\'on}                   & \ucDescription    \\ \hline
+    \titlecell{Actores}                         & \ucActors         \\ \hline
+    \titlecell{Precondiciones}                  & \ucPreconditions  \\ \hline
+    \titlecell{\pbox{0.15\linewidth}{Escenario\\principal}} & \ucMainScenery \\ \hline
+    \titlecell{Postcondiciones}                 & \ucPostconditions \\ \hline
+    \titlecell{\pbox{0.15\linewidth}{Escenarios\\alternativos}} & \ucAltSceneries \\ \hline
+    \titlecell{Notas}                            & \ucNotes         \\ \hline
+    \end{tabular}
+    \caption{\lastUseCaseCode\ - \ucName}
+    \label{#1}
+    \end{table}
+    \captionsetup[table]{singlelinecheck=true}
+}
+
+%\def \dbtName {My table name}
+%\def \dbtIrq {Entity/entities described by my table.}
+%\def \dbtNumFields {4} % Numbers of fields. Need for centering cell title.
+%\def \dbtFields { 
+%
+%    % Fields from first to last but one (note: "yes" or "not" depends on the language; even you can use a check symbol):
+%    %   & \code{Name} (underlined if PK) & \code{Type} 
+%    %   & \code{Referenced field} (if any) & isUnique (yes or not) & isMandatory (yes or not) \\ \cline{2-6}
+%    % Last Field
+%    %   \dbtTitle & \code{Name} (underlined if PK) & \code{Type} 
+%    %      & \code{Referenced field} (if any) & isUnique (yes or not) & isMandatory (yes or not) \\ \hline
+%
+%           & \underline{\code{PK}}     & \code{int32}       &                               & yes & yes   \\ \cline{2-6}
+%           & \code{Id\_Other}          & \code{int32}       & \code{OtherEntity.OtherField} & no  & yes   \\ \cline{2-6}
+%\dbtTitle  & \code{Field 3}            & \code{varchar(64)} &                               & no  & no    \\ \hline
+%}
+%\createDbTableTable{myTableLabel}
+
+\def \dbtTitle {\multirow{-\dbtRows}{*}{\titlecell{Campos}}}
+\newcommand{\createDbTableTable}[1]{
+    \FPeval{\dbtRows}{clip(\dbtNumFields+1)}
+    \captionsetup[table]{singlelinecheck=false}
+    \begin{table}[H]
+    \centering
+    \begin{tabular}{|>{\columncolor{header}}r|p{0.22\linewidth}|p{0.17\linewidth}|p{0.22\linewidth}|c|c|}
+    \hline
+    \titlecell{\codeInTitle{Tabla}} & \multicolumn{5}{l|}{\textbf{\code{\dbtName}}} \\ \hline
+    \titlecell{Requisito} & \multicolumn{5}{l|}{ \pbox{0.8\linewidth}{\dbtIrq}} \\ \hline
+            & \titlecell{Nombre} & \titlecell{Tipo} & \titlecell{Campo referenciado} & \titlecell{\'Unico} & \titlecell{Obl.} \\ \cline{2-6}
+    \dbtFields
+    \end{tabular}
+    \caption{Tabla \code{\dbtName}}
+    \label{#1}
+    \end{table}
+    \captionsetup[table]{singlelinecheck=true}
+}
+
+%\def \tstRules          {BRU-001}
+%\def \tstAction         {C} % Any letters of CRUD
+%\def \tstValidate       {\checkmark}
+%\def \tstDescription    {Una inserción con valores válidos se realiza adecuadamente.}
+%\def \tstCode           {
+%    \code{SELECT COUNT(*) FROM User;} \\
+%    \code{INSERT INTO User (IsSupervisor, Name, Surname, Login, Password)}\\
+%    \code{VALUES (TRUE, \textquotesingle Bruce\textquotesingle, \textquotesingle Wayne\textquotesingle, 
+%    \textquotesingle batm\textquotesingle, \textquotesingle 12345\textquotesingle);} \\
+%    \code{SELECT COUNT(*) FROM User;} \\
+%    \code{SELECT * FROM User ORDER BY Id DESC LIMIT 1;}
+%}
+%\def \tstResult         {
+%    \code{0} \\
+%    \code{1} \\
+%    \code{1, TRUE, \textquotesingle Bruce\textquotesingle, 
+%    \textquotesingle Wayne\textquotesingle, \textquotesingle batm\textquotesingle, \textquotesingle 12345\textquotesingle}
+%}
+%\def \tstCaption    {Inserción válida en tabla \code{User}}
+%\createDbTestCaseTable{tab:tst001}
+
+\newcommand{\createDbTestCaseTable}[1]{
+    \captionsetup[table]{singlelinecheck=false}
+    \begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|p{0.15\linewidth}|c|p{0.15\linewidth}|c|c|c|c|}
+    \hline
+    \titlecell{\codeInTitle{\newTestCaseCode}} & \titlecell{Regla} & \tstRules 
+        & \titlecell{Tabla} & \code{\tstTable} & \titlecell{Acción} & \tstAction & \titlecell{Validado} & \tstValidate    \\ \hline
+    \titlecell{Descripci\'on}   & \multicolumn{8}{l|}{\pbox{0.85\linewidth}{\tstDescription}}    \\ \hline
+    \titlecell{Código}          & \multicolumn{8}{l|}{\pbox{0.85\linewidth}{\tstCode}}          \\ \hline
+    \titlecell{Resultado}       & \multicolumn{8}{l|}{\pbox{0.85\linewidth}{\tstResult}}        \\ \hline
+    \end{tabular}
+    \caption{\lastTestCaseCode\ - \tstCaption}
+    \label{#1}
+    \end{table}
+    \captionsetup[table]{singlelinecheck=true}
+}

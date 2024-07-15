@@ -1,0 +1,26 @@
+% Archivo para incluir tablas o figuras grandes que, de haberlas y por su extensión, desestructuran el documento.
+
+\begin{shaded}
+Ejemplo de tabla comparativa de las aplicaciones revisadas durante el estado del arte. Las columnas deben ser modificadas para ajustarse a los criterios del estudio.
+\end{shaded}
+
+\captionsetup[table]{singlelinecheck=true} % Para que el título aparezca centrado
+
+\begin{sidewaystable} % table: horizontal; sidewaystable: vertical
+\centering
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|}                      
+\hline
+\header{Solución              & Plataforma & Licencia & Procesamiento Automático & 
+                                Métodos}  \\ \hline
+
+\textbf{\program{Ergoniza}}   & \pbox{20cm}{Web} & Limitada & No & \pbox{20cm} {15}\\\hline
+
+\textbf{\program{Ergo/IBV}}   & \pbox{20cm}{Web} & De pago & Sí & \pbox{20cm}{13} \\ \hline
+                                
+\textbf{\program{ErgoIA}}   & \pbox{20cm}{Web} & De pago & Sí & \pbox{20cm}{13}\\ \hline  
+\textbf{\program{ERGOSoft Pro}} &\pbox{20cm}{Web} & De pago & No & \pbox{20cm}{20}\\ \hline
+  
+\end{tabular}
+\caption{Estado del arte, comparativa}
+\label{tab:stateOfArt}
+\end{sidewaystable}

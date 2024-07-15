@@ -1,0 +1,35 @@
+\section{Objetivos}
+\label{sec:objectives}
+
+\begin{shaded}
+Hacer una introducción de los objetivos. Debe recordarse que los objetivos no son del alumno, sino del proyecto. Los objetivos del alumno se describen en el Capítulo \ref{sec:conclusions}. Posteriormente, se facilitan las tablas de objetivo, con la estructura y orden:
+\begin{itemize}
+    \item Objetivo $1$
+    \begin{itemize}
+        \item Subobjetivo $1.1$
+        \item ...
+        \item Subobjetivo $1.m_1$
+    \end{itemize}
+    \item ...
+    \item Objetivo $n$
+    \begin{itemize}
+        \item Subobjetivo $n.1$
+        \item ...
+        \item Subobjetivo $n.m_n$
+    \end{itemize}
+\end{itemize}
+\end{shaded}
+
+\def \objectiveTitle {Primer objetivo de la aplicación}
+\def \objectiveDescription
+    {Descripción del objetivo.}
+\createObjectiveTable{tab:firstObjective} % Change the label, but leave "tab:"
+% The parameter is the label, to be referrenced from a text using Tabla \ref{tab:firstObjective}.
+
+\def \subobjectiveTitle {Primer sub-objetivo del anterior}
+\def \subobjectiveDescription
+    {Descripción.}
+\createSubobjectiveTable{tab:firstSubobjective}
+
+% You need call this every time you must create a new objective (not subobjective).
+\resetSubobjectiveCounter

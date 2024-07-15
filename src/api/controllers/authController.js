@@ -19,13 +19,12 @@ export const login = async (req, res) => {
       return res.status(400).json({ code: 400, message: 'Faltan credenciales de inicio de sesión' });
     }
 
-    // Valida las credenciales del usuario
     const user = await userService.validateUser(email, password);
     if (!user) {
       return res.status(401).json({ message: 'Credenciales de inicio de sesión inválidas' });
     }
 
-    const token = jwt.sign({ userId: user.ID }, process.env.SECRET_KEY_JWT, { expiresIn: '365d' });
+    const token = jwt.sign({ userId: user.ID }, process.env.SECRET_KEY_JWT, { expiresIn: '24h' });
     res.setHeader('authorization', 'Bearer ' + token);
     return res.status(200).json({ message: 'Inicio de sesión exitoso' });
   } catch (error) {
@@ -64,7 +63,7 @@ export const checkIfTechnician = async (req, res) => {
     if (user === null) {
       return res.status(404).json({ code: 404, message: 'Usuario no encontrado' });
     }
-    return res.status(200).json({ isTechnician: user.role !== 1});
+    return res.status(200).json({ isTechnician: user.role !== 1 });
   } catch (error) {
     console.log(error)
     res.status(500).json({ message: 'Error interno del servidor' });
@@ -101,8 +100,14 @@ export const verifyToken = (req, res, next) => {
 
 export const getAllUsers = async (req, res) => {
   try {
-    const users = await userService.getUsers();
-    return res.status(200).json(users);
+    const userId = req.user.userId;
+    const esTecnico = await userService.checkIfTechnician(userId);
+    if (!esTecnico) {
+      const users = await userService.getUsers();
+      return res.status(200).json(users);
+    } else {
+      return res.status(403).json({ message: 'No tienes permisos para realizar esta acción' });
+    }
   } catch (error) {
     console.log(error)
     res.status(500).json({ message: 'Error interno del servidor' });
@@ -117,7 +122,8 @@ export const getAllUsers = async (req, res) => {
 export const register = async (req, res) => {
   try {
     const { DNI, email, password, name, surname, telephone, role } = req.body;
-    const user = await userService.createUser(DNI, email, password, name, surname, telephone, role);
+    const esTecnico = role == 'administrador' ? 0 : 1;
+    const user = await userService.createUser(DNI, email, password, name, surname, telephone, esTecnico);
 
     if (user === null) {
       return res.status(409).json({ message: 'El usuario ya existe' });

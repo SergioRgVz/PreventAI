@@ -74,4 +74,5 @@ def detectar_postura(image_path):
     cv2.imshow('Detección de Postura', image_bgr)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-detectar_postura('imagenginsht.png')
+# detectar_postura('imagenginsht.png')
+detectar_postura('./img/1.jpg')

@@ -3,7 +3,7 @@ import employeeService from '../services/employeeService.js';
 class employeeController {
     async getEmployees(req, res) {
         try {
-            const userId = req.user.userId; // Suponiendo que el userId viene del middleware de autenticación
+            const userId = req.user.userId;
             const empleados = await employeeService.getEmployees(userId);
             if (empleados.length) {
                 res.status(200).json(empleados);
@@ -81,13 +81,17 @@ class employeeController {
         try {
             const userId = req.user.userId; // Suponiendo que el userId viene del middleware de autenticación
             const employeeDNI = req.params.employeeDNI;
-            const employee = await employeeService.getEmployeeByDNI(userId, employeeDNI);
+            const employee = await employeeService.getEmployeeById(userId, employeeDNI);
             const { DNI, Nombre, Apellidos, Telefono, Correo, Edad, Sexo, PuestoTrabajo, FechaNacimiento, ID_Empresa } = req.body;
-            const empleadoActualizado = await employeeService.updateEmployee(userId, employee.ID, DNI, Nombre, Apellidos, Telefono, Correo, Edad, Sexo, PuestoTrabajo, FechaNacimiento, ID_Empresa);
+            let empleadoActualizado = null;
+            try{
+                empleadoActualizado = await employeeService.updateEmployee(userId, employee.ID, DNI, Nombre, Apellidos, Telefono, Correo, Edad, Sexo, PuestoTrabajo, FechaNacimiento, ID_Empresa);
+
+            } catch (error) {
+                res.status(400).json({ code: 400, message: 'No se pudo actualizar el empleado' });
+            }
             if (empleadoActualizado) {
                 res.status(200).json(empleadoActualizado);
-            } else {
-                res.status(400).json({ code: 400, message: 'No se pudo actualizar el empleado' });
             }
         } catch (error) {
             res.status(500).json({ message: 'Error al actualizar empleado', error: error.message });
@@ -97,8 +101,8 @@ class employeeController {
     async deleteEmployee(req, res) {
         try {
             const userId = req.user.userId; // Suponiendo que el userId viene del middleware de autenticación
-            const employeeId = req.params.employeeId;
-            const empleadoEliminado = await employeeService.deleteEmployee(userId, employeeId);
+            const employeeDNI = req.params.employeeDNI;
+            const empleadoEliminado = await employeeService.deleteEmployee(userId, employeeDNI);
             if (empleadoEliminado) {
                 res.status(200).json({ message: 'Empleado eliminado', empleado: empleadoEliminado });
             } else {

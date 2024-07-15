@@ -1,0 +1,19 @@
+\subsection{\forlnameref Reglas de negocio}
+\label{sec:bussinessRules}
+
+Por motivos de claridad y para simplificar el número de reglas de negocio explícitas, se ha incluido la obligatoriedad y unicidad de los atributos en el mismo detalle de las \lnameref{sec:entities}. No obstante, también y a continuación se especifican de forma general las reglas de negocio respectivas, así como otras específicas.
+
+\def \bussinessRuleName {Obligatoriedad de atributos}
+\def \bussinessRuleDescription
+    {Los campos especificados como tales en sus descripciones (ver Sección \ref{sec:entities}) deben ser obligatorios.}
+\createBussinessRuleTable{tab:bruMandatority}
+
+\def \bussinessRuleName {Unicidad de atributos}
+\def \bussinessRuleDescription
+    {Los campos especificados en sus descripciones (ver Sección \ref{sec:entities}) deben ser únicos en el conjunto de elementos de su entidad.}
+\createBussinessRuleTable{tab:bruUniqueness}
+
+\def \bussinessRuleName {Otra regla}
+\def \bussinessRuleDescription
+    {Descripción de la otra regla.}
+\createBussinessRuleTable{tab:bruAnotherRule}

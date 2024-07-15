@@ -1,0 +1,13 @@
+\section{\forlnameref Requisitos funcionales}
+\label{sec:functionalReqs}
+
+Se presentan, en primer lugar, las \lnameref{sec:functionalGroups} del sistema. Posteriormente, se dibujan y describen los \lnameref{sec:useCases} y la \lnameref{sec:traceabilityMatrix}.
+
+\begin{shaded}
+Ojo a esto, que es un error común: los requisitos funcionales/casos de uso, son acciones \underline{que realiza el sistema, no el actor}. El actor INVOCA a los requisitos funcionales, y el sistema los ejecuta. Así, un requisito funcional denominado \sout{\textit{Ver Usuario}} es incorrecto, porque el sistema no ``ve'' nada; el sistema lo que hace es ``mostrar'' los datos del usuario y, en consecuencia, el requisito debe denominarse \textit{Mostrar Usuario}.
+
+De esta forma, la manera más ordenada de concebir un requisito funcional es mediante la forma \textit{Verbo Entidad}, donde los verbos son generalmente \textit{Agregar}, \textit{Modificar}, \textit{Eliminar} y \textit{Buscar}. Por tanto, \textit{Buscar Contacto} significa que hay una acción que solicita el actor al sistema (que el sistema [no el actor] busque), y hay una entidad que conformará posteriormente los requisitos de información: \textit{Contacto}.
+\end{shaded}
+
+\inputContent{analysis/functionalReqs/functionalGroups.tex}
+\inputContent{analysis/functionalReqs/useCases.tex}

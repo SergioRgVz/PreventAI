@@ -1,0 +1,37 @@
+% Archivo para incluir tablas o figuras grandes que, de haberlas y por su extensión, desestructuran el documento.
+
+\begin{shaded}
+Ejemplo de tabla comparativa de las aplicaciones revisadas durante el estado del arte. Las columnas deben ser modificadas para ajustarse a los criterios del estudio.
+\end{shaded}
+
+\captionsetup[table]{singlelinecheck=true} % Para que el título aparezca centrado
+
+\begin{sidewaystable} % table: horizontal; sidewaystable: vertical
+\centering
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|}                      
+\hline
+\header{Solución              & Plataforma & Licencia & Alertas & Mensajería & 
+                                Redes sociales & Llamadas & Contactos & 
+                                Internet}  \\ \hline
+
+\textbf{\program{TeenSafe}}   & \pbox{20cm}{iPhone\\Android} & De pago & No & \pbox{20cm}{SMS\\iMessages\\\program{WhatsApp}} &         
+                                \pbox{20cm}{\program{Instagram}\\\program{Kik}} & Teléfono & Teléfono & 
+                                \pbox{20cm}{Búsqueda\\Navegación}\\ \hline
+
+\textbf{\program{Norton Family}}   & \pbox{20cm}{Windows\\Android} & De pago & Sí & \pbox{20cm}{SMS\\\program{WhatsApp}} & 
+                                \pbox{20cm}{\program{Facebook}\\\program{Orkut}\\\program{Mixi} (jap.)\\\program{Skyrock} (fr.)} &
+                                Teléfono & \pbox{20cm}{Redes sociales\\Teléfono} & \pbox{20cm}{Búsqueda\\Navegación\\Vídeos}\\ \hline
+                                
+\textbf{\program{Movistar Protege}}   & \pbox{20cm}{Windows\\Android\\Mac OS\\Kindle\\iOS} & De pago & No & \pbox{20cm}{SMS} & 
+                                \pbox{20cm}{\program{Facebook}\\\program{Twitter}} &
+                                Teléfono & \pbox{20cm}{Redes sociales\\Teléfono} & \pbox{20cm}{Búsqueda\\Navegación}\\ \hline  
+\textbf{\program{Qustodio}}   & \pbox{20cm}{Windows\\Android\\Mac OS\\iOS} & Limitada & Sí & \pbox{20cm}{SMS\\\program{WhatsApp}} & 
+                                \pbox{20cm}{\program{Facebook}\\\program{Twitter}\\\program{Instagram}} &
+                                Teléfono & \pbox{20cm}{Redes sociales\\Teléfono} & \pbox{20cm}{Búsqueda\\Navegación}\\ \hline
+\textbf{\program{SecureTeen}}   & \pbox{20cm}{Windows\\Android\\iOS} & De pago & No & \pbox{20cm}{SMS\\\program{WhatsApp}\\\hphantom{spaces}(iOS)} & 
+                                \pbox{20cm}{\program{Facebook}\\\program{Instagram}\\\program{Kik} (iOS)\\\program{Viber} (iOS)\\\program{LINE} (iOS)} &
+                                Teléfono & \pbox{20cm}{Redes sociales\\Teléfono} & \pbox{20cm}{Búsqueda\\Navegación}\\ \hline   
+\end{tabular}
+\caption{Estado del arte, comparativa}
+\label{tab:stateOfArt}
+\end{sidewaystable}

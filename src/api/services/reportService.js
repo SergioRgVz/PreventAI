@@ -355,9 +355,12 @@ const reportService = {
     createReport: async (data) => {
         const { ID_Usuario, ID_Empleado, Referencia, Fecha, Indicaciones, tipo, detalles, imagenes, factores } = data;
 
+        if (!ID_Usuario || !ID_Empleado || !Referencia || !Fecha || !tipo) {
+            throw new Error('Datos de entrada faltantes o inválidos');
+        }
+
         const transaction = await Informe.sequelize.transaction();
         try {
-            // Crear el informe principal
             const informe = await Informe.create({
                 ID_Usuario,
                 ID_Empleado,
@@ -367,7 +370,6 @@ const reportService = {
                 tipo
             }, { transaction });
 
-            // Crear el informe específico según el tipo
             if (tipo === 'GINSHT') {
                 await GINSHT.create({ ID: informe.ID, ...detalles }, { transaction });
             } else if (tipo === 'PVD') {
@@ -396,19 +398,32 @@ const reportService = {
                             Tipo_Factor: tipo
                         }, { transaction });
                     }
-                }
+                } s
             }
             await transaction.commit();
             return informe;
         } catch (error) {
             await transaction.rollback();
             console.error('Error al crear el informe:', error);
+
+            error.httpStatusCode = 500;
+            if (error.name === 'SequelizeValidationError') {
+                error.httpStatusCode = 400;
+                error.message = 'Datos de entrada inválidos.';
+            } else if (error instanceof ReferenceError) {
+                error.httpStatusCode = 404;
+                error.message = 'Referencia no encontrada.';
+            }
+            else {
+                error.httpStatusCode = 500; // Error interno del servidor
+                error.message = error.message || 'Error interno del servidor';
+            }
             throw error;
         }
     },
     updateReport: async (id, data) => {
         const { ID_Usuario, ID_Empleado, Referencia, Fecha, Indicaciones, tipo, detalles, imagenes, factores } = data;
-    
+
         const transaction = await Informe.sequelize.transaction();
         try {
             // Actualizar el informe principal
@@ -423,7 +438,7 @@ const reportService = {
                 where: { ID: id },
                 transaction
             });
-    
+
             // Actualizar el informe específico según el tipo
             if (tipo === 'GINSHT') {
                 await GINSHT.update({ ...detalles }, { where: { ID: id }, transaction });
@@ -432,12 +447,12 @@ const reportService = {
             } else if (tipo === 'REBA') {
                 await REBA.update({ ...detalles }, { where: { ID: id }, transaction });
             }
-    
+
             // Manejar las imágenes asociadas
             if (imagenes && imagenes.length > 0) {
                 // Eliminar las imágenes existentes
                 await Imagen.destroy({ where: { ID_Informe: id }, transaction });
-    
+
                 // Crear nuevas imágenes
                 for (let imagen of imagenes) {
                     await Imagen.create({
@@ -446,12 +461,12 @@ const reportService = {
                     }, { transaction });
                 }
             }
-    
+
             // Manejar los factores asociados
             if (factores) {
                 // Eliminar los factores existentes
                 await InformeFactor.destroy({ where: { ID_Informe: id }, transaction });
-    
+
                 // Crear nuevos factores
                 for (const Subfactor in factores) {
                     for (const factor in factores[Subfactor]) {
@@ -463,7 +478,7 @@ const reportService = {
                     }
                 }
             }
-    
+
             await transaction.commit();
             return informe;
         } catch (error) {
@@ -472,7 +487,7 @@ const reportService = {
             throw error;
         }
     },
-    
+
     // updateReport: async (reportId, data) => {
     //     const { ID_Usuario, ID_Empleado, Referencia, Fecha, Indicaciones, tipo, detalles, imagenes, factores } = data;
 

@@ -1,0 +1,27 @@
+\chapter{Implementación}
+\label{sec:implementation}
+
+\introImplementation % In introduction/organization.tex
+
+\begin{shaded}
+Como se indica, en este capítulo no debe explicarse todo el código, sino debe detallarse la implementación con carácter general. No es necesario ni oportuno plasmar ni desglosar cada clase una a una. También es interesante mencionar aspectos que hayan resultado interesantes o especialmente complicados.\\
+
+Se observa en este proyecto carencias estéticas como iconos o formularios más profesionales, que es lo que se espera de un trabajo de este tipo. Debido al carácter ilustrativo de este proyecto, se ha obviado esta faceta, cosa que no debe hacer el alumno en su entregable.
+\end{shaded}
+
+%Instrucciones para instalación de Hibernate: http://www.simplecodestuffs.com/hibernate-environment-setup/
+%Dio problemas en HibernateUtil, solucionándose con http://stackoverflow.com/questions/32405031/hibernate-5-org-hibernate-mappingexception-unknown-entity
+%Poner imagen de Main con varias ventanas.
+%http://www.codejava.net/frameworks/hibernate/writing-a-basic-hibernate-based-program-with-eclipse?showall=1&limitstart=
+
+% One-to-many in Hibernate: https://docs.jboss.org/hibernate/orm/3.3/reference/es-ES/html/example-parentchild.html
+
+%Para la traducción, en el archivo my.ini de MySQL (wampp/bin/mysql/mysql5.6.17), se añade language=spanish bajo la entrada [mysqld]. Se requiere reiniciar el servicio, y poner lc-messages=es_ES bajo el comentario # Change your locale here !
+
+\inputContent{implementation/implementationCriteria.tex}
+\inputContent{implementation/implementationStructure.tex}
+\inputContent{implementation/systemConfiguration.tex}
+\inputContent{implementation/databaseImplementation.tex}
+\inputContent{implementation/securityImplementation.tex}
+\inputContent{implementation/userInterfaceImplementation.tex}
+\inputContent{implementation/implementationResume.tex}

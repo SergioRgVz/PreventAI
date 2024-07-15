@@ -8,7 +8,9 @@ const upload = multer({ dest: 'uploads/' });  // Configura multer para guardar a
 
 export const getReports = async (req, res) => {
     const userId = req.user.userId;
-
+    if (!userId) {
+        return res.status(401).json({ code: 401, message: 'Usuario no autorizado' });
+    }
     try {
         const reports = await reportService.getReports(userId);
         res.status(200).json(reports);
@@ -41,6 +43,9 @@ export const getReportByEmployee = async (req, res) => {
 
 export const getReportByReferencia = async (req, res) => {
     const referencia = req.params.referencia;
+    const userId = req.user.userId;
+    if(!userId) 
+        return res.status(401).json({ code: 401, message: 'Usuario no autorizado' });
     try {
         const report = await reportService.getReportByReference(referencia);
         if (report) {
@@ -102,22 +107,22 @@ export const createReport = async (req, res) => {
     const ID_Usuario = req.user.userId;
     const reportData = req.body;
 
-    // const validationErrors = validateReportGINSHTData(reportData);
-    // if (validationErrors.length > 0) {
-    //     return res.status(400).json({ errors: validationErrors });
-    // }
+
+    if(!ID_Usuario)
+        return res.status(401).json({ code: 401, message: 'Usuario no autorizado' });
+
+    if(Object.keys(reportData).length === 0)
+        return res.status(400).json({ code: 400, message: 'Faltan datos del reporte' });
 
     try {
         reportData.ID_Usuario = ID_Usuario;
         const report = await reportService.createReport(reportData);
         res.status(201).json(report);
     } catch (error) {
-        if (error instanceof HttpError) {
-            res.status(error.status).json({ message: error.message });
-        } else {
-
-            res.status(500).json({ message: 'Error interno del servidor' });
-        }
+        console.error('Error procesando la solicitud:', error);
+        res.status(error.httpStatusCode || 500).json({
+            message: error.message
+        });
     }
 };
 
@@ -125,6 +130,13 @@ export const updateReport = async (req, res) => {
     const ID_Usuario = req.user.userId;
     const reportId = req.params.id;
     const reportData = req.body;
+
+    if(!ID_Usuario)
+        return res.status(401).json({ code: 401, message: 'Usuario no autorizado' });
+
+    if(Object.keys(reportData).length === 0 || !reportId)
+        return res.status(400).json({ code: 400, message: 'Faltan datos del reporte' });
+
 
     // const validationErrors = validateReportGINSHTData(reportData);
     // if (validationErrors.length > 0) {
@@ -224,7 +236,15 @@ export const modifyPWD = async (req, res) => {
 }
 
 export const deleteReport = async (req, res) => {
-    const Referencia = req.params.id;
+    const Referencia = req.params.Referencia;
+    const userId = req.user.userId;
+
+    if(!userId)
+        return res.status(401).json({ code: 401, message: 'Usuario no autorizado' });
+
+    if(!Referencia)
+        return res.status(400).json({ code: 400, message: 'Falta la referencia del reporte' });
+
     try {
         const report = await reportService.deleteReportByReferencia(Referencia);
         res.status(200).json(report);

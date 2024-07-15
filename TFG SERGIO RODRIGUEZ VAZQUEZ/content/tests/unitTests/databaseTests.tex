@@ -1,0 +1,36 @@
+\subsection{\forlnameref Base de datos}
+\label{sec:databaseTests}
+
+\begin{shaded}
+Los párrafos añadidos son, como se ha dicho en alguna ocasión propios del autor y del proyecto. Deberán ser modificados cuando y como corresponda.
+\end{shaded}
+
+Se obvian las comprobaciones directas sobre posibles tipos erróneos, campos nulos no permitidos e incumplimiento de integridad referencial, ya que forman parte de la propia gestión y configuración de la base de datos, no de la programación. De otra forma, se requeriría probar por cada campo y acción (inserción, actualización y eliminación) todos los tipos posibles, generando una explosión innecesaria de casos de pruebas. Por tanto, una vez comprobada la adecuada configuración de las tablas, sólo se realizarán pruebas sobre código implementado en desencadenadores y procedimientos almacenados. Dichas pruebas se han realizado con las tablas de entidades vacías. En caso de que tengan información, los resultados pueden diferir de los presentados por conflicto de datos\footnote{Por ejemplo, si se ejecuta dos veces seguidas la prueba \textit{TST-001}, el gestor de bases de datos generará un error debido a que el campo \code{Login} de la tabla \code{User} se configuró como índice único.}.
+
+\hiddensubsection{Tabla \code{User}}
+
+\def \tstRules          {-}
+\def \tstTable          {User}
+\def \tstAction         {C} % Any letters of CRUD
+\def \tstValidate       {\checkmark}
+\def \tstDescription    {Una inserción con valores válidos se realiza adecuadamente.}
+\def \tstCode           {
+    \code{SELECT COUNT(*) FROM User;} \\
+    \code{INSERT INTO User (IsSupervisor, Name, Surname, Login, Password)} \\
+    \code{VALUES (TRUE, \textquotesingle Bruce\textquotesingle, \textquotesingle Wayne\textquotesingle, 
+    \textquotesingle batm\textquotesingle, \textquotesingle 12345\textquotesingle);} \\
+    \code{SELECT COUNT(*) FROM User;} \\
+    \code{SELECT * FROM User ORDER BY Id DESC LIMIT 1;}
+}
+\def \tstResult         {
+    \code{0} \\
+    \code{1} \\
+    \code{1, TRUE, \textquotesingle Bruce\textquotesingle, 
+    \textquotesingle Wayne\textquotesingle, \textquotesingle batm\textquotesingle, \textquotesingle 12345\textquotesingle}
+}
+\def \tstCaption    {Inserción válida en tabla \code{User}}
+\createDbTestCaseTable{tab:tstUserInsertValid}
+
+\begin{shaded}
+A título ilustrativo, se presentan únicamente un caso de prueba de \code{User}. En un entregable final, deben incluirse todos los casos para todas las tablas.
+\end{shaded}

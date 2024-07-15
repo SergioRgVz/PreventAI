@@ -10,16 +10,10 @@ import reportRoutes from './api/routes/reportRoutes.js';
 import provinciaRoutes from './api/routes/provinciaRoutes.js';
 import municipioRoutes from './api/routes/municipioRoutes.js';
 import { verifyToken } from './api/controllers/authController.js';
-import { connectMONGODB } from '../config/db.js';
-import pool from './db/mariadb.js'; // Asegúrate de que la ruta es correcta
-import sequelize from './db/mariadb.js';
 import bodyParser from 'body-parser';
 import multer from 'multer';
 
 dotenv.config({ path: '../.env' })
-
-// Database connection
-// connectMONGODB();
 
 const app = express();
 const __dirname = path.resolve();
@@ -39,7 +33,7 @@ const upload = multer({ storage: storage });
 
 // Middleware de CORS
 app.use(cors({
-  origin: 'http://localhost:5173', // Cambia esto por la URL de tu frontend
+  origin: 'http://localhost:5173', 
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
   exposedHeaders: 'Authorization',
@@ -68,11 +62,11 @@ app.post('/upload', upload.single('image'), (req, res) => {
 // Rutas API
 app.use('/provincia', provinciaRoutes);
 app.use('/municipio', municipioRoutes);
-app.use('/auth', authRoutes);
-app.use('/factor', verifyToken, factorRoutes); // Estas rutas requieren autenticación
-app.use('/company', verifyToken, companyRoutes); // Estas rutas requieren autenticación
-app.use('/employee', verifyToken, employeeRoutes); // Estas rutas requieren autenticación
-app.use('/report', verifyToken, reportRoutes); // Estas rutas requieren autenticación
+app.use('/auth',authRoutes);
+app.use('/factor', verifyToken, factorRoutes);
+app.use('/company', verifyToken, companyRoutes);
+app.use('/employee', verifyToken, employeeRoutes);
+app.use('/report', verifyToken, reportRoutes);
 
 // Middleware para servir archivos estáticos
 app.use(express.static(buildPath));

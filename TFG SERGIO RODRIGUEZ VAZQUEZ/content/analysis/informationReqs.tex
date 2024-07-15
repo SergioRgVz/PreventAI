@@ -1,0 +1,47 @@
+section{\forlnameref Requisitos de información}
+\label{sec:informationReqs}
+
+Se presentan a continuación las \lnameref{sec:entities} que conforman requisitos de información del sistema. Seguidamente, se facilitan las \lnameref{sec:bussinessRules}. Por último, en esta misma sección, se ilustra el \nameref{sec:conceptualModel}.
+
+Para la relación de atributos de las \lnameref{sec:entities} se usará como referencia los tipos descritos en la Tabla \ref{tab:analysisDataTypes}. Asimismo, se incluye si el atributo es único y si es obligatorio.
+
+\captionsetup[table]{singlelinecheck=true}
+\begin{table}[ht]
+\centering
+\begin{tabular}{|c|p{0.8\linewidth}|} 
+\hline
+\header{Tipo de dato    & Descripción} \\ \hline
+\texttt{texto} & Campo alfanumérico. Si el tamaño es acotado, se usa \texttt{texto(\textit{tamaño})}. \\ \hline
+\texttt{entero} & Número entero. \\ \hline
+\texttt{natural} & Número natural. \\ \hline
+\texttt{booleano} & Verdadero o falso. \\ \hline
+\texttt{fecha} & Homónimo. \\ \hline
+\texttt{hora} & Homónimo. \\ \hline
+\texttt{fechahora} & Campos que incluyen los dos anteriores. \\ \hline
+\texttt{uri}    & Enlaces o descriptores (por ejemplo, rutas de archivos). \\ \hline
+\texttt{binario} & Archivos incrustados. \\ \hline
+\texttt{imagen} & Tipo particular de \texttt{binario}, que almacena una imagen. \\ \hline
+\texttt{lista<\textit{tipo}>} & Secuencia de un tipo específico. \\ \hline
+\texttt{\textit{Requisito}} & Cualquier tipo definido como requisito de información. \\ \hline
+\end{tabular}
+\caption{Tipos de datos de análisis}
+\label{tab:analysisDataTypes}
+\end{table}
+
+
+\begin{shaded}
+Existen varias diferencias importantes entre los requisitos de información y las tablas de las bases de datos, que en ocasiones se confunden. Dichas divergencias son, fundamentalmente:
+\begin{itemize}
+    \item Los requisitos de información son más parecidos a las clases que a las tablas.
+    \item No existen ``claves primarias'', ``claves ajenas'' ni ningún otro tipo de elemento característico de los sistemas de gestión de bases de datos relacionales (y mayormente exclusivo de ellos). Por ello, no deben incluirse campos ``Id'' salvo que realmente el cliente haya requerido que haya un campo identificador único, cosa que no suele ocurrir. Dichos artificios aparecerán en todo caso en la fase de \nameref{sec:design}.
+    \item Los nombres de las entidades se indican en singular, salvo que cada entrada de dicha entidad pueda representar a más de un elemento (por ejemplo, una entidad \textit{Ruedas} con los atributos \textit{Rueda 1}, \textit{Rueda 2}, etcétera), lo cual es muy poco habitual. Dicho criterio se mantendrá también cuando tales entidades se conviertan en tablas, en su caso.
+    \item Deben emplearse nombres claros para los atributos.
+    \item El nombre de los atributos no debe contener el nombre de la entidad. Para una entidad \textit{Usuario}, no es correcto llamar a un atributo \textit{CódigoUsuario}, sino \textit{Código}.
+    \item Todo atributo candidato a contener un texto dentro de un conjunto acotado de textos se concibe como una relación a una entidad débil. Por ejemplo, un atributo como \textit{País} no debe ser especificado como tipo \code{texto}, ya que su valor forma parte de un conjunto acotado. En su lugar, el tipo es \code{País}, que deberá referenciar a una entidad \textit{País} con (al menos) un atributo \textit{Nombre}.
+\end{itemize}
+\end{shaded}
+
+\inputContent{analysis/informationReqs/entities.tex}
+\inputContent{analysis/informationReqs/bussinessRules.tex}
+\inputContent{analysis/informationReqs/conceptualModel.tex}
+\inputContent{analysis/informationReqs/traceabilityMatrix.tex}

@@ -71,7 +71,6 @@ const userService = {
     try {
       let user = await userService.findUserByEmail(email);
       if (user) {
-        console.log("User already exists:", user);
         return null;
       }
 
@@ -86,7 +85,6 @@ const userService = {
         esTecnico: role === "tecnico",
       });
 
-      console.log("User created:", user);
       return user;
     } catch (error) {
       console.error("Error creating user:", error);

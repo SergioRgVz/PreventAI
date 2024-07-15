@@ -1,0 +1,74 @@
+\section{Organización del documento}
+\label{sec:organization}
+
+% \begin{shaded}
+% Lo mostrado a continuación es un ejemplo. Deben hacerse las modificaciones pertinentes, en su caso. Debe recordarse que la introducción de cada capítulo se corresponde al mismo texto que su explicación en este apartado. Aunque esto es modificable, se aconseja dejarlo así para evitar tener en cuenta prácticamente el mismo texto en dos zonas diferentes.
+% \end{shaded}
+El presente documento describe la elaboración del proyecto y está estructurado en las siguientes partes y capítulos:
+
+\subsection*{Parte \ref{sec:preface}. \nameref{sec:preface}}
+
+Se presenta el proyecto y su planificación, en los capítulos referidos a continuación:
+
+\subsubsection*{Capítulo \ref{sec:introduction}. \nameref{sec:introduction}}
+
+\introIntroduction % In introduction.tex
+
+\subsubsection*{Capítulo \ref{sec:planning}. \nameref{sec:planning}}
+
+\def \introPlanning {En este capítulo se detallan el ciclo de vida y la metodología de desarrollo empleados. Seguidamente, se indican las actividades previstas y su estimación temporal teniendo en cuenta los recursos disponibles. Dichas actividades son plasmadas posteriormente en un calendario de ejecución. Una vez determinados los tiempos, se estudian los riesgos críticos, se revisan y escogen las alternativas tecnológicas, se describen los recursos con los que se cuenta y se prevén los costes del proyecto. Por último, se facilita un resumen de este capítulo.}
+
+\introPlanning
+
+\subsection*{Parte \ref{sec:developing}. \nameref{sec:developing}}
+
+Se describe en esta parte el desarrollo del proyecto en sus etapas de análisis, diseño y pruebas:
+
+\subsubsection{Capítulo \ref{sec:analysis}. \nameref{sec:analysis}}
+
+\def \introAnalysis {Se incluye en este capítulo la especificación y análisis de los requisitos del cliente. En concreto, el catálogo de \lnameref{sec:actors}, los \lnameref{sec:functionalReqs}, los \lnameref{sec:informationReqs} y los \lnameref{sec:nonFunctionalReqs}. Los \lnameref{sec:informationReqs} incluyen las \lnameref{sec:entities}, sus \lnameref{sec:bussinessRules} y, finalmente, un \lnameref{sec:conceptualModel}. Asimismo, los \lnameref{sec:functionalReqs} se ilustran mediante \lnameref{sec:functionalGroups}, diagramas de \lnameref{sec:useCases}, descripción de los mismos y la correspondiente \lnameref{sec:traceabilityMatrix}. El capítulo se cierra con un resumen de todo el análisis.}
+
+\introAnalysis
+
+\subsubsection{Capítulo \ref{sec:design}. \nameref{sec:design}}
+
+\def \introDesign{Se detalla en este capítulo la expansión del análisis teniendo en cuenta las decisiones técnicas y sus restricciones, constituyendo la arquitectura en la que se basará la fase de implementación. Dicha arquitectura se presenta en su vertiente de \lnameref{sec:physicalArchitecture}, ilustrándose el diagrama de equipos e interconexiones necesarias para el funcionamiento del sistema, así como sus especificaciones técnicas; y \lnameref{sec:logicalArchitecture}, donde se muestran las capas lógicas del sistema, y los servicios y aplicaciones requeridos. De igual manera, se presentan los \lnameref{sec:messageCodes} que el sistema empleará (a través de estas arquitecturas) para comunicarse con el usuario.
+
+En cuanto a los datos, se amplía el modelo conceptual para transformarlo en un \lnameref{sec:erd}, en este proyecto cumpliendo los criterios de una base de datos relacional. De igual manera, los casos de uso se plasman visualmente en una serie de bocetos que ilustran la \lnameref{sec:userInterface}. Por último, se profundiza en los artefactos utilizados en el \lnameref{sec:components}.}
+
+\introDesign
+
+\subsubsection{Capítulo \ref{sec:implementation}. \nameref{sec:implementation}}
+
+\def \introImplementation{Se describen en este capítulo los detalles de implementación. Tras la concreción de los \lnameref{sec:implementationCriteria}, se parte de la \lnameref{sec:implementationStructure} para proceder a explicar la su distribución y los elementos importantes del código: la \lnameref{sec:systemConfiguration}, la implementación de la \lnameref{sec:databaseImplementation}, la codificación de aspectos relativos a la \lnameref{sec:securityImplementation} y la programación de las \lnameref{sec:userInterfaceImplementation}. Para cerrar el capítulo, se realiza un \lnameref{sec:implementationResume}.
+
+Por motivos prácticos, no se revisará todo el código, sino ejemplos representativos de éste. En todo caso, se garantiza que los ejemplos abarcan los aspectos más interesantes de la codificación, quedando fuera de esta memoria aspectos superfluos o repetitivos.}
+
+\introImplementation
+
+\subsubsection{Capítulo \ref{sec:tests}. \nameref{sec:tests}}
+
+\def \introTests {En este capítulo se documentan los diferentes tipos de pruebas que se han llevado a cabo durante el desarrollo del sistema. En primer lugar, se describe la \lnameref{sec:testsStrategy} y el \lnameref{sec:testsEnvironment}. Posteriormente, se detallan las diferentes fases referidas: \lnameref{sec:unitTests}, que comprueba el funcionamiento independiente de los distintos componentes de la aplicación; \lnameref{sec:integrationTests}, que verifica que el ensamblado entre dichos componentes es correcto; \lnameref{sec:validationTests}, donde se confronta los requisitos del modelo con la operatividad del software; y \lnameref{sec:systemTests}, cuyo objetivo es asegurar que el sistema funciona correctamente en explotación.}
+
+\introTests
+
+\subsection*{Parte \ref{sec:epilogue}. \nameref{sec:epilogue}}
+
+Como parte del proyecto, se presentan las conclusiones del mismo:
+
+\subsubsection{Capítulo \ref{sec:conclusions}. \nameref{sec:conclusions}}
+
+\def \introConclusions {Como capítulo final en la elaboración del proyecto, se describen los \lnameref{sec:results} del mismo y el \lnameref{sec:futureWork}. Asimismo, se comparten las \lnameref{sec:lessonsLearnt}.}
+
+\introConclusions
+
+\subsection*{Apéndices}
+
+Los apéndices facilitados al final del documento son [LOS QUE TOQUE]:
+
+\begin{itemize}
+    \item Apéndice \ref{sec:usersGuide}, donde se transcribe el manual del usuario.
+\end{itemize}
+
+\subsection*{Bibliografía y referencias}
+Finalmente, se enumeran las referencias bibliográficas.

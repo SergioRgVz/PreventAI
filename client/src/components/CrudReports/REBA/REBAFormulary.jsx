@@ -253,58 +253,63 @@ export const REBAFormulary = (report) => {
     setImages([]);
   };
 
+  const toBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
   const handleSavePDF = async () => {
     const doc = new jsPDF();
-
-    // Título del documento
-    doc.setFontSize(18);
-    doc.text("Informe REBA", 20, 20);
-
-    // Datos identificativos
-    doc.setFontSize(16);
-    doc.text("Datos identificativos", 20, 30);
-
-    doc.setFontSize(12);
-    doc.text(`CIF Empresa: ${formData.CIF_Empresa}`, 20, 40);
-    doc.text(`ID Empresa: ${formData.ID_Empresa}`, 20, 50);
-    doc.text(`DNI Empleado: ${formData.DNI_Empleado}`, 20, 60);
-    doc.text(`ID Empleado: ${formData.ID_Empleado}`, 20, 70);
-    doc.text(`Sexo: ${formData.Sexo}`, 20, 80);
-    doc.text(`Puesto de Trabajo: ${formData.PuestoTrabajo}`, 20, 90);
-    doc.text(`Fecha: ${formData.Fecha}`, 20, 100);
-    doc.text(`Referencia: ${formData.Referencia}`, 20, 110);
-
-    // Descripción del trabajo con peso
-    doc.text("Descripción del trabajo con peso:", 20, 120);
-    doc.text(formData.Desc_REBA, 20, 130);
-
-    // Datos de la evaluación del grupo A
-    doc.setFontSize(16);
-    doc.text("Datos de la evaluación del grupo A:", 20, 140);
-    doc.setFontSize(12);
-
-    let yPosition = 150;
-    doc.text(
+    const pageWidth = doc.internal.pageSize.width;
+    const pageHeight = doc.internal.pageSize.height;
+    let yPosition = 20;
+  
+    const addText = (text, fontSize = 12, isBold = false) => {
+      if (yPosition > pageHeight - 20) {
+        doc.addPage();
+        yPosition = 20;
+      }
+      doc.setFontSize(fontSize);
+      doc.setFont(undefined, isBold ? 'bold' : 'normal');
+      doc.text(text, 20, yPosition);
+      yPosition += fontSize * 0.5 + 5;
+    };
+  
+    addText("Informe REBA", 24, true);
+    yPosition += 10;
+  
+    addText("1. Datos Identificativos", 16, true);
+    addText(`CIF Empresa: ${formData.CIF_Empresa}`);
+    addText(`ID Empresa: ${formData.ID_Empresa}`);
+    addText(`DNI Empleado: ${formData.DNI_Empleado}`);
+    addText(`ID Empleado: ${formData.ID_Empleado}`);
+    addText(`Sexo: ${formData.Sexo}`);
+    addText(`Puesto de Trabajo: ${formData.PuestoTrabajo}`);
+    addText(`Fecha: ${formData.Fecha}`);
+    addText(`Referencia: ${formData.Referencia}`);
+    yPosition += 10;
+  
+    addText("2. Descripción del Trabajo con Peso", 16, true);
+    const splitDesc = doc.splitTextToSize(formData.Desc_REBA, pageWidth - 40);
+    doc.text(splitDesc, 20, yPosition);
+    yPosition += splitDesc.length * 5 + 10;
+  
+    addText("3. Datos de la Evaluación del Grupo A", 16, true);
+    addText(
       `Puntuación del cuello: ${
         formData.PCuello === 1
           ? "El cuello está entre 0º y 20º de flexión"
           : "El cuello está extendido o flexionado más de 20º"
-      }`,
-      20,
-      yPosition
+      }`
     );
-    yPosition += 10;
-
     if (formData.CCuello !== 0) {
-      doc.text(
-        `Se indica que existe torsión o inclinación lateral del cuello`,
-        20,
-        yPosition
-      );
-      yPosition += 10;
+      addText(`Se indica que existe torsión o inclinación lateral del cuello`);
     }
-
-    doc.text(
+    addText(
       `Puntuación de tronco: ${
         [
           "El tronco está erguido",
@@ -312,59 +317,29 @@ export const REBAFormulary = (report) => {
           "El tronco está entre 20º y 60 de flexión o 20º y 60 de extensión",
           "El tronco está flexionado más de 60º",
         ][formData.PTronco - 1]
-      }`,
-      20,
-      yPosition
+      }`
     );
-    yPosition += 10;
-
     if (formData.CTronco !== 0) {
-      doc.text(
-        `Se indica que existe torsión o inclinación lateral del tronco`,
-        20,
-        yPosition
-      );
-      yPosition += 10;
+      addText(`Se indica que existe torsión o inclinación lateral del tronco`);
     }
-
-    doc.text(
+    addText(
       `Puntuación de piernas: ${
         [
           "Existe flexión de una o de ambas rodillas entre 30º y 60º",
           "Existe flexión de una o de ambas rodillas de más de 60º (salvo postura sedente)",
         ][formData.PPiernas - 1]
-      }`,
-      20,
-      yPosition
+      }`
     );
-    yPosition += 10;
-
     if (formData.CPiernas1 !== 0) {
-      doc.text(
-        `Se indica que existe soporte bilateral, andando o sentado`,
-        20,
-        yPosition
-      );
-      yPosition += 10;
+      addText(`Se indica que existe soporte bilateral, andando o sentado`);
     }
-
     if (formData.CPiernas2 !== 0) {
-      doc.text(
-        `Se indica que existe soporte unilateral, soporte ligero o postura inestable.`,
-        20,
-        yPosition
-      );
-      yPosition += 10;
+      addText(`Se indica que existe soporte unilateral, soporte ligero o postura inestable.`);
     }
-
-    // Datos de la evaluación del grupo B
-    doc.setFontSize(16);
     yPosition += 10;
-    doc.text("Datos de la evaluación del grupo B:", 20, yPosition);
-    doc.setFontSize(12);
-    yPosition += 10;
-
-    doc.text(
+  
+    addText("4. Datos de la Evaluación del Grupo B", 16, true);
+    addText(
       `Puntuación de brazos: ${
         [
           "El brazo está entre 20º de flexión y 20º de extensión.",
@@ -372,87 +347,47 @@ export const REBAFormulary = (report) => {
           "El brazo está entre 46º y 90º de flexión.",
           "El brazo está flexionado más de 90º.",
         ][formData.PBrazos - 1]
-      }`,
-      20,
-      yPosition
+      }`
     );
-    yPosition += 10;
-
     if (formData.CAbducidos !== 0) {
-      doc.text(`Se indica que el brazo está abducido o rotado`, 20, yPosition);
-      yPosition += 10;
+      addText(`Se indica que el brazo está abducido o rotado`);
     }
-
     if (formData.CHombrosLevantados !== 0) {
-      doc.text(
-        `Se indica que los hombros están elevados o encogidos`,
-        20,
-        yPosition
-      );
-      yPosition += 10;
+      addText(`Se indica que los hombros están elevados o encogidos`);
     }
-
     if (formData.CBrazosApoyados !== 0) {
-      doc.text(
-        `Se indica que los brazos están apoyados o en una postura a favor de la gravedad`,
-        20,
-        yPosition
-      );
-      yPosition += 10;
+      addText(`Se indica que los brazos están apoyados o en una postura a favor de la gravedad`);
     }
-
-    doc.text(
+    addText(
       `Puntuación de antebrazos: ${
         formData.PAntebrazos === 1
           ? "El antebrazo está entre 60º y 100º de flexión."
           : "El antebrazo está flexionado por debajo de 60º o por encima de 100º."
-      }`,
-      20,
-      yPosition
+      }`
     );
-    yPosition += 10;
-
-    doc.text(
+    addText(
       `Puntuación de muñecas: ${
         formData.PMunnecas === 1
           ? "La muñeca está entre 0 y 15 grados de flexión o extensión."
           : "La muñeca está flexionada o extendida más de 15 grados."
-      }`,
-      20,
-      yPosition
+      }`
     );
-    yPosition += 10;
-
     if (formData.CMunnecas !== 0) {
-      doc.text(
-        `Se indica que la muñeca está en una postura de desviación radial o cubital.`,
-        20,
-        yPosition
-      );
-      yPosition += 10;
+      addText(`Se indica que la muñeca está en una postura de desviación radial o cubital.`);
     }
-
-    // Datos de la evaluación del grupo C
-    doc.setFontSize(16);
     yPosition += 10;
-    doc.text("Datos de la evaluación del grupo C:", 20, yPosition);
-    doc.setFontSize(12);
-    yPosition += 10;
-
-    doc.text(
+  
+    addText("5. Datos de la Evaluación del Grupo C", 16, true);
+    addText(
       `Puntuación de carga: ${
         [
           "La carga o fuerza es menor de 5kg.",
           "La carga o fuerza está entre 5 y 10 kgs.",
           "La carga o fuerza es mayor de 10 kgs.",
         ][formData.PCarga]
-      }`,
-      20,
-      yPosition
+      }`
     );
-    yPosition += 10;
-
-    doc.text(
+    addText(
       `Puntuación de agarre: ${
         [
           "Agarre Bueno (el agarre es bueno y la fuerza de agarre de rango medio).",
@@ -460,39 +395,102 @@ export const REBAFormulary = (report) => {
           "Agarre Malo (el agarre es posible pero no aceptable).",
           "Agarre Inaceptable (el agarre es torpe e inseguro, no es posible el agarre manual o el agarre es inaceptable utilizando otras partes del cuerpo).",
         ][formData.Agarre]
-      }`,
-      20,
-      yPosition
+      }`
     );
-    yPosition += 10;
-
     if (formData.Estatismo !== 0) {
-      doc.text(
-        `Se indica que una o más partes del cuerpo permanecen estáticas, por ejemplo soportadas durante más de 1 minuto.`,
-        20,
-        yPosition
-      );
-      yPosition += 10;
+      addText(`Se indica que una o más partes del cuerpo permanecen estáticas, por ejemplo soportadas durante más de 1 minuto.`);
     }
-
     if (formData.AccionesRepetidas !== 0) {
-      doc.text(
-        `Se indica que se realizan acciones repetidas, por ejemplo más de 4 veces por minuto.`,
-        20,
-        yPosition
-      );
-      yPosition += 10;
+      addText(`Se indica que se realizan acciones repetidas, por ejemplo más de 4 veces por minuto.`);
     }
-
     if (formData.CambiosRapidos !== 0) {
-      doc.text(
-        `Se indica que se realizan cambios rápidos de postura.`,
-        20,
-        yPosition
-      );
-      yPosition += 10;
+      addText(`Se indica que se realizan cambios rápidos de postura.`);
     }
-
+    yPosition += 10;
+  
+    if (formData.imagenDeteccion && images.length > 0) {
+      doc.addPage();
+      yPosition = 20;
+      addText("6. Imágenes", 16, true);
+      yPosition += 10;
+  
+      const maxImageWidth = 80;
+      const maxImageHeight = 80;
+  
+      try {
+        const uploadedImgData = await toBase64(images[0].file);
+  
+        // Create a temporary image element to get the original dimensions
+        const uploadedImg = new Image();
+        uploadedImg.src = uploadedImgData;
+        await new Promise(resolve => uploadedImg.onload = resolve);
+  
+        // Calculate the aspect ratio
+        const uploadedAspectRatio = uploadedImg.width / uploadedImg.height;
+  
+        // Determine the final dimensions
+        let uploadedFinalWidth = uploadedImg.width;
+        let uploadedFinalHeight = uploadedImg.height;
+  
+        if (uploadedFinalWidth > maxImageWidth) {
+          uploadedFinalWidth = maxImageWidth;
+          uploadedFinalHeight = uploadedFinalWidth / uploadedAspectRatio;
+        }
+  
+        if (uploadedFinalHeight > maxImageHeight) {
+          uploadedFinalHeight = maxImageHeight;
+          uploadedFinalWidth = uploadedFinalHeight * uploadedAspectRatio;
+        }
+  
+        // Add the uploaded image to the PDF
+        doc.addImage(uploadedImgData, "JPEG", 20, yPosition, uploadedFinalWidth, uploadedFinalHeight);
+        doc.text("Imagen subida", 20, yPosition + uploadedFinalHeight + 5);
+  
+        let detectionImgData;
+  
+        if (typeof formData.imagenDeteccion === 'string') {
+          // If imagenDeteccion is a base64 string, use it directly
+          detectionImgData = formData.imagenDeteccion;
+        } else {
+          // If imagenDeteccion is a Blob or File, convert it to base64
+          detectionImgData = await toBase64(formData.imagenDeteccion);
+        }
+  
+        // Create a temporary image element to get the original dimensions
+        const detectionImg = new Image();
+        detectionImg.src = 'data:image/jpeg;base64,' + detectionImgData;
+        await new Promise(resolve => detectionImg.onload = resolve);
+  
+        // Calculate the aspect ratio
+        const detectionAspectRatio = detectionImg.width / detectionImg.height;
+  
+        // Determine the final dimensions
+        let detectionFinalWidth = detectionImg.width;
+        let detectionFinalHeight = detectionImg.height;
+  
+        if (detectionFinalWidth > maxImageWidth) {
+          detectionFinalWidth = maxImageWidth;
+          detectionFinalHeight = detectionFinalWidth / detectionAspectRatio;
+        }
+  
+        if (detectionFinalHeight > maxImageHeight) {
+          detectionFinalHeight = maxImageHeight;
+          detectionFinalWidth = detectionFinalHeight * detectionAspectRatio;
+        }
+  
+        // Add the detection image to the PDF
+        doc.addImage(detectionImgData, "JPEG", 110, yPosition, detectionFinalWidth, detectionFinalHeight);
+        doc.text("Imagen detectada", 110, yPosition + detectionFinalHeight + 5);
+  
+        yPosition += Math.max(uploadedFinalHeight, detectionFinalHeight) + 20;
+  
+      } catch (error) {
+        console.error("Error adding images to PDF:", error);
+        addText("Error al cargar las imágenes", 10);
+        yPosition += 10;
+      }
+    }
+  
     doc.save("informe_reba.pdf");
   };
 

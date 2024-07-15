@@ -16,6 +16,9 @@ const companyController = {
     getCompanies: async (req, res) => {
         try {
             const userId = req.user.userId;
+            if (!userId) 
+                return res.status(401).json({ code: 401, message: 'Usuario no autorizado' });
+
             const User = await userService.getUserById(userId);
             if (!User) return res.status(404).json({ message: 'Usuario no encontrado' }
             );
@@ -42,6 +45,10 @@ const companyController = {
      */
     getCompanyById: async (req, res) => {
         try {
+            const userId = req.user.userId;
+            if (!userId) 
+                return res.status(401).json({ code: 401, message: 'Usuario no autorizado' });
+
             const { id } = req.params;
             const company = await companyService.getCompanyById(id);
             if (!company) {
@@ -61,6 +68,10 @@ const companyController = {
      */
     getCompanyByCIF: async (req, res) => {
         try {
+            const userId = req.user.userId;
+            if (!userId) 
+                return res.status(401).json({ code: 401, message: 'Usuario no autorizado' });
+
             const { CIF } = req.params;
             const company = await companyService.getCompanyByCIF(CIF);
             if (!company) {
@@ -83,7 +94,7 @@ const companyController = {
             const userId = req.user.userId;
             const { CIF, Nombre, municipio } = req.body;
             if (!userId) {
-                return res.status(404).json({ message: 'Usuario no encontrado' });
+                return res.status(401).json({ message: 'Usuario no autorizado' });
             }
             const company = await companyService.createCompany({
                 CIF,
@@ -109,7 +120,7 @@ const companyController = {
             const userId = req.user.userId;
             const { nombre, ID_Municipio } = req.body;
             if (!userId) {
-                return res.status(404).json({ message: 'Usuario no encontrado' });
+                return res.status(401).json({ message: 'Usuario no autorizado' });
             }
             const company = await companyService.updateCompanyByCIF(CIF, {
                 nombre,

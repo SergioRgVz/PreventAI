@@ -1,0 +1,70 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {part}{I\hspace {1em}Prolegómeno}{19}{part.1}%
+\contentsline {chapter}{\numberline {1}Introducción}{21}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Motivación}{21}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Alcance}{21}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Conceptos básicos}{21}{section.1.3}%
+\contentsline {section}{\numberline {1.4}Estado del arte}{22}{section.1.4}%
+\contentsline {section}{\numberline {1.5}Objetivos}{22}{section.1.5}%
+\contentsline {section}{\numberline {1.6}Organización del documento}{23}{section.1.6}%
+\contentsline {subsubsection}{Capítulo \ref {sec:analysis}. \nameref {sec:analysis}}{24}{section*.20}%
+\contentsline {subsubsection}{Capítulo \ref {sec:design}. \nameref {sec:design}}{24}{section*.21}%
+\contentsline {subsubsection}{Capítulo \ref {sec:implementation}. \nameref {sec:implementation}}{24}{section*.22}%
+\contentsline {subsubsection}{Capítulo \ref {sec:tests}. \nameref {sec:tests}}{24}{section*.23}%
+\contentsline {subsubsection}{Capítulo \ref {sec:conclusions}. \nameref {sec:conclusions}}{25}{section*.25}%
+\contentsline {chapter}{\numberline {2}Planificación}{27}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Metodología de desarrollo}{27}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Cronograma del proyecto}{27}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Riesgos}{28}{section.2.3}%
+\contentsline {section}{\numberline {2.4}Alternativas tecnológicas}{28}{section.2.4}%
+\contentsline {section}{\numberline {2.5}Recursos}{28}{section.2.5}%
+\contentsline {section}{\numberline {2.6}Costes}{29}{section.2.6}%
+\contentsline {section}{\numberline {2.7}Resumen de la planificación}{29}{section.2.7}%
+\contentsline {part}{II\hspace {1em}Desarrollo}{31}{part.2}%
+\contentsline {chapter}{\numberline {3}Análisis}{33}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Actores}{33}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Requisitos funcionales}{33}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Agrupaciones funcionales}{34}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Casos de uso}{34}{subsection.3.2.2}%
+\contentsline {subsection}{\numberline {3.2.3}Entidades}{39}{subsection.3.2.3}%
+\contentsline {subsection}{\numberline {3.2.4}Reglas de negocio}{40}{subsection.3.2.4}%
+\contentsline {subsection}{\numberline {3.2.5}Diagrama conceptual}{40}{subsection.3.2.5}%
+\contentsline {subsection}{\numberline {3.2.6}Matriz de trazabilidad}{42}{subsection.3.2.6}%
+\contentsline {section}{\numberline {3.3}Requisitos no funcionales}{44}{section.3.3}%
+\contentsline {section}{\numberline {3.4}Resumen del análisis}{44}{section.3.4}%
+\contentsline {chapter}{\numberline {4}Diseño}{45}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Diseño de arquitectura}{45}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}Arquitectura física}{45}{subsection.4.1.1}%
+\contentsline {subsection}{\numberline {4.1.2}Arquitectura lógica}{46}{subsection.4.1.2}%
+\contentsline {section}{\numberline {4.2}Códigos de mensajes}{46}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Modelo lógico}{46}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}Relación de tablas}{46}{subsection.4.3.1}%
+\contentsline {subsection}{\numberline {4.3.2}Diagrama lógico/físico de datos}{47}{subsection.4.3.2}%
+\contentsline {section}{\numberline {4.4}Interfaz de usuario}{48}{section.4.4}%
+\contentsline {section}{\numberline {4.5}Diseño de componentes}{48}{section.4.5}%
+\contentsline {section}{\numberline {4.6}Resumen del diseño}{48}{section.4.6}%
+\contentsline {chapter}{\numberline {5}Implementación}{49}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Criterios generales de implementación}{49}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Estructura del código}{50}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Configuración del sistema}{51}{section.5.3}%
+\contentsline {section}{\numberline {5.4}Base de datos}{51}{section.5.4}%
+\contentsline {section}{\numberline {5.5}Seguridad}{52}{section.5.5}%
+\contentsline {section}{\numberline {5.6}Interfaz de usuario}{52}{section.5.6}%
+\contentsline {section}{\numberline {5.7}Resumen de la implementación}{52}{section.5.7}%
+\contentsline {chapter}{\numberline {6}Pruebas}{53}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Estrategia de pruebas}{53}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Entorno de pruebas}{53}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Pruebas unitarias}{53}{section.6.3}%
+\contentsline {subsection}{\numberline {6.3.1}Base de datos}{53}{subsection.6.3.1}%
+\contentsline {subsection}{\numberline {6.3.3}Aplicación}{54}{subsection.6.3.3}%
+\contentsline {section}{\numberline {6.4}Pruebas de integración}{58}{section.6.4}%
+\contentsline {section}{\numberline {6.5}Pruebas de validación}{58}{section.6.5}%
+\contentsline {section}{\numberline {6.6}Pruebas de sistema}{58}{section.6.6}%
+\contentsline {section}{\numberline {6.7}Resumen de las pruebas}{58}{section.6.7}%
+\contentsline {part}{III\hspace {1em}Epílogo}{59}{part.3}%
+\contentsline {chapter}{\numberline {7}Conclusiones}{61}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Resultados}{61}{section.7.1}%
+\contentsline {section}{\numberline {7.2}Trabajo futuro}{61}{section.7.2}%
+\contentsline {section}{\numberline {7.3}Lecciones aprendidas}{61}{section.7.3}%
+\contentsline {part}{Apéndices}{63}{section.7.3}%
+\contentsline {chapter}{Apéndice\ A: {Manual de usuario}}{65}{appendix*.74}%

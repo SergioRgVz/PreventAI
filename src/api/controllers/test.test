@@ -1,0 +1,1226 @@
+% ------------------------------------------------------------------------------
+% Este fichero es parte de la plantilla LaTeX para la realización de Proyectos
+% Final de Grado, protegido bajo los términos de la licencia GFDL.
+% Para más información, la licencia completa viene incluida en el
+% fichero fdl-1.3.tex
+
+% Copyright (C) 2012 SPI-FM. Universidad de Cádiz
+% ------------------------------------------------------------------------------
+En este capítulo se documentan los diferentes tipos de pruebas que se han llevado a cabo durante el desarrollo del sistema. En primer ligar, veremos la estrategia de pruebas seguida y el entorno de pruebas utilizado. Posteriormente, se detallan las pruebas que vamos a realizar: pruebas unitarias, que comprueban el funcionamiento independiente de los distintos componentes de la aplicación; pruebas de aceptación, cuyo objetivo es asegurar que el sistema funciona correctamente según las especificaciones indicadas por el usuario final.
+
+\section{Estrategia}
+
+Para la estrategia de pruebas, se realizarán dos tipos específicos: pruebas unitarias pruebas funciones, pruebas no funcionales ypruebas de aceptación, cada una enfocada en comprobar distintos aspectos del software.
+
+La primera fase incluye las pruebas unitarias (o tests unitarios), cuyo objetivo es comprobar bloques de código individuales. Con una determinada entrada, siempre se espera una determinada salida, es decir, se verifica que la especificación de los componentes se cumpla. En este caso, las pruebas unitarias se realizarán mediante el apartado de pruebas de \textit{Apidog}, probando las diferentes rutas de la API y validando que dan una respuesta esperada. Para llevar a cabo estas pruebas, se seguirá una metodología específica: primero, se identificarán todas las rutas de la API que se van a probar. Luego, se definirán casos de prueba para cada ruta, que incluyan diferentes escenarios, como respuestas exitosas, errores y comportamientos esperados bajo condiciones específicas. Posteriormente, se configurará \textit{Apidog} para automatizar la ejecución de las pruebas y la validación de las respuestas. Finalmente, se compararán las respuestas obtenidas de la API con las respuestas esperadas para determinar si las pruebas son exitosas.
+
+Las fase de pruebas funcionales se enfoca en verificar que cada función de la aplicación opere en conformidad con los requisitos especificados. Estas pruebas se basan en las especificaciones funcionales del software, es decir, lo que el sistema debe hacer. Se realizan sin tener en cuenta la estructura interna del software. Las pruebas funcionales incluyen la validación de interfaces de usuario, bases de datos, API, seguridad, y otras funcionalidades críticas para el negocio. El objetivo es garantizar que las funcionalidades del software cumplan con las expectativas del usuario final y los criterios de aceptación definidos.
+
+Por otro lado, se continúa con las pruebas no funcionales, que evalúan aspectos no relacionados con funciones específicas del software, sino con su compatibilidad, usabilidad, fiabilidad, seguridad, y otros atributos de calidad. Estas pruebas pruebas de seguridad para identificar vulnerabilidades, pruebas de compatibilidad para verificar el correcto funcionamiento en diferentes entornos, y pruebas de usabilidad para asegurar que el sistema sea fácil de usar y entender. El objetivo de las pruebas no funcionales es garantizar que el software no solo funcione correctamente, sino que también cumpla con los estándares de calidad y rendimiento requeridos.
+
+La siguiente fase se centrará en las pruebas de aceptación. Estas pruebas comprueban que se cumplen las especificaciones al completo: tanto requisitos funcionales como no funcionales. El objetivo principal es verificar que la aplicación cumple con los requisitos y expectativas del usuario final. Para esto, se definirán escenarios detallados que describan cómo un usuario interactuaría con la aplicación. Se configurará un entorno de pruebas que refleje el entorno de producción lo más fielmente posible. Los escenarios de usuario serán ejecutados y se documentarán los resultados, verificando que la aplicación cumple con todos los requisitos especificados.
+
+\section{Entorno de pruebas}
+El mismo entorno y equipo de desarrollo descrito en la etapa de Planificación \ref{Recursos_del_sistema} se ha empleado para las pruebas unitarias y pruebas de aceptación.
+
+\section{Pruebas Unitarias}
+
+Para la ejecución de las pruebas unitarias se ha utilizado el software \textit{Apidog}, el cual permite configurar un entorno de desarrollo aislado para cada prueba. Este entorno facilita la ejecución de scripts de preprocesamiento antes de la prueba, seguidos de la ejecución del test propiamente dicho. Posteriormente, se ejecutan scripts de postprocesamiento que limpian los datos generados durante la prueba, asegurando así que el sistema quede en un estado limpio y listo para pruebas futuras.
+
+Ejecutaremos un test por cada ruta de nuestro servidor que usemos, cubriendo así un porcentaje extenso de la funcionalidad del backend de la aplicación. 
+
+Empecemos explicando un ejemplo de como sería el flujo de datos para un test, nos centraremos en la funcionalidad de obtener un usuario por su email. Lo vemos en los siguientes pasos:
+
+\begin{itemize}
+    \item Necesitamos hacer el test sobre el \textit{endpoint} para obtener un usuario por su correo electrónico: \texttt{localhost:8080/auth/email/\{email\}}
+    \item Crearemos un script de preprocesado, en el cual crearemos un usuario de ejemplo, y guardaremos su email en una variable temporal para más tarde realizar la petición \ref{fig:script-preprocesado-test}.
+
+\begin{lstlisting}[style=JavaScript, caption={Script de preprocesado para crear un usuario de ejemplo}, label=fig:script-preprocesado-test]
+const exampleUser = {
+  DNI: "12345678A",
+  email: "example@example.com",
+  password: "examplePassword",
+  name: "Example",
+  surname: "User",
+  telephone: "123456789",
+  role: "tecnico"
+};
+
+pm.sendRequest({
+  url: pm.globals.get("base_url") + "/auth/register",
+  method: "POST",
+  header: {
+    "Content-Type": "application/json"
+  },
+  body: {
+    mode: "raw",
+    raw: JSON.stringify(exampleUser)
+  }
+}, function (err, res) {
+  if (err) {
+    console.error("Error al crear el usuario de ejemplo:", err);
+    return;
+  }
+  pm.environment.set("temp_email", exampleUser.email);  
+});
+
+\end{lstlisting}
+
+\item Definimos el esquema de respuesta \textit{JSONResponse} concretando el \textit{Schema} a recibir \ref{fig:schema-validacion-test}, por extensión del esquema, se muestra en el fragmento como sería el esquema si nuestros usuarios solo tuvieran dos atributos.
+
+\begin{lstlisting}[style=JavaScript, caption={Schema de validación para entidad usuario}, label=fig:schema-validacion-test]
+{
+    "type": "object",
+    "properties": {
+        "ID": {
+            "type": "integer"
+        },
+        "DNI": {
+            "type": "string"
+        },
+        ...
+        //Resto de atributos
+    },
+    "required": [
+        "ID",
+        "DNI",
+    ],
+    "x-apidog-orders": [
+        "ID",
+        "DNI",
+        ...
+        //Resto de atributos
+    ]
+}
+\end{lstlisting}
+
+
+\item Ejecutamos el test y recibimos la respuesta del mismo \ref{fig:validacion_test}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\linewidth]{validacion_test.png}
+    \caption{Resultado de ejecución del test}
+    \label{fig:validacion_test}
+\end{figure}
+
+\item Creamos un script de postprocesado, en el que limpiaremos el usuario creado anteriormente, limpiando los datos creados durante el test, para ello, ejecutaremos directamente en la base de datos una operación \textit{DELETE} buscando el email anteriormente creado. La operación es: \texttt{DELETE FROM Usuario WHERE Correo = '\{\{temp\_email\}\}';}
+\end{itemize}
+
+Una vez visto nuestro flujo de pruebas, veremos las diferentes rutas que probaremos de nuestro proyecto, así como los diferentes tipos de respuesta de cada una, en concreto veremos las peticiones realizadas al controlador de usuarios, de empleados, de empresas, de provincias, de municipios y de informes.
+
+
+\bigskip
+\noindent\textbf{\underline{Usuarios}} \\
+
+
+\begin{itemize}
+    \item \textbf{GET /auth/users}: obtener todos los usuarios del sistema
+    \begin{itemize}
+        \item \textit{Caso 1}: Éxito.
+        \begin{itemize}
+            \item \textbf{Entrada}: Ninguna.
+            \item \textbf{Respuesta Esperada}: Código 200 con un array de objetos usuario.
+        \end{itemize}
+        \item \textit{Caso 2}: Fallo.
+        \begin{itemize}
+            \item \textbf{Entrada}: Ninguna
+            \item \textbf{Respuesta Esperada}: Código 403 con un mensaje.
+        \end{itemize}
+    \end{itemize}
+
+    \item \textbf{GET /auth/email/\{email\}}: Obtener un usuario por su email
+    \begin{itemize}
+        \item \textit{Caso 1}: Éxito
+        \begin{itemize}
+            \item \textbf{Entrada}: Email del usuario.
+            \item \textbf{Respuesta Esperada}: Código 200 con el objeto usuario correspondiente.
+        \end{itemize}
+        \item \textit{Caso 2}: Intentar obtener un usuario con un email inexistente.
+        \begin{itemize}
+            \item \textbf{Entrada}: Email que no está registrado.
+            \item \textbf{Respuesta Esperada}: Código 404 con mensaje "Usuario no encontrado".
+        \end{itemize}
+    \end{itemize}
+
+    \item \textbf{POST /auth/register}: Crear un nuevo usuario con datos válidos
+    \begin{itemize}
+        \item \textit{Caso 1}: Éxito
+        \begin{itemize}
+            \item \textbf{Entrada}: Datos del usuario (nombre, correo, contraseña).
+            \item \textbf{Respuesta Esperada}: Código 200 con el objeto usuario creado.
+        \end{itemize}
+        \item \textit{Caso 2}: Fallo.
+        \begin{itemize}
+            \item \textbf{Entrada}: Datos del usuario ya existente.
+            \item \textbf{Respuesta Esperada}: Código 409 con mensaje de error de validación.
+        \end{itemize}
+    \end{itemize}
+
+    \item \textbf{POST /auth/login}: Login de usuario 
+    \begin{itemize}
+        \item \textit{Caso 1}: Éxito.
+        \begin{itemize}
+            \item \textbf{Entrada}: Email y contraseña del usuario.
+            \item \textbf{Respuesta Esperada}: Código 200 con token de autenticación y datos del usuario.
+        \end{itemize}
+        \item \textit{Caso 2}: Fallo, credenciales no válidas.
+        \begin{itemize}
+            \item \textbf{Entrada}: Email o contraseña incorrecta.
+            \item \textbf{Respuesta Esperada}: Código 401 con mensaje "Credenciales incorrectas".
+        \end{itemize}
+        \item \textit{Caso 3}: Fallo, no se encuentran los parámetros.
+        \begin{itemize}
+            \item \textbf{Entrada}: Falta Email o contraseña.
+            \item \textbf{Respuesta Esperada}: Código 404 con mensaje ""Faltan credenciales de inicio de sesión"".
+        \end{itemize}
+    \end{itemize}
+
+    \item \textbf{DELETE /auth/email/\{email\}}
+    \begin{itemize}
+        \item \textit{Caso 1}: Eliminar un usuario por su email.
+        \begin{itemize}
+            \item \textbf{Entrada}: Email del usuario.
+            \item \textbf{Respuesta Esperada}: Código 200 con mensaje "Usuario eliminado".
+        \end{itemize}
+    \end{itemize}
+
+    \item \textbf{PUT /auth/users/\{id\}}
+    \begin{itemize}
+        \item \textit{Caso 1}: Actualizar un usuario en concreto con datos válidos.
+        \begin{itemize}
+            \item \textbf{Entrada}: ID del usuario y datos actualizados (nombre, correo, etc.).
+            \item \textbf{Respuesta Esperada}: Código 200 con el objeto usuario actualizado.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+Mediante esta estrategia, se cubre una amplia gama de funcionalidades del backend relacionadas con la gestión de usuarios, asegurando que cada ruta y su comportamiento bajo diferentes escenarios sean validados adecuadamente. Lo vemos en la figura \ref{fig:usertests}.
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{usertests.jpg}
+    \caption{Ejecución de los tests sobre cada \textit{endpoint} de usuario}
+    \label{fig:usertests}
+\end{figure}
+
+
+\bigskip
+\noindent\textbf{\underline{Empleados}} \\
+
+\begin{itemize}
+    \item \textbf{GET /employee}: Obtener todos los empleados relacionados con el usuario.
+    \begin{itemize}
+        \item \textit{Caso 1}: Éxito.
+        \begin{itemize}
+            \item \textbf{Entrada}: Ninguna.
+            \item \textbf{Respuesta Esperada}: Código 200 con un array de objetos empleado.
+        \end{itemize}
+        \item \textit{Caso 2}: Fallo, sin permisos.
+        \begin{itemize}
+            \item \textbf{Entrada}: Ninguna.
+            \item \textbf{Respuesta Esperada}: Código 401 con un mensaje.
+        \end{itemize}
+    \end{itemize}
+
+    \item \textbf{GET /employee/dni/\{dni\}}: Obtener un empleado por su DNI.
+    \begin{itemize}
+        \item \textit{Caso 1}: Éxito.
+        \begin{itemize}
+            \item \textbf{Entrada}: DNI del empleado.
+            \item \textbf{Respuesta Esperada}: Código 200 con el objeto empleado correspondiente.
+        \end{itemize}
+        \item \textit{Caso 2}: Intentar obtener un empleado con un DNI inexistente.
+        \begin{itemize}
+            \item \textbf{Entrada}: DNI que no está registrado.
+            \item \textbf{Respuesta Esperada}: Código 404 con mensaje "Empleado no encontrado".
+        \end{itemize}
+    \end{itemize}
+
+    \item \textbf{GET /employee/company/\{companyId\}/employees}: Obtener todos los empleados de una empresa.
+    \begin{itemize}
+        \item \textit{Caso 1}: Éxito.
+        \begin{itemize}
+            \item \textbf{Entrada}: ID de la empresa.
+            \item \textbf{Respuesta Esperada}: Código 200 con un array de objetos empleado.
+        \end{itemize}
+        \item \textit{Caso 2}: Fallo.
+        \begin{itemize}
+            \item \textbf{Entrada}: ID de empresa inexistente.
+            \item \textbf{Respuesta Esperada}: Código 404 con mensaje "Empresa no encontrada".
+        \end{itemize}
+    \end{itemize}
+
+    \item \textbf{POST /employee/create}: Crear un nuevo empleado.
+    \begin{itemize}
+        \item \textit{Caso 1}: Éxito.
+        \begin{itemize}
+            \item \textbf{Entrada}: Datos del empleado (nombre, DNI, empresa, etc.).
+            \item \textbf{Respuesta Esperada}: Código 201 con el objeto empleado creado.
+        \end{itemize}
+        \item \textit{Caso 2}: Fallo, no se encuentra la empresa.
+        \begin{itemize}
+            \item \textbf{Entrada}: Datos del empleado incompletos o inválidos.
+            \item \textbf{Respuesta Esperada}: Código 404 con mensaje de error "Empresa no encontrada".
+        \end{itemize}
+        \item \textit{Caso 3}: Fallo, sin permisos.
+        \begin{itemize}
+            \item \textbf{Entrada}: Datos del empleado incompletos o inválidos.
+            \item \textbf{Respuesta Esperada}: Código 401 con un mensaje.
+        \end{itemize}
+    \end{itemize}
+
+    \item \textbf{PUT /employee/update/\{employeeId\}}: Actualizar un empleado.
+    \begin{itemize}
+        \item \textit{Caso 1}: Éxito.
+        \begin{itemize}
+            \item \textbf{Entrada}: ID del empleado y datos actualizados (nombre, DNI, empresa, etc.).
+            \item \textbf{Respuesta Esperada}: Código 200 con el objeto empleado actualizado.
+        \end{itemize}
+         \item \textit{Caso 2}: Fallo, sin permisos.
+        \begin{itemize}
+            \item \textbf{Entrada}: Datos del empleado incompletos o inválidos.
+            \item \textbf{Respuesta Esperada}: Código 400 con un mensaje.
+        \end{itemize}
+    \end{itemize}
+
+    \item \textbf{DELETE /employee/delete/\{employeeDNI\}}: Eliminar un empleado.
+    \begin{itemize}
+        \item \textit{Caso 1}: Éxito.
+        \begin{itemize}
+            \item \textbf{Entrada}: DNI del empleado.
+            \item \textbf{Respuesta Esperada}: Código 200 con mensaje "Empleado eliminado".
+        \end{itemize}
+        \item \textit{Caso 2}: Fallo, sin permisos.
+        \begin{itemize}
+            \item \textbf{Entrada}: Datos del empleado incompletos o inválidos.
+            \item \textbf{Respuesta Esperada}: Código 400 con un mensaje.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+Mediante esta estrategia, se cubre una amplia gama de funcionalidades del backend relacionadas con la gestión de empleados, asegurando que cada ruta y su comportamiento bajo diferentes escenarios sean validados adecuadamente. Lo vemos en la figura \ref{fig:employeestest}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{employeestest.jpg}
+    \caption{Ejecución de los tests sobre cada \textit{endpoint} de empleado}
+    \label{fig:employeestest}
+\end{figure}
+
+\bigskip
+\noindent\textbf{\underline{Empresas}} \\
+
+\begin{itemize}
+    \item \textbf{GET /company/}: Obtener todas las empresas a su cargo.
+    \begin{itemize}
+        \item \textit{Caso 1}: Éxito.
+        \begin{itemize}
+            \item \textbf{Entrada}: Ninguna.
+            \item \textbf{Respuesta Esperada}: Código 200 con un array de objetos empresa.
+        \end{itemize}
+        \item \textit{Caso 2}: Fallo, sin permisos.
+        \begin{itemize}
+            \item \textbf{Entrada}: Ninguna.
+            \item \textbf{Respuesta Esperada}: Código 401 con un mensaje.
+        \end{itemize}
+    \end{itemize}
+
+    \item \textbf{GET /company/\{id\}}: Obtener una empresa por su ID.
+    \begin{itemize}
+        \item \textit{Caso 1}: Éxito.
+        \begin{itemize}
+            \item \textbf{Entrada}: ID de la empresa.
+            \item \textbf{Respuesta Esperada}: Código 200 con el objeto empresa correspondiente.
+        \end{itemize}
+        \item \textit{Caso 2}: Intentar obtener una empresa con un ID inexistente.
+        \begin{itemize}
+            \item \textbf{Entrada}: ID que no está registrado.
+            \item \textbf{Respuesta Esperada}: Código 404 con mensaje "Empresa no encontrada".
+        \end{itemize}
+        \item \textit{Caso 3}: Fallo, sin permisos.
+        \begin{itemize}
+            \item \textbf{Entrada}: Ninguna.
+            \item \textbf{Respuesta Esperada}: Código 401 con un mensaje.
+        \end{itemize}
+    \end{itemize}
+
+    \item \textbf{GET /company/cif/\{CIF\}}: Obtener una empresa por su CIF.
+    \begin{itemize}
+        \item \textit{Caso 1}: Éxito.
+        \begin{itemize}
+            \item \textbf{Entrada}: CIF de la empresa.
+            \item \textbf{Respuesta Esperada}: Código 200 con el objeto empresa correspondiente.
+        \end{itemize}
+        \item \textit{Caso 2}: Intentar obtener una empresa con un CIF inexistente.
+        \begin{itemize}
+            \item \textbf{Entrada}: CIF que no está registrado.
+            \item \textbf{Respuesta Esperada}: Código 404 con mensaje "Empresa no encontrada".
+        \end{itemize}
+        \item \textit{Caso 3}: Fallo, sin permisos.
+        \begin{itemize}
+            \item \textbf{Entrada}: Ninguna.
+            \item \textbf{Respuesta Esperada}: Código 401 con un mensaje.
+        \end{itemize}
+    \end{itemize}
+
+    \item \textbf{POST /company/}: Crear una empresa nueva.
+    \begin{itemize}
+        \item \textit{Caso 1}: Éxito.
+        \begin{itemize}
+            \item \textbf{Entrada}: Datos de la empresa (nombre, CIF, dirección, etc.).
+            \item \textbf{Respuesta Esperada}: Código 201 con el objeto empresa creado.
+        \end{itemize}
+        \item \textit{Caso 2}: Fallo, sin permisos.
+        \begin{itemize}
+            \item \textbf{Entrada}: Ninguna.
+            \item \textbf{Respuesta Esperada}: Código 401 con un mensaje.
+        \end{itemize}
+    \end{itemize}
+
+    \item \textbf{PUT /company/cif/\{CIF\}}: Actualizar una empresa por su CIF.
+    \begin{itemize}
+        \item \textit{Caso 1}: Éxito.
+        \begin{itemize}
+            \item \textbf{Entrada}: CIF de la empresa y datos actualizados (nombre, dirección, etc.).
+            \item \textbf{Respuesta Esperada}: Código 200 con el objeto empresa actualizado.
+        \end{itemize}
+        \item \textit{Caso 2}: Fallo.
+        \begin{itemize}
+            \item \textbf{Entrada}: CIF de la empresa inexistente.
+            \item \textbf{Respuesta Esperada}: Código 404 con mensaje "Empresa no encontrada".
+        \end{itemize}
+        \item \textit{Caso 2}: Fallo, sin permisos.
+        \begin{itemize}
+            \item \textbf{Entrada}: Ninguna.
+            \item \textbf{Respuesta Esperada}: Código 401 con un mensaje.
+        \end{itemize}
+    \end{itemize}
+
+    \item \textbf{DELETE /company/cif/\{CIF\}}: Eliminar una empresa por su CIF.
+    \begin{itemize}
+        \item \textit{Caso 1}: Éxito.
+        \begin{itemize}
+            \item \textbf{Entrada}: CIF de la empresa.
+            \item \textbf{Respuesta Esperada}: Código 200 con mensaje "Empresa eliminada".
+        \end{itemize}
+        \item \textit{Caso 2}: Fallo.
+        \begin{itemize}
+            \item \textbf{Entrada}: CIF de la empresa inexistente.
+            \item \textbf{Respuesta Esperada}: Código 404 con mensaje "Empresa no encontrada".
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+Mediante esta estrategia, se cubre una amplia gama de funcionalidades del backend relacionadas con la gestión de empresas, asegurando que cada ruta y su comportamiento bajo diferentes escenarios sean validados adecuadamente \ref{fig:companiestest}. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{companiestest.jpg}
+    \caption{Ejecución de los tests sobre cada \textit{endpoint} de empresa}
+    \label{fig:companiestest}
+\end{figure}
+
+\bigskip
+\noindent\textbf{\underline{Provincias}} \\
+
+\begin{itemize}
+    \item \textbf{GET /provincia/}: Obtener todas las provincias.
+    \begin{itemize}
+        \item \textit{Caso 1}: Éxito.
+        \begin{itemize}
+            \item \textbf{Entrada}: Ninguna.
+            \item \textbf{Respuesta Esperada}: Código 200 con un array de objetos provincia.
+        \end{itemize}
+    \end{itemize}
+
+    \item \textbf{GET /provincia/\{id\}}: Obtener una provincia por su ID.
+    \begin{itemize}
+        \item \textit{Caso 1}: Éxito.
+        \begin{itemize}
+            \item \textbf{Entrada}: ID de la provincia.
+            \item \textbf{Respuesta Esperada}: Código 200 con el objeto provincia correspondiente.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+\bigskip
+\noindent\textbf{\underline{Municipios}} \\
+
+\begin{itemize}
+    \item \textbf{GET /municipio/}: Obtener todos los municipios.
+    \begin{itemize}
+        \item \textit{Caso 1}: Éxito.
+        \begin{itemize}
+            \item \textbf{Entrada}: Ninguna.
+            \item \textbf{Respuesta Esperada}: Código 200 con un array de objetos municipio.
+        \end{itemize}
+    \end{itemize}
+
+    \item \textbf{GET /municipio/\{id\}}: Obtener un municipio por su ID.
+    \begin{itemize}
+        \item \textit{Caso 1}: Éxito.
+        \begin{itemize}
+            \item \textbf{Entrada}: ID del municipio.
+            \item \textbf{Respuesta Esperada}: Código 200 con el objeto municipio correspondiente.
+        \end{itemize}
+    \end{itemize}
+
+    \item \textbf{GET /municipio/provincia/\{provinciaId\}}: Obtener todos los municipios de una provincia.
+    \begin{itemize}
+        \item \textit{Caso 1}: Éxito.
+        \begin{itemize}
+            \item \textbf{Entrada}: ID de la provincia.
+            \item \textbf{Respuesta Esperada}: Código 200 con un array de objetos municipio.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+Mediante esta estrategia, se cubre una amplia gama de funcionalidades del backend relacionadas con la gestión de provincias y municipios, asegurando que cada ruta y su comportamiento bajo diferentes escenarios sean validados adecuadamente \ref{fig:locationstest}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\linewidth]{locationstest.jpg}
+    \caption{Ejecución de los tests sobre cada \textit{endpoint} de provincia y municipio}
+    \label{fig:locationstest}
+\end{figure}
+
+\bigskip
+\noindent\textbf{\underline{Informes}} \\
+
+\begin{itemize}
+    \item \textbf{GET /report/}: Obtener todos los informes.
+    \begin{itemize}
+        \item \textit{Caso 1}: Éxito.
+        \begin{itemize}
+            \item \textbf{Entrada}: Ninguna.
+            \item \textbf{Respuesta Esperada}: Código 200 con un array de objetos informe.
+        \end{itemize}
+        \item \textit{Caso 2}: Fallo, sin permisos.
+        \begin{itemize}
+            \item \textbf{Entrada}: Ninguna.
+            \item \textbf{Respuesta Esperada}: Código 401 con un mensaje.
+        \end{itemize}
+    \end{itemize}
+
+    \item \textbf{GET /report/referencia/\{referencia\}}: Obtener un informe por su referencia.
+    \begin{itemize}
+        \item \textit{Caso 1}: Éxito.
+        \begin{itemize}
+            \item \textbf{Entrada}: Referencia del informe.
+            \item \textbf{Respuesta Esperada}: Código 200 con el objeto informe correspondiente.
+        \end{itemize}
+        \item \textit{Caso 2}: Fallo, sin permisos.
+        \begin{itemize}
+            \item \textbf{Entrada}: Ninguna.
+            \item \textbf{Respuesta Esperada}: Código 401 con un mensaje.
+        \end{itemize}
+    \end{itemize}
+
+    \item \textbf{POST /report/create}: Crear un nuevo informe.
+    \begin{itemize}
+        \item \textit{Caso 1}: Éxito.
+        \begin{itemize}
+            \item \textbf{Entrada}: Datos del informe (título, contenido, etc.).
+            \item \textbf{Respuesta Esperada}: Código 201 con el objeto informe creado.
+        \end{itemize}
+        \item \textit{Caso 2}: Fallo.
+        \begin{itemize}
+            \item \textbf{Entrada}: Datos del informe incompletos o inválidos.
+            \item \textbf{Respuesta Esperada}: Código 400 con mensaje de error de validación.
+        \end{itemize}
+        \item \textit{Caso 3}: Fallo, sin permisos.
+        \begin{itemize}
+            \item \textbf{Entrada}: Ninguna.
+            \item \textbf{Respuesta Esperada}: Código 401 con un mensaje.
+        \end{itemize}
+    \end{itemize}
+
+    \item \textbf{PUT /report/update/\{id\}}: Actualizar un informe.
+    \begin{itemize}
+        \item \textit{Caso 1}: Éxito.
+        \begin{itemize}
+            \item \textbf{Entrada}: ID del informe y datos actualizados (título, contenido, etc.).
+            \item \textbf{Respuesta Esperada}: Código 200 con el objeto informe actualizado.
+        \end{itemize}
+        \item \textit{Caso 2}: Fallo.
+        \begin{itemize}
+            \item \textbf{Entrada}: ID del informe inexistente.
+            \item \textbf{Respuesta Esperada}: Código 404 con mensaje "Informe no encontrado".
+        \end{itemize}
+        \item \textit{Caso 3}: Fallo, sin permisos.
+        \begin{itemize}
+            \item \textbf{Entrada}: Ninguna.
+            \item \textbf{Respuesta Esperada}: Código 401 con un mensaje.
+        \end{itemize}
+    \end{itemize}
+
+    \item \textbf{DELETE /report/delete/\{Referencia\}}: Eliminar un informe por su referencia.
+    \begin{itemize}
+        \item \textit{Caso 1}: Éxito.
+        \begin{itemize}
+            \item \textbf{Entrada}: Referencia del informe.
+            \item \textbf{Respuesta Esperada}: Código 200 con mensaje "Informe eliminado".
+        \end{itemize}
+        \item \textit{Caso 2}: Fallo, datos inexistentes.
+        \begin{itemize}
+            \item \textbf{Entrada}: Referencia inexistente.
+            \item \textbf{Respuesta Esperada}: Código 400 con mensaje "Falta la referencia del reporte".
+        \end{itemize}
+        \item \textit{Caso 3}: Fallo, sin permisos.
+        \begin{itemize}
+            \item \textbf{Entrada}: Ninguna.
+            \item \textbf{Respuesta Esperada}: Código 401 con un mensaje.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+Mediante esta estrategia, se cubre una amplia gama de funcionalidades del backend relacionadas con la gestión de informes, asegurando que cada ruta y su comportamiento bajo diferentes escenarios sean validados adecuadamente \ref{fig:reportstests}. 
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.75\linewidth]{reportstests.jpg}
+    \caption{Ejecución de los tests sobre cada \textit{endpoint} de informe}
+    \label{fig:reportstests}
+\end{figure}
+
+
+\section{Pruebas de Sistema}
+En esta apartado veremos las pruebas que se han realizado para asegurar que el sistema cumple con los requisitos establecidos: funcionales y no funcionales. Se desarrollarán en el entorno de pruebas ya explicado.
+
+\subsection{Pruebas Funcionales}
+Para realizar las pruebas funcionales del sistema, fue necesario probar tanto los flujos normales como los alternativos de cada caso de uso descrito.
+
+En primer lugar, se realizaron pruebas de acceso de usuarios al sistema, ya que este es el primer paso para poder utilizar el sistema. Se llevaron a cabo todas las pruebas necesarias para verificar que los permisos de usuario son correctos y que, en caso de que los datos de acceso proporcionados sean incorrectos, el sistema notifique adecuadamente esta situación. Además, se comprobó el correcto funcionamiento de la protección de rutas, asegurando que solo los usuarios autenticados puedan acceder a ellas.
+
+Una vez completadas estas pruebas, se procedió a realizar pruebas de gestión de usuarios (técnicos y administradores), empresas, empleados e informes. Estas pruebas consistieron en validar que los datos introducidos son correctos, están libres de errores y se guardan adecuadamente en la base de datos. También se verificó que las relaciones entre las diferentes entidades se gestionan correctamente.
+
+Posteriormente, se realizaron pruebas específicas de los informes, prestando especial atención a las detecciones realizadas. Se probó con diversas imágenes para asegurar que el informe se rellena correctamente y que las solicitudes se ejecutan adecuadamente.
+
+Finalmente, se verificó que los documentos PDF generados se producen correctamente.
+
+\subsection{Pruebas No Funcionales}
+
+En el siguiente apartado, vamos a describir las pruebas no funcionales realizadas para comprobar el correcto funcionamiento de la aplicación.
+
+\begin{itemize}
+    \item \textbf{Mantenibilidad}: Al usar un \textit{framework} nos aseguramos que la aplicación tiene una estructura lógica de directorios definida, consiguiendo de esta forma una estructura organizada de todos los ficheros de la aplicación.
+    \item \textbf{Seguridad}: Se han seguido una serie de pautas para mantener la seguridad del sistema y que vemos a continuación:
+    \begin{enumerate}
+        \item Sólo debemos dar acceso a la base de datos física a personas de confianza con unos conocimientos informáticos suficientes como para poder realizar las tareas de administración y mantenimiento de la base de datos.
+        \item Cifrado de la contraseña de usuario.
+        \item Evitar una posible inyección de código SQL.
+    \end{enumerate}
+    \item \textbf{Fiabilidad}: La fiabilidad del sistema la hemos conseguido tras la fase de pruebas, asegurando el correcto funcionamiento del sistema en todo momento.
+    \item \textbf{Compatibilidad}: Se han realizado pruebas en diferentes navegadores y sistemas, se ha comprobado el correcto funcionamiento desde el navegador web \textit{Google Chrome}, desde \textit{Brave} y desde \textit{Microsoft Edge}.
+    \item \textbf{Accesibilidad}: Se han realizado pruebas en diferentes dispositivos, se ha comprobado el correcto funcionamiento desde un dispositivo móvil y desde un ordenador portátil diferente al que actúa como entorno de desarrollo.
+\end{itemize}
+\section{Pruebas de Aceptación}
+
+Las pruebas de aceptación en fábrica (FAT, por sus siglas en inglés) son una etapa crucial en el proceso de desarrollo de software y sistemas integrados, donde se verifica y valida que el producto cumple con todas las especificaciones y requisitos acordados antes de su entrega y despliegue en el entorno del cliente. Durante esta fase, realizamos una serie de pruebas exhaustivas en un entorno controlado, simulado para imitar las condiciones operativas reales lo más fielmente posible. El objetivo de las pruebas FAT es asegurar que todos los componentes del sistema funcionan correctamente y que el software cumple con los estándares de calidad y las expectativas del cliente. Esto incluye la validación de funcionalidades críticas, la verificación de la integración de los distintos módulos y la evaluación del rendimiento del sistema bajo diversas condiciones de uso. Al finalizar las pruebas FAT, se genera un informe detallado que documenta los resultados y cualquier incidencia encontrada, garantizando que el producto esté listo para su implementación en el entorno final del cliente.
+
+\subsubsection{Creación del usuario}
+% \documentclass{article}
+% \usepackage[utf8]{inputenc}
+% \usepackage{array}
+% \usepackage{geometry}
+% \geometry{a4paper, margin=1in}
+
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|p{15cm}|}
+        \hline
+        \multicolumn{1}{|c|}{\textbf{Objetivo}} \\
+        \hline
+        Verificar que PreventAI permite al usuario no registrado aún crear una cuenta \\
+        \hline
+        \multicolumn{1}{|c|}{\textbf{Condiciones Iniciales}} \\
+        \hline
+        No aplica \\
+        \hline
+    \end{tabular}
+
+    \begin{tabular}{| m{1cm} | m{6.8cm} | m{4cm} | m{1.9cm} |}
+        \hline
+        \textbf{Paso} & \textbf{Descripción} & \textbf{Criterio de superación} & \textbf{Resultado} \\
+        \hline
+        1 & El usuario hace clic en `Registro' & El usuario accede a la pantalla dedicada para el registro & OK \\
+        \hline
+        2 & El usuario introduce los siguientes datos para la creación de un nuevo usuario: \begin{itemize}
+                \item Nombre: Sergio
+                \item Apellidos: Rodríguez Vázquez
+                \item Correo electrónico: sergio@test.com
+                \item Teléfono: 634471640
+                \item Contraseña: fuLATErnYmEm
+            \end{itemize}
+            y hace clic en `Registrarse' & El usuario accede a la página principal de la aplicación & OK \\
+        \hline
+       
+    \end{tabular}
+    \caption{Prueba FAT - Creación del usuario}
+    \label{tab:fat-test}
+\end{table}
+
+
+
+
+\subsubsection{Identificación del usuario}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|p{15cm}|}
+        \hline
+        \multicolumn{1}{|c|}{\textbf{Objetivo}} \\
+        \hline
+        Verificar que PreventAI permite al usuario iniciar sesión mediante el uso de usuario y contraseña para acceder a su cuenta \\
+        \hline
+        \multicolumn{1}{|c|}{\textbf{Condiciones Iniciales}} \\
+        \hline
+        No aplica \\
+        \hline
+    \end{tabular}
+
+    \begin{tabular}{| m{1cm} | m{6.8cm} | m{4cm} | m{1.9cm} |}
+        \hline
+        \textbf{Paso} & \textbf{Descripción} & \textbf{Criterio de superación} & \textbf{Resultado} \\
+        \hline
+        1 & El usuario hace clic en `Iniciar Sesión ' & El usuario accede a la pantalla dedicada para el inicio de sesión & OK \\
+        \hline
+        2 & Introducimos los siguientes datos para la creación de un nuevo usuario: \begin{itemize}
+                \item Correo electrónico: sergio@test.com
+                \item Contraseña: fuLATErnYmEm
+            \end{itemize}
+            y hace clic en 'Iniciar sesión' & El usuario accede a la página principal de la aplicación & OK \\
+        \hline
+       
+    \end{tabular}
+    \caption{Prueba FAT - Identificación del usuario}
+    \label{tab:fat-test}
+\end{table}
+
+\subsubsection{Cerrar sesión del usuario}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|p{15cm}|}
+        \hline
+        \multicolumn{1}{|c|}{\textbf{Objetivo}} \\
+        \hline
+        Verificar que PreventAI permite al usuario cerrar sesión \\
+        \hline
+        \multicolumn{1}{|c|}{\textbf{Condiciones Iniciales}} \\
+        \hline
+        El usuario ha iniciado sesión \\
+        \hline
+    \end{tabular}
+
+    \begin{tabular}{| m{1cm} | m{6.8cm} | m{4cm} | m{1.9cm} |}
+        \hline
+        \textbf{Paso} & \textbf{Descripción} & \textbf{Criterio de superación} & \textbf{Resultado} \\
+        \hline
+        1 & El usuario hace clic en el logo de perfil arriba a la derecha de la pantalla principal & Se despliega un menú con botones & OK \\
+        \hline
+        2 & El usuario hace clic en `Cerrar sesión' & El usuario accede a la pantalla de inicio de la aplicación & OK \\
+        \hline
+       
+    \end{tabular}
+    \caption{Prueba FAT - Cerrar sesión del usuario}
+    \label{tab:fat-test}
+\end{table}
+
+\subsubsection{Crear usuario}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|p{15cm}|}
+        \hline
+        \multicolumn{1}{|c|}{\textbf{Objetivo}} \\
+        \hline
+        Verificar que PreventAI permite la creación de usuarios desde el rol de administrador \\
+        \hline
+        \multicolumn{1}{|c|}{\textbf{Condiciones Iniciales}} \\
+        \hline
+        El usuario ha iniciado sesión y es administrador \\
+        \hline
+    \end{tabular}
+
+    \begin{tabular}{| m{1cm} | m{6.8cm} | m{4cm} | m{1.9cm} |}
+        \hline
+        \textbf{Paso} & \textbf{Descripción} & \textbf{Criterio de superación} & \textbf{Resultado} \\
+        \hline
+        1 & El usuario hace clic en `Gestionar' & El usuario accede a la pantalla de gestión de entidades de la aplicación & OK \\
+        \hline
+        2 & El usuario hace clic en el apartado de `Usuarios' & El usuario accede a la pantalla de gestión de usuarios de la aplicación & OK \\
+        \hline
+        3 & El usuario hace clic en `Crear usuario' & El usuario accede a la pantalla de creación de usuarios de la aplicación & OK \\
+        \hline
+        4 &  El usuario introduce los siguientes datos para la creación de un nuevo usuario: \begin{itemize}
+                \item Nombre: Sergio
+                \item Apellidos: Rodríguez Vázquez
+                \item Correo electrónico: sergio2@test.com
+                \item Teléfono: 634471640
+                \item Contraseña: fuLATErnYmEmo
+                \item Rol: Administrador
+            \end{itemize}
+            y hace clic en `Enviar' & El sistema notifica la creación y devuelve la página de gestión de la aplicación & OK \\
+        \hline
+    \end{tabular}
+    \caption{Prueba FAT - Crear usuario}
+    \label{tab:fat-test}
+\end{table}
+
+\subsubsection{Modificar usuario}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|p{15cm}|}
+        \hline
+        \multicolumn{1}{|c|}{\textbf{Objetivo}} \\
+        \hline
+        Verificar que PreventAI permite la modificación de usuarios desde el rol de administrador \\
+        \hline
+        \multicolumn{1}{|c|}{\textbf{Condiciones Iniciales}} \\
+        \hline
+        El usuario ha iniciado sesión y es administrador \\
+        \hline
+    \end{tabular}
+
+    \begin{tabular}{| m{1cm} | m{6.8cm} | m{4cm} | m{1.9cm} |}
+        \hline
+        \textbf{Paso} & \textbf{Descripción} & \textbf{Criterio de superación} & \textbf{Resultado} \\
+        \hline
+        1 & El usuario hace clic en `Gestionar' & El usuario accede a la pantalla de gestión de entidades de la aplicación & OK \\
+        \hline
+        2 & El usuario hace clic en el apartado de `Usuarios' & El usuario accede a la pantalla de gestión de usuarios de la aplicación & OK \\
+        \hline
+        3 & El usuario hace clic en `Modificar usuario' & El usuario accede a la pantalla de modificación de usuarios de la aplicación & OK \\
+        \hline
+        4 & El usuario hace clic en el usuario que quiere modificar & Se despliega un formulario con los datos del usuario a modificar & OK \\
+        \hline
+        5 &  El usuario cambia los campos con los siguientes datos para la creación de un nuevo usuario: \begin{itemize}
+                \item Nombre: Sergio
+                \item Apellidos: Rodríguez Pérez
+                \item Correo electrónico: sergio3@test.com
+                \item Teléfono: 634471646
+                \item Contraseña: fuLATErnYmEmo
+                \item Rol: Usuario
+            \end{itemize}
+            y hace clic en `Enviar' & El sistema notifica la creación y devuelve la página de gestión de la aplicación & OK \\
+        \hline
+    \end{tabular}
+    \caption{Prueba FAT - Modificar usuario}
+    \label{tab:fat-test}
+\end{table}
+
+
+\subsubsection{Eliminar usuario}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|p{15cm}|}
+        \hline
+        \multicolumn{1}{|c|}{\textbf{Objetivo}} \\
+        \hline
+        Verificar que PreventAI permite la eliminación de usuarios desde el rol de administrador \\
+        \hline
+        \multicolumn{1}{|c|}{\textbf{Condiciones Iniciales}} \\
+        \hline
+        El usuario ha iniciado sesión y es administrador \\
+        \hline
+    \end{tabular}
+
+    \begin{tabular}{| m{1cm} | m{6.8cm} | m{4cm} | m{1.9cm} |}
+        \hline
+        \textbf{Paso} & \textbf{Descripción} & \textbf{Criterio de superación} & \textbf{Resultado} \\
+        \hline
+        1 & El usuario hace clic en `Gestionar' & El usuario accede a la pantalla de gestión de entidades de la aplicación & OK \\
+        \hline
+        2 & El usuario hace clic en el apartado de `Usuarios' & El usuario accede a la pantalla de gestión de usuarios de la aplicación & OK \\
+        \hline
+        3 & El usuario hace clic en `Eliminar usuario' & El usuario accede a la pantalla de eliminación de usuarios de la aplicación & OK \\
+        \hline
+        4 & El usuario hace clic el icono de papelera rojo del usuario que quiere eliminar & Se despliega un menú con una pregunta para confirmar la eliminación & OK \\
+        \hline
+        5 &  El usuario hace clic en 'Confirmar' & El sistema notifica la eliminación y devuelve la página de eliminación de usuarios de la aplicación & OK \\
+        \hline
+    \end{tabular}
+    \caption{Prueba FAT - Eliminar usuario}
+    \label{tab:fat-test}
+\end{table}
+
+
+\subsubsection{Crear empresa}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|p{15cm}|}
+        \hline
+        \multicolumn{1}{|c|}{\textbf{Objetivo}} \\
+        \hline
+        Verificar que PreventAI permite la creación de empresas\\
+        \hline
+        \multicolumn{1}{|c|}{\textbf{Condiciones Iniciales}} \\
+        \hline
+        El usuario ha iniciado sesión\\
+        \hline
+    \end{tabular}
+
+    \begin{tabular}{| m{1cm} | m{6.8cm} | m{4cm} | m{1.9cm} |}
+        \hline
+        \textbf{Paso} & \textbf{Descripción} & \textbf{Criterio de superación} & \textbf{Resultado} \\
+        \hline
+        1 & El usuario hace clic en `Gestionar' & El usuario accede a la pantalla de gestión de entidades de la aplicación & OK \\
+        \hline
+        2 & El usuario hace clic en el apartado de `Empresas' & El usuario accede a la pantalla de gestión de empresas de la aplicación & OK \\
+        \hline
+        3 & El usuario hace clic en `Crear empresa' & El usuario accede a la pantalla de creación de empresas de la aplicación & OK \\
+        \hline
+        4 &  El usuario introduce los siguientes datos para la creación de una nuevo empresa: \begin{itemize}
+                \item CIF: A12345678
+                \item Nombre: Empresa de Ejemplo
+                \item Provincia: Cádiz
+                \item Municipio: San Fernando
+            \end{itemize}
+            y hace clic en `Añadir empresa' & El sistema notifica la creación y devuelve la página de gestión de la aplicación & OK \\
+        \hline
+    \end{tabular}
+    \caption{Prueba FAT - Crear empresa}
+    \label{tab:fat-test}
+\end{table}
+
+\subsubsection{Modificar empresa}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|p{15cm}|}
+        \hline
+        \multicolumn{1}{|c|}{\textbf{Objetivo}} \\
+        \hline
+        Verificar que PreventAI permite la modificación de empresas \\
+        \hline
+        \multicolumn{1}{|c|}{\textbf{Condiciones Iniciales}} \\
+        \hline
+        El usuario ha iniciado sesión \\
+        \hline
+    \end{tabular}
+
+    \begin{tabular}{| m{1cm} | m{6.8cm} | m{4cm} | m{1.9cm} |}
+        \hline
+        \textbf{Paso} & \textbf{Descripción} & \textbf{Criterio de superación} & \textbf{Resultado} \\
+        \hline
+        1 & El usuario hace clic en `Gestionar' & El usuario accede a la pantalla de gestión de entidades de la aplicación & OK \\
+        \hline
+        2 & El usuario hace clic en el apartado de `Empresas' & El usuario accede a la pantalla de gestión de empresas de la aplicación & OK \\
+        \hline
+        3 & El usuario hace clic en `Modificar empresa' & El usuario accede a la pantalla de modificación de empresas de la aplicación & OK \\
+        \hline
+        4 & El usuario hace clic en la empresa que quiere modificar & Se despliega un formulario con los datos del usuario a modificar & OK \\
+        \hline
+        5 &  El usuario cambia los campos con los siguientes datos para la creación de un nuevo usuario: \begin{itemize}
+                \item CIF: A12345678
+                \item Nombre: Empresa de Ejemplo
+                \item Provincia: Cádiz
+                \item Municipio: El puerto de Santa María
+            \end{itemize}
+            y hace clic en `Modificar empresa' & El sistema notifica la creación y devuelve la página de gestión de la aplicación & OK \\
+        \hline
+    \end{tabular}
+    \caption{Prueba FAT - Modificar empresa}
+    \label{tab:fat-test}
+\end{table}
+
+
+\subsubsection{Eliminar empresa}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|p{15cm}|}
+        \hline
+        \multicolumn{1}{|c|}{\textbf{Objetivo}} \\
+        \hline
+        Verificar que PreventAI permite la eliminación de empresas \\
+        \hline
+        \multicolumn{1}{|c|}{\textbf{Condiciones Iniciales}} \\
+        \hline
+        El usuario ha iniciado sesión\\
+        \hline
+    \end{tabular}
+
+    \begin{tabular}{| m{1cm} | m{6.8cm} | m{4cm} | m{1.9cm} |}
+        \hline
+        \textbf{Paso} & \textbf{Descripción} & \textbf{Criterio de superación} & \textbf{Resultado} \\
+        \hline
+        1 & El usuario hace clic en `Gestionar' & El usuario accede a la pantalla de gestión de entidades de la aplicación & OK \\
+        \hline
+        2 & El usuario hace clic en el apartado de `Empresas' & El usuario accede a la pantalla de gestión de empresas de la aplicación & OK \\
+        \hline
+        3 & El usuario hace clic en `Eliminar empresa' & El usuario accede a la pantalla de eliminación de empresas de la aplicación & OK \\
+        \hline
+        4 & El usuario hace clic el icono de papelera rojo de la empresa que quiere eliminar & Se despliega un menú con una pregunta para confirmar la eliminación & OK \\
+        \hline
+        5 &  El usuario hace clic en 'Confirmar' & El sistema notifica la eliminación y devuelve la página de eliminación de empresas de la aplicación & OK \\
+        \hline
+    \end{tabular}
+    \caption{Prueba FAT - Eliminar empresa}
+    \label{tab:fat-test}
+\end{table}
+
+
+% Aqui empiezan los empleados
+
+\subsubsection{Crear empleado}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|p{15cm}|}
+        \hline
+        \multicolumn{1}{|c|}{\textbf{Objetivo}} \\
+        \hline
+        Verificar que PreventAI permite la creación de empleados\\
+        \hline
+        \multicolumn{1}{|c|}{\textbf{Condiciones Iniciales}} \\
+        \hline
+        El usuario ha iniciado sesión\\
+        \hline
+    \end{tabular}
+
+    \begin{tabular}{| m{1cm} | m{6.8cm} | m{4cm} | m{1.9cm} |}
+        \hline
+        \textbf{Paso} & \textbf{Descripción} & \textbf{Criterio de superación} & \textbf{Resultado} \\
+        \hline
+        1 & El usuario hace clic en `Gestionar' & El usuario accede a la pantalla de gestión de entidades de la aplicación & OK \\
+        \hline
+        2 & El usuario hace clic en el apartado de `Empleados' & El usuario accede a la pantalla de gestión de empleados de la aplicación & OK \\
+        \hline
+        3 & El usuario hace clic en `Crear empleado' & El usuario accede a la pantalla de creación de empleados de la aplicación & OK \\
+        \hline
+        4 &  El usuario introduce los siguientes datos para la creación de un nuevo empleado: \begin{itemize}
+                \item Nombre: Pablo
+                \item Apellidos: Fernández Soto
+                \item DNI: 77171742C
+                \item Teléfono: 658152348
+                \item Correo: pablof@test.com
+                \item Edad: 34
+                \item Sexo: Masculino
+                \item Fecha de Nacimiento: 21/07/1990
+                \item Puesto de Trabajo: Desarrollador
+                \item Empresa: Empresa de Ejemplo
+            \end{itemize}
+            y hace clic en `Añadir empleado' & El sistema notifica la creación y devuelve la página de gestión de la aplicación & OK \\
+        \hline
+    \end{tabular}
+    \caption{Prueba FAT - Crear empleado}
+    \label{tab:fat-test}
+\end{table}
+
+\subsubsection{Modificar empleado}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|p{15cm}|}
+        \hline
+        \multicolumn{1}{|c|}{\textbf{Objetivo}} \\
+        \hline
+        Verificar que PreventAI permite la modificación de empleados \\
+        \hline
+        \multicolumn{1}{|c|}{\textbf{Condiciones Iniciales}} \\
+        \hline
+        El usuario ha iniciado sesión \\
+        \hline
+    \end{tabular}
+
+    \begin{tabular}{| m{1cm} | m{6.8cm} | m{4cm} | m{1.9cm} |}
+        \hline
+        \textbf{Paso} & \textbf{Descripción} & \textbf{Criterio de superación} & \textbf{Resultado} \\
+        \hline
+        1 & El usuario hace clic en `Gestionar' & El usuario accede a la pantalla de gestión de entidades de la aplicación & OK \\
+        \hline
+        2 & El usuario hace clic en el apartado de `Empleados' & El usuario accede a la pantalla de gestión de empleados de la aplicación & OK \\
+        \hline
+        3 & El usuario hace clic en `Modificar empleado' & El usuario accede a la pantalla de modificación de empleados de la aplicación & OK \\
+        \hline
+        4 & El usuario hace clic en el empleado que quiere modificar & El usuario accede a la pantalla de modificación del empleado en específico con los datos rellenos & OK \\
+        \hline
+        5 &  El usuario cambia los campos con los siguientes datos para la modificación de un empleado: \begin{itemize}
+                \item Nombre: Pablo
+                \item Apellidos: Fernández Soto
+                \item DNI: 77171742C
+                \item Teléfono: 658152348
+                \item Correo: pablof@test.com
+                \item Edad: 34
+                \item Sexo: Masculino
+                \item Fecha de Nacimiento: 21/07/1990
+                \item Puesto de Trabajo: Desarrollador
+                \item Empresa: Empresa de Ejemplo
+            \end{itemize}
+            y hace clic en `Modificar empleado' & El sistema notifica la creación y devuelve la página de gestión de la aplicación & OK \\
+        \hline
+    \end{tabular}
+    \caption{Prueba FAT - Modificar empleado}
+    \label{tab:fat-test}
+\end{table}
+
+
+\subsubsection{Eliminar empleado}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|p{15cm}|}
+        \hline
+        \multicolumn{1}{|c|}{\textbf{Objetivo}} \\
+        \hline
+        Verificar que PreventAI permite la eliminación de un empleado \\
+        \hline
+        \multicolumn{1}{|c|}{\textbf{Condiciones Iniciales}} \\
+        \hline
+        El usuario ha iniciado sesión\\
+        \hline
+    \end{tabular}
+
+    \begin{tabular}{| m{1cm} | m{6.8cm} | m{4cm} | m{1.9cm} |}
+        \hline
+        \textbf{Paso} & \textbf{Descripción} & \textbf{Criterio de superación} & \textbf{Resultado} \\
+        \hline
+        1 & El usuario hace clic en `Gestionar' & El usuario accede a la pantalla de gestión de entidades de la aplicación & OK \\
+        \hline
+        2 & El usuario hace clic en el apartado de `Empleados' & El usuario accede a la pantalla de gestión de empleados de la aplicación & OK \\
+        \hline
+        3 & El usuario hace clic en `Eliminar empleado' & El usuario accede a la pantalla de eliminación de empleados de la aplicación & OK \\
+        \hline
+        4 & El usuario hace clic el icono de papelera rojo del empleado que quiere eliminar & Se despliega un menú con una pregunta para confirmar la eliminación & OK \\
+        \hline
+        5 &  El usuario hace clic en 'Confirmar' & El sistema notifica la eliminación y devuelve la página de eliminación de empleados de la aplicación & OK \\
+        \hline
+    \end{tabular}
+    \caption{Prueba FAT - Eliminar empleado}
+    \label{tab:fat-test}
+\end{table}
+
+% Informe GINSHT
+
+\subsubsection{Crear informe GINSHT}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|p{15cm}|}
+        \hline
+        \multicolumn{1}{|c|}{\textbf{Objetivo}} \\
+        \hline
+        Verificar que PreventAI permite la creación de informes GINSHT \\
+        \hline
+        \multicolumn{1}{|c|}{\textbf{Condiciones Iniciales}} \\
+        \hline
+        El usuario ha iniciado sesión\\
+        \hline
+    \end{tabular}
+
+    \begin{tabular}{| m{1cm} | m{6.8cm} | m{4cm} | m{1.9cm} |}
+        \hline
+        \textbf{Paso} & \textbf{Descripción} & \textbf{Criterio de superación} & \textbf{Resultado} \\
+        \hline
+        1 & El usuario hace clic en `Nueva evaluación' & El usuario accede a la pantalla de selección de tipo de informe & OK \\
+        \hline
+        2 & El usuario hace clic en el botón del informe `GINSHT' & El usuario accede a la primera pantalla del informe GINSHT & OK \\
+        \hline
+        3 &  El usuario introduce los siguientes datos para el primer paso del informe GINSHT: \begin{itemize}
+                \item Nombre: Empresa de Ejemplo
+                \item DNI del empleado: 77171742C
+                \item Sexo: Masculino
+                \item Fecha del informe: 28/06/2024
+                \item Referencia: 15647831M
+            \end{itemize}
+            y hace clic en `Siguiente' & El sistema le lleva a la siguiente pantalla del informe & OK \\
+        \hline
+        4 & El usuario pulsa el botón de `Subir imágenes' y selecciona los ficheros para el informe, a continuación pulsa el botón de `Realizar detecciones automáticas' y pulsa el botón de `Siguiente'. & El usuario accede a la pantalla de descripción del informe. & OK \\
+        5 & El usuario introduce los siguientes datos para las descripciones solicitadas:
+        \begin{itemize}
+            \item Descripción de Elevación: el empleado recoge la carga del camión y la transporta a la cinta de transporte
+        \end{itemize}
+    \end{tabular}
+    \caption{Prueba FAT - Crear informe GINSHT}
+    \label{tab:fat-test}
+\end{table}
+
+\subsubsection{Crear informe GINSHT}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|p{15cm}|}
+        \hline
+        \multicolumn{1}{|c|}{\textbf{Objetivo}} \\
+        \hline
+        Verificar que PreventAI permite la modificación de empleados \\
+        \hline
+        \multicolumn{1}{|c|}{\textbf{Condiciones Iniciales}} \\
+        \hline
+        El usuario ha iniciado sesión \\
+        \hline
+    \end{tabular}
+
+    \begin{tabular}{| m{1cm} | m{6.8cm} | m{4cm} | m{1.9cm} |}
+        \hline
+        \textbf{Paso} & \textbf{Descripción} & \textbf{Criterio de superación} & \textbf{Resultado} \\
+        \hline
+        1 & El usuario hace clic en `Gestionar' & El usuario accede a la pantalla de gestión de entidades de la aplicación & OK \\
+        \hline
+        2 & El usuario hace clic en el apartado de `Empleados' & El usuario accede a la pantalla de gestión de empleados de la aplicación & OK \\
+        \hline
+        3 & El usuario hace clic en `Modificar empleado' & El usuario accede a la pantalla de modificación de empleados de la aplicación & OK \\
+        \hline
+        4 & El usuario hace clic en el empleado que quiere modificar & El usuario accede a la pantalla de modificación del empleado en específico con los datos rellenos & OK \\
+        \hline
+        5 &  El usuario cambia los campos con los siguientes datos para la modificación de un empleado: \begin{itemize}
+                \item Nombre: Pablo
+                \item Apellidos: Fernández Soto
+                \item DNI: 77171742C
+                \item Teléfono: 658152348
+                \item Correo: pablof@test.com
+                \item Edad: 34
+                \item Sexo: Masculino
+                \item Fecha de Nacimiento: 21/07/1990
+                \item Puesto de Trabajo: Desarrollador
+                \item Empresa: Empresa de Ejemplo
+            \end{itemize}
+            y hace clic en `Modificar empleado' & El sistema notifica la creación y devuelve la página de gestión de la aplicación & OK \\
+        \hline
+    \end{tabular}
+    \caption{Prueba FAT - Modificar empleado}
+    \label{tab:fat-test}
+\end{table}
+
+
+\subsubsection{Eliminar empleado}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|p{15cm}|}
+        \hline
+        \multicolumn{1}{|c|}{\textbf{Objetivo}} \\
+        \hline
+        Verificar que PreventAI permite la eliminación de un empleado \\
+        \hline
+        \multicolumn{1}{|c|}{\textbf{Condiciones Iniciales}} \\
+        \hline
+        El usuario ha iniciado sesión\\
+        \hline
+    \end{tabular}
+
+    \begin{tabular}{| m{1cm} | m{6.8cm} | m{4cm} | m{1.9cm} |}
+        \hline
+        \textbf{Paso} & \textbf{Descripción} & \textbf{Criterio de superación} & \textbf{Resultado} \\
+        \hline
+        1 & El usuario hace clic en `Gestionar' & El usuario accede a la pantalla de gestión de entidades de la aplicación & OK \\
+        \hline
+        2 & El usuario hace clic en el apartado de `Empleados' & El usuario accede a la pantalla de gestión de empleados de la aplicación & OK \\
+        \hline
+        3 & El usuario hace clic en `Eliminar empleado' & El usuario accede a la pantalla de eliminación de empleados de la aplicación & OK \\
+        \hline
+        4 & El usuario hace clic el icono de papelera rojo del empleado que quiere eliminar & Se despliega un menú con una pregunta para confirmar la eliminación & OK \\
+        \hline
+        5 &  El usuario hace clic en 'Confirmar' & El sistema notifica la eliminación y devuelve la página de eliminación de empleados de la aplicación & OK \\
+        \hline
+    \end{tabular}
+    \caption{Prueba FAT - Eliminar empleado}
+    \label{tab:fat-test}
+\end{table}

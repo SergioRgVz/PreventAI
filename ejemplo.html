@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Agregar Sombra al Texto</title>
+</head>
+<body>
+    <canvas id="myCanvas" width="800" height="200"></canvas>
+    <script>
+        // Obtén el canvas y su contexto
+        var canvas = document.getElementById('myCanvas');
+        var ctx = canvas.getContext('2d');
+
+        // Define el texto y sus propiedades
+        var text = "Tu Texto Aquí";
+        ctx.font = "48px serif";
+
+        // Define la sombra
+        ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
+        ctx.shadowOffsetX = 4;
+        ctx.shadowOffsetY = 4;
+        ctx.shadowBlur = 4;
+
+        // Dibuja el texto con sombra
+        ctx.fillText(text, 50, 100);
+    </script>
+</body>
+</html>

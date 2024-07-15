@@ -29,10 +29,13 @@ def detect_pose(image_path):
 
 # detect_pose('imagenpostura.jpg')
 # detect_pose('imagenginsht.png')
-detect_pose('agachadopegado.png')
+# detect_pose('agachadopegado.png')
 # detect_pose('weirdpose.jpg')a
 # detect_pose('weirdpose2.jpeg')
 # detect_pose('pose1.jpg')
+detect_pose('img/REBA/cuello/testfabrica.jpg')
+# PoseEstimation\img\REBA\cuello\testfabrica.jpg
+# PoseEstimation\img\REBA\cuello\cuellorecto.jpg
 
 
 # Lanzar en WSL con python3 en este directorio

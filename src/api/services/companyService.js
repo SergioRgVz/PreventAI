@@ -17,7 +17,7 @@ const companyService = {
             }
 
             // Crear una nueva empresa si no existe
-            const newCompany = await Empresa.create({ID_Municipio: data.municipio,Nombre: data.Nombre,CIF: data.CIF});
+            const newCompany = await Empresa.create({ID_Municipio: data.municipio, Nombre: data.Nombre, CIF: data.CIF});
             console.log('Empresa creada:', newCompany);
 
             // Crear la relación entre la nueva empresa y el usuario
@@ -131,7 +131,7 @@ const companyService = {
         try {
             const company = await companyService.getCompanyByCIF(CIF);
             if (!company) {
-                console.log('Empresa no encontrada:', id);
+                console.log('Empresa no encontrada:', CIF);
                 return null;
             }
             await company.update(data);

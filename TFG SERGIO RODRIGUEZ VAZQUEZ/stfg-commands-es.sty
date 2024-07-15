@@ -1,0 +1,83 @@
+% Package: 'stfg-command.sty'
+% Copyright: Pablo de la Torre Moreno, 2016
+% Description: LaTeX commands definitions.
+% Version: 1.0
+% Date: 2016-08-05
+% Todo:
+%   Adapting to English language.
+%   \contentFolder must be defined.
+% Requirements: 
+%     \usepackage[titletoc]{appendix}
+%     \usepackage[spanish, es-tabla]{babel}
+
+\@ifpackageloaded{appendix}{}{\usepackage[titletoc]{appendix}}
+\@ifpackageloaded{babel}{}{\usepackage[spanish, es-tabla]{babel}}
+
+\if \contentFolder\empty
+    \newcommand{\inputContent}[1]{\input{#1}}
+    \newcommand{\bibliographyContent}[1]{\bibliograpy{#1}}
+    \newcommand{\lstinputlistingContent}[2]{\lstinputlisting[#1]{#2}}
+    %\newcommand{\lstinputlistingSqlContent}[1]{\lstinputlisting[language=SQL,
+    %]{#1}}
+\else
+    \newcommand{\inputContent}[1]{\input{\contentFolder/#1}}
+    \newcommand{\bibliographyContent}[1]{\bibliography{\contentFolder/#1}}
+    \newcommand{\lstinputlistingContent}[2]{\lstinputlisting[#1]{\contentFolder/#2}}
+    %\newcommand{\lstinputlistingSqlContent}[1]{\lstinputlisting[language=SQL,%
+    %    morekeywords={if,USE,DELIMITER,signal}]%
+    %]{\contentFolder/#1}}
+\fi
+
+% If \imgFolder is defined, you can put all your pictures in this path, without referencing it explicitly.
+\if \imgFolder\empty 
+\else
+     \if \contentFolder\empty
+        \graphicspath{{\imgFolder/}}
+    \else
+        \graphicspath{{\contentFolder/\imgFolder/}}
+
+\newcommand{\hiddensection}[1]{
+    \stepcounter{section}
+    \subsection*{\arabic{chapter}.\arabic{section}\hspace{1em}{#1}}
+}
+\newcommand{\hiddensubsection}[1]{
+    \stepcounter{subsection}
+    \subsubsection*{\arabic{chapter}.\arabic{section}.\arabic{subsection}\hspace{1em}{#1}}
+}
+
+\addto\captionsspanish{\renewcommand{\bibname}{Bibliografía y referencias}}
+\renewcommand{\appendixpagename}{Apéndices}
+\renewcommand{\appendixtocname}{Apéndice}
+\newcommand{\newappendix}[1]{
+  \refstepcounter{chapter}\chapter*{\appendixtocname\ \thechapter: {#1}}
+  \addcontentsline{toc}{chapter}{\appendixtocname\ \thechapter: {#1}}
+}
+
+% For references in lowercase. An example of use is:
+% \section{\forlnameref My \forlnameref Section name}
+% \label{sec:mySectionLabel}
+% and
+% \lnameref{sec:mySectionLabel}
+% shows my section name
+% or
+% \fnameref{sec:mySectionLabel}
+% shows My section name
+\newcommand{\forlnameref}{}
+\newcommand{\lnameref}[1]{%
+    \bgroup
+    \let\forlnameref\MakeLowercase
+    \nameref{#1}\egroup}
+\newcommand{\fnameref}[1]{%
+    \bgroup
+    \def\forlnameref{\let\forlnameref\MakeLowercase}%
+    \nameref{#1}\egroup}
+
+\newcommand{\actor}{\textit{actor}}
+\newcommand{\system}{\textit{sistema}}
+\newcommand{\sistema}{\system}
+
+\renewcommand\lstlistingname{Código}
+\renewcommand\lstlistlistingname{Índice de códigos fuente}
+
+\newcommand{\refwithpage}[1]{\ref{#1} (pág. \pageref{#1})}
+\newcommand{\namerefwithpage}[1]{\nameref{#1} (pág. \pageref{#1})}

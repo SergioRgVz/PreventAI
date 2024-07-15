@@ -1,0 +1,33 @@
+\subsection{Relación de tablas}
+\label{sec:tablesRelation}
+
+A continuación se muestra la relación de tablas del modelo. La descripción incluye el nombre de la tabla, el/los requisito/s de información que representa y los campos que contiene. Para cada campo se indica el nombre, si es clave primaria (si aparece subrayado), el tipo físico, el campo de referencia en su caso, y si es único y obligatorio.
+
+\begin{shaded}
+Se incluye una tabla de ejemplo. Con motivo de establecer una serie de pautas comunes que permita acelerar y facilitar la comprensión del modelo, para la descripción de las tablas se respetarán los siguientes criterios:
+\begin{itemize}
+    \item Deben eliminarse tildes y espacios, usando la notación Pascal \cite{wiki2012pascal}.
+    \item El primer elemento en aparecer será la clave primaria.
+    \item Posteriormente, se indican las claves ajenas por orden alfabético.
+    \item Por último, se incluye el resto de los campos en agrupación de significado.
+\end{itemize}
+\end{shaded}
+
+\def \dbtName {Usuario}
+\def \dbtIrq {Usuario (Tabla \ref{tab:irqUser}) [pág. \pageref{tab:irqUser}])}
+\def \dbtNumFields {6} % Número de campos. Necesario para que "Campos" aparezca centrado
+\def \dbtFields { 
+    % Filas de primera a penúltima
+    % & \code{NombreCampo} & \code{tipoCampo} & referencia (\code{Tabla.Campo} o vacío)
+    %                                         & esÚnico (\checkmark o vacío) & esObligatorio (\checkmark o vacío) \\ \cline{2-6}
+    % Última fila
+    % \dbtTitle  & \code{NombreCampo} & \code{tipoCampo} & referencia (\textit{primaria}, \code{Tabla.Campo} o vacío)
+    %            & esÚnico (sí o no) & esObligatorio (sí o no) \\ \hline
+            & \underline{\code{Id}} & \code{int32}          & & \checkmark & \checkmark   \\ \cline{2-6}
+            & \code{EsSupervisor}   & \code{boolean}        & &            & \checkmark   \\ \cline{2-6}
+            & \code{Nombre}         & \code{varchar(64)}    & &            & \checkmark   \\ \cline{2-6}
+            & \code{Apellidos}      & \code{varchar(128)}   & &            & \checkmark   \\ \cline{2-6}
+            & \code{Usuario}        & \code{varchar(16)}    & & \checkmark & \checkmark   \\ \cline{2-6}
+\dbtTitle   & \code{Contrasenna}    & \code{varchar(16)}    & &            & \checkmark   \\ \hline
+}
+\createDbTableTable{tab:tabUser}

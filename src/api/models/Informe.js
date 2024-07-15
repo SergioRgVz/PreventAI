@@ -1,8 +1,7 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../../db/mariadb.js';
-import User from './User.js';  // Asegúrate de que la ruta sea correcta
-import Empleado from './Empleado.js';  // Asegúrate de que la ruta sea correcta
-// import Imagen from './Imagen.js'; 
+import User from './User.js';  
+import Empleado from './Empleado.js';
 
 const Informe = sequelize.define('Informe', {
     ID: {

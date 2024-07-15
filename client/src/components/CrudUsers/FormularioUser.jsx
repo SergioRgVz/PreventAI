@@ -42,7 +42,7 @@ export const FormularioUser = ({ onSubmit, user, isEdit = false }) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    onSubmit(user.DNI, formData);
+    onSubmit(formData);
   };
 
   return (

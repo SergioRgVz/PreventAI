@@ -1,0 +1,22 @@
+\subsection{\forlnameref Entidades}
+\label{sec:entities}
+
+\begin{shaded}
+Se incluye como ejemplo la entidad Usuario.
+\end{shaded}
+
+\def \irqName {Usuario}
+\def \irqDescription {Usuario básico de la aplicación.}De acuerdo con el estudio del estado del arte
+\def \irqNumAttrs {5} % Número de atributos. Necesario para que "Atributos" aparezca centrado
+\def \irqAttrs { 
+    % Filas de primera a penúltima
+    % & NombreAtributo & \code{tipoAtributo} & esÚnico (\checkmark o vacío) & esObligatorio (\checkmark o vacío) \\ \cline{2-5}
+    % Última fila
+    % \irqTitle & nombreAtributo & \code{tipoAtributo} & esÚnico (\checkmark o vacío) & esObligatorio (\checkmark o vacío) \\ \hline
+    & Nombre        & \code{texto(64)}  &            & \checkmark   \\ \cline{2-5}
+    & Apellidos     & \code{texto(128)} &            & \checkmark   \\ \cline{2-5}
+    & Usuario       & \code{texto(16)}  & \checkmark & \checkmark   \\ \cline{2-5}
+    & Contraseña    & \code{texto(16)}  &            & \checkmark   \\ \cline{2-5}
+    \irqTitle & Contactos  & \code{lista<Contacto>}  &     & \checkmark     \\ \hline
+}
+\createInformationReqTable{tab:irqUser}

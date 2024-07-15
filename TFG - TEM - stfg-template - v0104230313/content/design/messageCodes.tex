@@ -1,0 +1,17 @@
+\section{\forlnameref Códigos de mensajes}
+\label{sec:messageCodes}
+
+\begin{shaded}
+Con objeto de que lógica de negocio reconozca los mensajes enviados por el sistema de gestión de bases de datos, deben especificarse aquí los códigos de error de las restricciones automáticas relativos a las \lnameref{sec:bussinessRules}.
+\end{shaded}
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{|c|c|c|l|} \hline
+\titlecell{Regla}    & \titlecell{Código}    & \titlecell{Exp.} & \titlecell{Mensaje} \\ \hline
+\titlecell{BRU-001}             & 2001       & \checkmark        & El campo '?1' no puede estar vacío.              \\ \hline
+\titlecell{BRU-002}             & 1062       &                   & Entrada duplicada '?1' para la clave '?2'.       \\ \hline
+\end{tabular}
+\caption{Códigos de mensajes de las reglas de negocio}
+\label{tab:messageCodes}
+\end{table}

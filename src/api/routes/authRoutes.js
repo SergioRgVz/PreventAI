@@ -34,7 +34,7 @@ router.get('/check-role', verifyToken, checkIfTechnician);
  */
 router.get('/email/:email', getUserByEmail);
 
-router.get('/users', getAllUsers);
+router.get('/users', verifyToken, getAllUsers);
 
 /**
  * Ruta para el registro de nuevos usuarios.
