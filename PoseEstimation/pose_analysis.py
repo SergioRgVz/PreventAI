@@ -363,7 +363,7 @@ def procesar_imagen(image, tipo):
         posiciones['separacion'] = clasificacion_proximidad
 
     # Mostrar la imagen anotada antes de guardarla
-    cv2.imshow('Imagen Anotada', annotated_image)
+    # cv2.imshow('Imagen Anotada', annotated_image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
     
